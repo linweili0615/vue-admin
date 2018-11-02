@@ -1,12 +1,15 @@
 import request from '@/utils/request'
 
-export function login(username, password) {
+export function login(telno, pwd) {
   return request({
+    headers: {
+      'Content-Type':'application/json;charset=UTF-8'
+    },
     url: '/user/2login',
     method: 'post',
     data: {
-      username,
-      password
+      telno,
+      pwd
     }
   })
 }
@@ -14,7 +17,7 @@ export function login(username, password) {
 export function getInfo(token) {
   return request({
     url: '/user/info',
-    method: 'get',
+    method: 'post',
     params: { token }
   })
 }

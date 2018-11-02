@@ -2,11 +2,11 @@
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <h3 class="title">vue-admin-template</h3>
-      <el-form-item prop="username">
+      <el-form-item prop="telno">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="username" />
+        <el-input v-model="loginForm.telno" name="telno" type="text" auto-complete="on" placeholder="telno" />
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
@@ -14,10 +14,10 @@
         </span>
         <el-input
           :type="pwdType"
-          v-model="loginForm.password"
-          name="password"
+          v-model="loginForm.pwd"
+          name="pwd"
           auto-complete="on"
-          placeholder="password"
+          placeholder="pwd"
           @keyup.enter.native="handleLogin" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eye" />
@@ -43,7 +43,7 @@ export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
+      if (isvalidUsername(value)) {
         callback(new Error('请输入正确的用户名'))
       } else {
         callback()
@@ -58,12 +58,12 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: 'admin'
+        telno: '15866660001',
+        pwd: '123456a'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePass }]
+        telno: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        pwd: [{ required: true, trigger: 'blur', validator: validatePass }]
       },
       loading: false,
       pwdType: 'password',
