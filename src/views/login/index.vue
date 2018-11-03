@@ -38,6 +38,7 @@
 
 <script>
 import { isvalidUsername } from '@/utils/validate'
+import { Message } from 'element-ui'
 
 export default {
   name: 'Login',
@@ -92,9 +93,10 @@ export default {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then((response) => {
             const data = response.data
-            if(data != '200'){
+            if(data.code != '200'){
               this.loading = false
-              new Error('请输入正确的用户名/密码')
+              Message.success(data.code)
+              console.log(data.code)
             }else {
               this.$router.push({ path: this.redirect || '/' })
             }
