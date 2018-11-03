@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <h3 class="title">vue-admin-template</h3>
+      <h3 class="title">Activity-Test</h3>
       <el-form-item prop="telno">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -28,10 +28,10 @@
           Sign in
         </el-button>
       </el-form-item>
-      <div class="tips">
+<!--      <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
         <span> password: admin</span>
-      </div>
+      </div>-->
     </el-form>
   </div>
 </template>
@@ -95,20 +95,18 @@ export default {
             const data = response.data
             if(data.code != '200'){
               this.loading = false
-              this.$message({
-                message: '恭喜你，这是一条成功消息',
-                type: 'success'
-              })
-              // console.log(data.code)
+              this.$message.error('用户名或密码错误')
             }else {
+              this.$message.success('登录成功')
+              this.loading = false
               this.$router.push({ path: this.redirect || '/' })
             }
 
           }).catch(() => {
+            this.$message.error('登录异常')
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
