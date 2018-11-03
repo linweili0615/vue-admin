@@ -91,9 +91,14 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then((response) => {
-            console.log(response)
-            this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
+            const data = response.data
+            if(data != '200'){
+              this.loading = false
+              new Error('请输入正确的用户名/密码')
+            }else {
+              this.$router.push({ path: this.redirect || '/' })
+            }
+
           }).catch(() => {
             this.loading = false
           })
