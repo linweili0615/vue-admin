@@ -17,7 +17,9 @@ import '@/icons' // icon
 import '@/permission' // permission control
 
 Vue.use(ElementUI, { locale })
-// Vue.prototype.$message = Message
+
+import { Message } from 'element-ui'
+Vue.prototype.$message = Message
 
 Vue.config.productionTip = false
 

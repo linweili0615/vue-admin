@@ -95,8 +95,11 @@ export default {
             const data = response.data
             if(data.code != '200'){
               this.loading = false
-              Message.success(data.code)
-              console.log(data.code)
+              this.$message({
+                message: '恭喜你，这是一条成功消息',
+                type: 'success'
+              })
+              // console.log(data.code)
             }else {
               this.$router.push({ path: this.redirect || '/' })
             }
