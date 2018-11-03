@@ -30,11 +30,14 @@ const user = {
       const telno = userInfo.telno.trim()
       return new Promise((resolve, reject) => {
         login(telno, userInfo.pwd).then(response => {
-          const data = response.data
-          console.log(data)
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
-          resolve()
+          // const data = response.data
+          // if(data.code != '200'){
+          //
+          // }
+          //
+          // setToken(data.token)
+          // commit('SET_TOKEN', data.token)
+          resolve(response)
         }).catch(error => {
           reject(error)
         })
