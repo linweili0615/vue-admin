@@ -27,14 +27,13 @@ const user = {
           const data = response.data
           if(data.code == '200'){
             setToken(data.token)
-            commit('SET_TOKEN', data.token)
             commit('SET_NAME',data.user_name)
           }
           resolve(response)
         }).catch(error => {
-          commit('SET_TOKEN', '')
-          commit('SET_NAME','')
           removeToken()
+          commit('SET_TOKEN','')
+          commit('SET_NAME','')
           reject(error)
         })
       })
@@ -45,18 +44,14 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
           const data = response.data
-          if(data != null){
+          if(data.username != ''){
             commit('SET_NAME',data.username)
-            resolve(response)
-          }else{
-            this.$store.dispatch('LogOut').then(() => {
-              location.reload() // 为了重新实例化vue-router对象 避免bug
-            })
           }
-
+          resolve(response)
         }).catch(error => {
-          commit('SET_TOKEN', '')
           removeToken()
+          commit('SET_TOKEN','')
+          commit('SET_NAME','')
           reject(error)
         })
       })
@@ -65,21 +60,19 @@ const user = {
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          removeToken()
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        removeToken()
+        commit('SET_TOKEN','')
+        commit('SET_NAME','')
+        resolve()
       })
     },
 
     // 前端 登出
     FedLogOut({ commit }) {
       return new Promise(resolve => {
-        commit('SET_TOKEN', '')
         removeToken()
+        commit('SET_TOKEN','')
+        commit('SET_NAME','')
         resolve()
       })
     }

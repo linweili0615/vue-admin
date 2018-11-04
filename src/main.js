@@ -19,7 +19,10 @@ import '@/permission' // permission control
 Vue.use(ElementUI, { locale })
 
 import { Message } from 'element-ui'
+import { Notification } from 'element-ui';
+
 Vue.prototype.$message = Message
+Vue.prototype.$notify = Notification
 
 Vue.config.productionTip = false
 

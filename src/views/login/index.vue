@@ -6,9 +6,9 @@
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-input v-model="loginForm.telno" name="telno" type="text" auto-complete="on" placeholder="telno" />
+        <el-input v-model="loginForm.telno" name="telno" type="text" auto-complete="on" placeholder="请输入手机号码" />
       </el-form-item>
-      <el-form-item prop="password">
+      <el-form-item prop="pwd">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
@@ -17,7 +17,7 @@
           v-model="loginForm.pwd"
           name="pwd"
           auto-complete="on"
-          placeholder="pwd"
+          placeholder="请输入登录密码"
           @keyup.enter.native="handleLogin" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eye" />
@@ -28,42 +28,47 @@
           Sign in
         </el-button>
       </el-form-item>
-<!--      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: admin</span>
-      </div>-->
     </el-form>
   </div>
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
-import { Message } from 'element-ui'
+import { validateMobile } from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (isvalidUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
+    const validatePass=(rule,value,callback)=>{
+        if(!value){
+          callback(new Error('请输入登录密码'))
+        }else if(value.length < 5 ){
+          callback(new Error('密码不能小于5位数'))
+        }else{
+          callback()
+        }
+    }
+
+    const validateTelno = (rule, value, callback) => {
+      if(!value){
+        callback(new Error('请输入手机号码'))
+      }else if(value.length < 11){
+        callback(new Error('请输入11位的手机号码'))
+      }
+      if (!validateMobile(value)) {
+        callback(new Error('请输入正确的手机号码'))
       } else {
         callback()
       }
     }
-    const validatePass = (rule, value, callback) => {
-      if (value.length < 5) {
-        callback(new Error('密码不能小于5位'))
-      } else {
-        callback()
-      }
-    }
+
+
     return {
       loginForm: {
-        telno: '15866660001',
-        pwd: '123456a'
+        telno: '',
+        pwd: ''
       },
       loginRules: {
-        telno: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        telno: [{ required: true, trigger: 'blur', validator: validateTelno }],
         pwd: [{ required: true, trigger: 'blur', validator: validatePass }]
       },
       loading: false,
@@ -89,6 +94,7 @@ export default {
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
+
         if (valid) {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then((response) => {

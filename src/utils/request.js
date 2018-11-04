@@ -10,7 +10,7 @@ const service = axios.create({
 })
 
 // request拦截器
-service.interceptors.request.use(
+/*service.interceptors.request.use(
   config => {
     if (store.getters.token) {
       config.headers['X-Token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
@@ -22,7 +22,7 @@ service.interceptors.request.use(
     console.log(error) // for debug
     Promise.reject(error)
   }
-)
+)*/
 
 // response 拦截器
 /*

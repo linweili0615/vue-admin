@@ -2,7 +2,6 @@ import router from './router'
 import store from './store'
 import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式
-import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth' // 验权
 
 const whiteList = ['/login'] // 不重定向白名单
@@ -13,15 +12,23 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
-        store.dispatch('GetInfo').then(res => { // 拉取用户信息
+        store.dispatch('GetInfo').then(response => { // 拉取用户信息
+          const data = response.data
+          if(data != ''){
+            console.log(1)
             next()
+          }else {
+            console.log(2)
+            store.dispatch('FedLogOut').then(() => {
+              next({ path: '/' })
+            })
+          }
+
         }).catch((err) => {
           store.dispatch('FedLogOut').then(() => {
-            Message.error(err || 'token已失效,请重新登录')
             next({ path: '/' })
           })
         })
-
     }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
