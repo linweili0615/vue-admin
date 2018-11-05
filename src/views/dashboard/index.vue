@@ -12,7 +12,7 @@ export default {
   name: 'Dashboard',
   computed: {
     ...mapGetters([
-      'name',
+      'name'
     ])
   }
 }
