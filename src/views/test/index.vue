@@ -11,6 +11,7 @@
           empty-text="no data"
           class="filter-tree"
           :data="data2"
+          indent="20"
           :props="defaultProps"
           default-expand-all
           :filter-node-method="filterNode"
@@ -19,7 +20,8 @@
       </el-col>
 
       <el-col :span="18">
-        <el-form :model="formInline" inline-message label-width="100px" class="demo-form-inline">
+        <div class="grid-content bg-purple" style="border: darkgray 1px solid">
+          <el-form :model="formInline" inline-message label-width="100px" class="demo-form-inline">
           <el-row>
             <el-col :span="4">
             <el-form-item >
@@ -37,7 +39,7 @@
           </el-row>
           <el-form-item>
             <el-collapse v-model="activeNames" @change="handleChange">
-              <el-collapse-item title="请求头部" name="2">
+              <el-collapse-item title="请求头部" name="1">
                 <el-table :data="tableData" class="tb-edit" style="width: 100%" highlight-current-row @row-click="handleCurrentChange">
                   <el-table-column label="参数名" width="350">
                     <template slot-scope="scope">
@@ -83,7 +85,7 @@
         </el-collapse>
           </el-form-item>
         </el-form>
-
+        </div>
 
       </el-col>
 
@@ -103,11 +105,15 @@ export default {
         user: '',
         region: 'GET',
       },
-      activeNames: ['2'],
+      activeNames: ['1','2'],
       tableData: [{
         date: '',
         name: ''
-      }],
+      },{
+        date: '',
+        name: ''
+      },
+      ],
       filterText: '',
       data2: [{
         id: 1,
