@@ -5,17 +5,13 @@
 
     <template>
       <section>
-        <!--<router-link :to="{ name: '新增接口', params: {project_id: this.$route.params.project_id, formData: this.form, _type: this.radio, _typeData: this.radioType}}" style='text-decoration: none;color: aliceblue;'>
-          <el-button class="return-list">快速新建API</el-button>
-        </router-link>-->
+
+        <div class="return-list">
+          <el-button  plain size="medium" @click="fastTest">模拟请求</el-button>
+          <el-button  type="primary" size="medium">保存接口</el-button>
+        </div>
+
         <el-form :model="form" ref="form" :rules="formRules">
-          <!--<el-col :span="3" class="HOST">
-            <el-form-item prop="url">
-              <el-select v-model="form.url"  placeholder="测试环境">
-                <el-option v-for="(item,index) in Host" :key="index+''" :label="item.name" :value="item.host"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>-->
           <div style="border: 1px solid #e6e6e6;margin-bottom: 10px;padding:15px;padding-bottom: 0px">
             <el-row :gutter="10">
               <el-col :span="3">
@@ -32,14 +28,14 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span='16'>
+              <el-col :span='18'>
                 <el-form-item prop="addr">
-                  <el-input v-model.trim="form.addr" placeholder="地址" auto-complete></el-input>
+                  <el-input v-model.trim="form.addr" placeholder="请输入URL地址" auto-complete></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span='2'>
+              <!--<el-col :span='2'>
                 <el-button type="primary" @click="fastTest" :loading="loadingSend">发送</el-button>
-              </el-col>
+              </el-col>-->
             </el-row>
           </div>
           <el-row :span="24">
@@ -53,7 +49,7 @@
                       <el-select placeholder="head标签" filterable v-model="scope.row.name">
                         <el-option v-for="(item,index) in header" :key="index+''" :label="item.label" :value="item.value"></el-option>
                       </el-select>
-                      <el-input class="selectInput" v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入内容"></el-input>
+                      <el-input class="selectInput" v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入标签"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column prop="value" label="内容" min-width="40%" sortable>
@@ -89,7 +85,7 @@
                   </el-table-column>
                   <el-table-column prop="name" label="参数名" min-width="20%" sortable>
                     <template slot-scope="scope">
-                      <el-input v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入参数值"></el-input>
+                      <el-input v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入参数名"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column prop="value" label="参数值" min-width="40%" sortable>
@@ -145,10 +141,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
-// import $ from 'jquery'
-// import VuePopper from "element-ui/src/utils/vue-popper";
+import request from '@/utils/request'
 
 export default {
   name: 'Dashboard',
@@ -158,43 +151,45 @@ export default {
         {value: 'post', label: 'POST'},
         {value: 'put', label: 'PUT'},
         {value: 'delete', label: 'DELETE'}],
-      Http: [{value: 'http', label: 'HTTP'},
-        {value: 'https', label: 'HTTPS'}],
+      Http: [{value: 'https', label: 'HTTPS'},
+        {value: 'http', label: 'HTTP'},
+        ],
       ParameterTyep: true,
       radio: "form-data",
       loadingSend: false,
       header: [{value: 'Accept', label: 'Accept'},
-        {value: 'Accept-Charset', label: 'Accept-Charset'},
-        {value: 'Accept-Encoding', label: 'Accept-Encoding'},
-        {value: 'Accept-Language', label: 'Accept-Language'},
-        {value: 'Accept-Ranges', label: 'Accept-Ranges'},
-        {value: 'Authorization', label: 'Authorization'},
-        {value: 'Cache-Control', label: 'Cache-Control'},
-        {value: 'Connection', label: 'Connection'},
+        // {value: 'Accept-Charset', label: 'Accept-Charset'},
+        // {value: 'Accept-Encoding', label: 'Accept-Encoding'},
+        // {value: 'Accept-Language', label: 'Accept-Language'},
+        // {value: 'Accept-Ranges', label: 'Accept-Ranges'},
+        // {value: 'Authorization', label: 'Authorization'},
+        // {value: 'Cache-Control', label: 'Cache-Control'},
+        // {value: 'Connection', label: 'Connection'},
         {value: 'Cookie', label: 'Cookie'},
-        {value: 'Content-Length', label: 'Content-Length'},
+        // {value: 'Content-Length', label: 'Content-Length'},
         {value: 'Content-Type', label: 'Content-Type'},
-        {value: 'Content-MD5', label: 'Content-MD5'},
-        {value: 'Date', label: 'Date'},
-        {value: 'Expect', label: 'Expect'},
-        {value: 'From', label: 'From'},
-        {value: 'Host', label: 'Host'},
-        {value: 'If-Match', label: 'If-Match'},
-        {value: 'If-Modified-Since', label: 'If-Modified-Since'},
-        {value: 'If-None-Match', label: 'If-None-Match'},
-        {value: 'If-Range', label: 'If-Range'},
-        {value: 'If-Unmodified-Since', label: 'If-Unmodified-Since'},
-        {value: 'Max-Forwards', label: 'Max-Forwards'},
+        // {value: 'Content-MD5', label: 'Content-MD5'},
+        // {value: 'Date', label: 'Date'},
+        // {value: 'Expect', label: 'Expect'},
+        // {value: 'From', label: 'From'},
+        // {value: 'Host', label: 'Host'},
+        // {value: 'If-Match', label: 'If-Match'},
+        // {value: 'If-Modified-Since', label: 'If-Modified-Since'},
+        // {value: 'If-None-Match', label: 'If-None-Match'},
+        // {value: 'If-Range', label: 'If-Range'},
+        // {value: 'If-Unmodified-Since', label: 'If-Unmodified-Since'},
+        // {value: 'Max-Forwards', label: 'Max-Forwards'},
         {value: 'Origin', label: 'Origin'},
-        {value: 'Pragma', label: 'Pragma'},
-        {value: 'Proxy-Authorization', label: 'Proxy-Authorization'},
-        {value: 'Range', label: 'Range'},
-        {value: 'Referer', label: 'Referer'},
-        {value: 'TE', label: 'TE'},
-        {value: 'Upgrade', label: 'Upgrade'},
+        // {value: 'Pragma', label: 'Pragma'},
+        // {value: 'Proxy-Authorization', label: 'Proxy-Authorization'},
+        // {value: 'Range', label: 'Range'},
+        // {value: 'Referer', label: 'Referer'},
+        // {value: 'TE', label: 'TE'},
+        // {value: 'Upgrade', label: 'Upgrade'},
         {value: 'User-Agent', label: 'User-Agent'},
-        {value: 'Via', label: 'Via'},
-        {value: 'Warning', label: 'Warning'}],
+        // {value: 'Via', label: 'Via'},
+        // {value: 'Warning', label: 'Warning'}
+        ],
       header4: "",
       radioType: "",
       result: true,
@@ -205,7 +200,7 @@ export default {
       form: {
         url:"",
         request4: 'POST',
-        Http4: 'HTTP',
+        Http4: 'HTTPS',
         addr: '',
         head: [{name: "", value: ""},
           {name: "", value: ""}],
@@ -219,7 +214,7 @@ export default {
       },
       formRules: {
         addr: [
-          { required: true, message: '请输入地址', trigger: 'blur' },
+          { required: true, message: '请输入URL地址', trigger: 'blur' },
         ]
       },
       headers: "",
@@ -248,7 +243,7 @@ export default {
     },
     getHost() {
       let self = this;
-      $.ajax({
+      /*$.ajax({
         type: "get",
         url: test+"/api/global/host_total",
         async: true,
@@ -272,7 +267,7 @@ export default {
             })
           }
         },
-      })
+      })*/
     },
     toggleHeadSelection(rows) {
       rows.forEach(row => {
@@ -340,7 +335,8 @@ export default {
                 type: 'error'
               })
             } else {
-              $.ajax({
+
+              /*$.ajax({
                 type: self.form.request4,
                 url: url,
                 async: true,
@@ -361,10 +357,29 @@ export default {
                   self.form.resultData = jqXHR.responseJSON;
                   self.form.resultHead = jqXHR.getAllResponseHeaders()
                 }
+              })*/
+
+              request({
+                headers: {
+                  'Content-Type':'application/json;charset=UTF-8'
+                },
+                url: '/interface/test',
+                method: 'post',
+                data: {
+                  form,
+                }
+              }).then(response => {
+                  console.log(response.data)
+              }).catch(error => {
+                console.log(error)
               })
+
+
+
             }
           } else {
-            $.ajax({
+
+            /*$.ajax({
               type: self.form.request4,
               url: url,
               async: true,
@@ -383,7 +398,8 @@ export default {
                 self.form.resultData = jqXHR.responseJSON;
                 self.form.resultHead = jqXHR.getAllResponseHeaders()
               }
-            })
+            })*/
+
           }
         }
       })
@@ -475,7 +491,7 @@ export default {
 .return-list {
   margin-top: 0px;
   margin-bottom: 10px;
-  border-radius: 25px;
+  /*border-radius: 25px;*/
 }
 .head-class {
   font-size: 17px
