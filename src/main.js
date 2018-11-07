@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
@@ -16,7 +18,9 @@ import store from './store'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+
 Vue.use(ElementUI, { locale })
+Vue.use(VueAxios,axios)
 
 import { Message } from 'element-ui'
 import { Notification } from 'element-ui';

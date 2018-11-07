@@ -7,7 +7,7 @@
       <section>
 
         <div class="return-list">
-          <el-button  plain size="medium" @click="fastTest">模拟请求</el-button>
+          <el-button  plain size="medium" @click="fastTest" :loading="loadingSend">模拟请求</el-button>
           <el-button  type="primary" size="medium">保存接口</el-button>
         </div>
 
@@ -16,26 +16,16 @@
             <el-row :gutter="10">
               <el-col :span="3">
                 <el-form-item>
-                  <el-select v-model="form.request4" placeholder="请求方式" @change="checkRequest">
-                    <el-option v-for="(item,index) in request" :key="index+''" :label="item.label" :value="item.value"></el-option>
+                  <el-select v-model="form.methods" placeholder="请求方式" @change="checkRequest">
+                    <el-option v-for="(item,index) in methods" :key="index+''" :label="item.label" :value="item.value"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="3">
-                <el-form-item>
-                  <el-select v-model="form.Http4" placeholder="HTTP协议">
-                    <el-option v-for="(item,index) in Http" :key="index+''" :label="item.label" :value="item.value"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span='18'>
+              <el-col :span='21'>
                 <el-form-item prop="addr">
                   <el-input v-model.trim="form.addr" placeholder="请输入URL地址" auto-complete></el-input>
                 </el-form-item>
               </el-col>
-              <!--<el-col :span='2'>
-                <el-button type="primary" @click="fastTest" :loading="loadingSend">发送</el-button>
-              </el-col>-->
             </el-row>
           </div>
           <el-row :span="24">
@@ -46,7 +36,7 @@
                   </el-table-column>
                   <el-table-column prop="name" label="标签" min-width="20%" sortable>
                     <template slot-scope="scope">
-                      <el-select placeholder="head标签" filterable v-model="scope.row.name">
+                      <el-select placeholder="标签" filterable v-model="scope.row.name">
                         <el-option v-for="(item,index) in header" :key="index+''" :label="item.label" :value="item.value"></el-option>
                       </el-select>
                       <el-input class="selectInput" v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入标签"></el-input>
@@ -76,11 +66,11 @@
                 <div style="margin: 5px">
                   <el-row :span="24">
                     <el-col :span="4"><el-radio v-model="radio" label="form-data">表单(form-data)</el-radio></el-col>
-                    <el-col :span="4"><el-radio v-model="radio" label="raw" v-if="request3">源数据(raw)</el-radio></el-col>
-                    <el-col v-show="request3" :span="16"><el-checkbox v-model="radioType" label="3" v-show="ParameterTyep">表单转源数据</el-checkbox></el-col>
+                    <el-col :span="4"><el-radio v-model="radio" label="raw" v-if="formchange">源数据(raw)</el-radio></el-col>
+                    <el-col v-show="formchange" :span="16"><el-checkbox v-model="radioType" label="3" v-show="ParameterType">表单转源数据</el-checkbox></el-col>
                   </el-row>
                 </div>
-                <el-table ref="multipleParameterTable" :data="form.parameter" highlight-current-row :class="ParameterTyep? 'parameter-a': 'parameter-b'" @selection-change="selsChangeParameter">
+                <el-table ref="multipleParameterTable" :data="form.parameter" highlight-current-row :class="ParameterType? 'parameter-a': 'parameter-b'" @selection-change="selsChangeParameter">
                   <el-table-column type="selection" min-width="5%" label="头部">
                   </el-table-column>
                   <el-table-column prop="name" label="参数名" min-width="20%" sortable>
@@ -106,7 +96,7 @@
                   <el-table-column label="" min-width="18%"></el-table-column>
                 </el-table>
                 <template>
-                  <el-input :class="ParameterTyep? 'parameter-b': 'parameter-a'" type="textarea" :rows="5" placeholder="请输入内容" v-model.trim="form.parameterRaw"></el-input>
+                  <el-input :class="ParameterType? 'parameter-b': 'parameter-a'" type="textarea" :rows="5" placeholder="请输入内容" v-model.trim="form.parameterRaw"></el-input>
                 </template>
               </el-collapse-item>
               <el-collapse-item title="响应结果" name="4">
@@ -147,67 +137,39 @@ export default {
   name: 'Dashboard',
   data() {
     return {
-      request: [{value: 'get', label: 'GET'},
+      methods: [
+        {value: 'get', label: 'GET'},
         {value: 'post', label: 'POST'},
         {value: 'put', label: 'PUT'},
-        {value: 'delete', label: 'DELETE'}],
-      Http: [{value: 'https', label: 'HTTPS'},
-        {value: 'http', label: 'HTTP'},
+        {value: 'delete', label: 'DELETE'}
         ],
-      ParameterTyep: true,
+      ParameterType: true,
       radio: "form-data",
       loadingSend: false,
-      header: [{value: 'Accept', label: 'Accept'},
-        // {value: 'Accept-Charset', label: 'Accept-Charset'},
-        // {value: 'Accept-Encoding', label: 'Accept-Encoding'},
-        // {value: 'Accept-Language', label: 'Accept-Language'},
-        // {value: 'Accept-Ranges', label: 'Accept-Ranges'},
-        // {value: 'Authorization', label: 'Authorization'},
-        // {value: 'Cache-Control', label: 'Cache-Control'},
-        // {value: 'Connection', label: 'Connection'},
+      header: [
+        {value: 'Accept', label: 'Accept'},
         {value: 'Cookie', label: 'Cookie'},
-        // {value: 'Content-Length', label: 'Content-Length'},
         {value: 'Content-Type', label: 'Content-Type'},
-        // {value: 'Content-MD5', label: 'Content-MD5'},
-        // {value: 'Date', label: 'Date'},
-        // {value: 'Expect', label: 'Expect'},
-        // {value: 'From', label: 'From'},
-        // {value: 'Host', label: 'Host'},
-        // {value: 'If-Match', label: 'If-Match'},
-        // {value: 'If-Modified-Since', label: 'If-Modified-Since'},
-        // {value: 'If-None-Match', label: 'If-None-Match'},
-        // {value: 'If-Range', label: 'If-Range'},
-        // {value: 'If-Unmodified-Since', label: 'If-Unmodified-Since'},
-        // {value: 'Max-Forwards', label: 'Max-Forwards'},
         {value: 'Origin', label: 'Origin'},
-        // {value: 'Pragma', label: 'Pragma'},
-        // {value: 'Proxy-Authorization', label: 'Proxy-Authorization'},
-        // {value: 'Range', label: 'Range'},
-        // {value: 'Referer', label: 'Referer'},
-        // {value: 'TE', label: 'TE'},
-        // {value: 'Upgrade', label: 'Upgrade'},
         {value: 'User-Agent', label: 'User-Agent'},
-        // {value: 'Via', label: 'Via'},
-        // {value: 'Warning', label: 'Warning'}
         ],
-      header4: "",
       radioType: "",
       result: true,
       activeNames: ['1', '2', '3', '4'],
-      Host: [{name: "", host: ""}],
-      id: "",
-      request3: true,
+      formchange: true,
       form: {
         url:"",
-        request4: 'POST',
-        Http4: 'HTTPS',
+        methods: 'POST',
         addr: '',
-        head: [{name: "", value: ""},
-          {name: "", value: ""}],
+        head: [
+          {name: "", value: ""},
+          {name: "", value: ""}
+          ],
         parameterRaw: "",
-        parameter: [{name: "", value: "", required:"", restrict: "", description: ""},
-          {name: "", value: "", required:"", restrict: "", description: ""}],
-        parameterType: "",
+        parameter: [
+          {name: "", value: "", required:"", restrict: "", description: ""},
+          {name: "", value: "", required:"", restrict: "", description: ""}
+          ],
         statusCode: "",
         resultData: "",
         resultHead: "",
@@ -225,11 +187,11 @@ export default {
   },
   methods: {
     checkRequest(){
-      let request = this.form.request4;
+      let request = this.form.methods;
       if (request==="GET" || request==="DELETE"){
-        this.request3=false
+        this.formchange=false
       } else {
-        this.request3=true
+        this.formchange=true
       }
     },
     isJsonString(str) {
@@ -240,34 +202,6 @@ export default {
       } catch(e) {
       }
       return false;
-    },
-    getHost() {
-      let self = this;
-      /*$.ajax({
-        type: "get",
-        url: test+"/api/global/host_total",
-        async: true,
-        data: { project_id: this.$route.params.project_id, page: this.page,},
-        headers: {
-          Authorization: 'Token '+JSON.parse(sessionStorage.getItem('token'))
-        },
-        timeout: 5000,
-        success: (data) => {
-          if (data.code === '999999') {
-            data.data.data.forEach((item) => {
-              if (item.status) {
-                self.Host.push(item)
-              }
-            })
-          }
-          else {
-            self.$message.error({
-              message: data.msg,
-              center: true,
-            })
-          }
-        },
-      })*/
     },
     toggleHeadSelection(rows) {
       rows.forEach(row => {
@@ -286,16 +220,19 @@ export default {
       this.parameters = sels
     },
     fastTest: function() {
-      let host = this.form.addr;
+/*      let host = this.form.addr;
       if (host.indexOf("http://") ===0){
         this.form.addr = host.slice(7)
       }
       if (host.indexOf("https://") ===0){
         this.form.addr = host.slice(8)
-      }
-      console.log(this.form.addr)
+      }*/
+      // console.log(this.form.addr)
+      console.log(9)
       this.$refs.form.validate((valid) => {
+        console.log(8)
         if (valid) {
+          console.log(7)
           this.loadingSend = true;
           let self = this;
           let _parameter = new Object();
@@ -309,7 +246,6 @@ export default {
               headers[a] = self.form.head[i]["value"]
             }
           }
-          let url = self.form.Http4 + "://" + this.form.addr;
           let _type = self.radio;
           if (_type === 'form-data') {
             if (self.radioType) {
@@ -327,7 +263,11 @@ export default {
             // POST(url, self.form.parameterRaw, headers)
             _parameter = self.form.parameterRaw;
           }
+          console.log(6)
+          console.log(self.form.parameterRaw)
+          console.log(_type)
           if (self.form.parameterRaw && _type === "raw") {
+            console.log('转换格式')
             if (!self.isJsonString(self.form.parameterRaw)) {
               self.$message({
                 message: '源数据格式错误',
@@ -337,7 +277,7 @@ export default {
             } else {
 
               /*$.ajax({
-                type: self.form.request4,
+                type: self.form.methods,
                 url: url,
                 async: true,
                 data: _parameter,
@@ -358,29 +298,33 @@ export default {
                   self.form.resultHead = jqXHR.getAllResponseHeaders()
                 }
               })*/
-
-              request({
-                headers: {
-                  'Content-Type':'application/json;charset=UTF-8'
-                },
-                url: '/interface/test',
-                method: 'post',
-                data: {
-                  form,
-                }
-              }).then(response => {
+              console.log(11)
+              this.$axios.post('/interface/test',{_parameter}).then(response => {
                   console.log(response.data)
               }).catch(error => {
                 console.log(error)
               })
 
-
+              console.log(22)
 
             }
           } else {
+            console.log(5)
+
+            this.axios({
+              url: '/api/interface/test',
+              method: 'post',
+              data:{
+                _parameter
+              }
+            }).then(response => {
+              console.log(response.data)
+            }).catch(error => {
+              console.log(error)
+            })
 
             /*$.ajax({
-              type: self.form.request4,
+              type: self.form.methods,
               url: url,
               async: true,
               data: _parameter,
@@ -443,9 +387,9 @@ export default {
     },
     changeParameterType() {
       if (this.radio === 'form-data') {
-        this.ParameterTyep = !this.ParameterTyep
+        this.ParameterType = !this.ParameterType
       } else {
-        this.ParameterTyep = !this.ParameterTyep
+        this.ParameterType = !this.ParameterType
       }
     },
     showBody() {
@@ -468,7 +412,6 @@ export default {
   mounted() {
     this.toggleHeadSelection(this.form.head);
     this.toggleParameterSelection(this.form.parameter);
-    this.getHost()
   },
   /*computed: {
     ...mapGetters([
