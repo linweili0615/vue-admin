@@ -36,10 +36,11 @@
                   </el-table-column>
                   <el-table-column prop="name" label="标签" min-width="20%" sortable>
                     <template slot-scope="scope">
-                      <el-select placeholder="标签" filterable v-model="scope.row.name">
+<!--                      <el-select placeholder="标签" filterable v-model="scope.row.name">
                         <el-option v-for="(item,index) in header" :key="index+''" :label="item.label" :value="item.value"></el-option>
-                      </el-select>
-                      <el-input class="selectInput" v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入标签"></el-input>
+                      </el-select>-->
+                      <!--<el-input class="selectInput" v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入标签"></el-input>-->
+                      <el-input  v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入标签"></el-input>
                     </template>
                   </el-table-column>
                   <el-table-column prop="value" label="内容" min-width="40%" sortable>
@@ -67,7 +68,7 @@
                   <el-row :span="24">
                     <el-col :span="4"><el-radio v-model="radio" label="form-data">表单(form-data)</el-radio></el-col>
                     <el-col :span="4"><el-radio v-model="radio" label="raw" v-if="formchange">源数据(raw)</el-radio></el-col>
-                    <el-col v-show="formchange" :span="16"><el-checkbox v-model="radioType" label="3" v-show="ParameterType">表单转源数据</el-checkbox></el-col>
+                    <!--<el-col v-show="formchange" :span="16"><el-checkbox v-model="radioType" label="3" v-show="ParameterType">表单转源数据</el-checkbox></el-col>-->
                   </el-row>
                 </div>
                 <el-table ref="multipleParameterTable" :data="form.parameter" highlight-current-row :class="ParameterType? 'parameter-a': 'parameter-b'" @selection-change="selsChangeParameter">
@@ -136,6 +137,18 @@ import request from '@/utils/request'
 export default {
   name: 'Dashboard',
   data() {
+
+    const validHttp =(rule,value,callback)=>{
+      if(!value){
+        callback(new Error('请输入URL地址'))
+      }else if(value.indexOf("http://") !==0 && value.indexOf("https://") !==0){
+        callback(new Error('请输入正确的URL地址'))
+      }else{
+        callback()
+      }
+
+    }
+
     return {
       methods: [
         {value: 'get', label: 'GET'},
@@ -146,13 +159,13 @@ export default {
       ParameterType: true,
       radio: "form-data",
       loadingSend: false,
-      header: [
+      /*header: [
         {value: 'Accept', label: 'Accept'},
         {value: 'Cookie', label: 'Cookie'},
         {value: 'Content-Type', label: 'Content-Type'},
         {value: 'Origin', label: 'Origin'},
         {value: 'User-Agent', label: 'User-Agent'},
-        ],
+        ],*/
       radioType: "",
       result: true,
       activeNames: ['1', '2', '3', '4'],
@@ -167,8 +180,8 @@ export default {
           ],
         parameterRaw: "",
         parameter: [
-          {name: "", value: "", required:"", restrict: "", description: ""},
-          {name: "", value: "", required:"", restrict: "", description: ""}
+          {name: "", value: ""},
+          {name: "", value: ""}
           ],
         statusCode: "",
         resultData: "",
@@ -177,6 +190,7 @@ export default {
       formRules: {
         addr: [
           { required: true, message: '请输入URL地址', trigger: 'blur' },
+          { required: true, validator: validHttp, trigger: 'blur' },
         ]
       },
       headers: "",
@@ -186,6 +200,42 @@ export default {
     }
   },
   methods: {
+    isJsonString(str) {
+        try {
+          if (typeof JSON.parse(str) === "object") {
+            return true;
+          }
+        } catch(e) {
+        }
+        return false;
+    },
+/*    changeRaw(){
+      for (let i = 0; i < this.form.parameter.length; i++) {
+        var a = this.form.parameter[i]["name"];
+        if (a) {
+          _parameter[a] = this.form.parameter[i]["value"];
+        }
+      }
+      if(_parameter){
+        _parameter = JSON.stringify(_parameter)
+      }
+    },
+    changeFormdata(){
+      if (!self.isJsonString(self.form.parameterRaw)) {
+
+        self.$message({
+          message: '格式转换错误',
+          center: true,
+          type: 'error'
+        })
+
+      }else{
+        for (let i = 0; i < self.form.parameterRaw.length; i++) {
+          this.form.parameter.push()
+        }
+      }
+
+    },*/
     checkRequest(){
       let request = this.form.methods;
       if (request==="GET" || request==="DELETE"){
@@ -193,15 +243,6 @@ export default {
       } else {
         this.formchange=true
       }
-    },
-    isJsonString(str) {
-      try {
-        if (typeof JSON.parse(str) === "object") {
-          return true;
-        }
-      } catch(e) {
-      }
-      return false;
     },
     toggleHeadSelection(rows) {
       rows.forEach(row => {
@@ -220,139 +261,73 @@ export default {
       this.parameters = sels
     },
     fastTest: function() {
-/*      let host = this.form.addr;
-      if (host.indexOf("http://") ===0){
-        this.form.addr = host.slice(7)
-      }
-      if (host.indexOf("https://") ===0){
-        this.form.addr = host.slice(8)
-      }*/
-      // console.log(this.form.addr)
-      console.log(9)
       this.$refs.form.validate((valid) => {
-        console.log(8)
         if (valid) {
-          console.log(7)
           this.loadingSend = true;
           let self = this;
           let _parameter = new Object();
-          let headers = new Object();
-          self.form.statusCode = '';
-          self.form.resultData = '';
-          self.form.resultHead = '';
-          for (let i = 0; i < self.form.head.length; i++) {
-            var a = self.form.head[i]["name"];
+          let _headers = new Object();
+          this.form.statusCode = '';
+          this.form.resultData = '';
+          this.form.resultHead = '';
+
+          for (let i = 0; i < this.form.head.length; i++) {
+            var a = this.form.head[i]["name"];
             if (a) {
-              headers[a] = self.form.head[i]["value"]
+              _headers[a] = this.form.head[i]["value"]
             }
           }
-          let _type = self.radio;
+          if(_headers){
+            _headers = JSON.stringify(_headers)
+          }
+
+          let _type = this.radio;
           if (_type === 'form-data') {
-            if (self.radioType) {
-              for (let i = 0; i < self.parameters.length; i++) {
-                var a = self.parameters[i]["name"];
+              for (let i = 0; i < this.form.parameter.length; i++) {
+                var a = this.form.parameter[i]["name"];
                 if (a) {
-                  _parameter[a] = self.parameters[i]["value"];
+                  _parameter[a] = this.form.parameter[i]["value"];
                 }
               }
-              _parameter = JSON.stringify(_parameter)
-            } else {
-              _parameter = self.form.parameter
-            }
-          } else {
-            // POST(url, self.form.parameterRaw, headers)
-            _parameter = self.form.parameterRaw;
-          }
-          console.log(6)
-          console.log(self.form.parameterRaw)
-          console.log(_type)
-          if (self.form.parameterRaw && _type === "raw") {
-            console.log('转换格式')
-            if (!self.isJsonString(self.form.parameterRaw)) {
-              self.$message({
-                message: '源数据格式错误',
-                center: true,
-                type: 'error'
-              })
-            } else {
-
-              /*$.ajax({
-                type: self.form.methods,
-                url: url,
-                async: true,
-                data: _parameter,
-                headers: headers,
-                timeout: 5000,
-                dataType: 'jsonp',
-                success: function (data, status, jqXHR) {
-                  console.log(data)
-                  self.loadingSend = false;
-                  self.form.statusCode = jqXHR.status;
-                  self.form.resultData = data;
-                  self.form.resultHead = jqXHR.getAllResponseHeaders()
-                },
-                error: function (jqXHR, error, errorThrown) {
-                  self.loadingSend = false;
-                  self.form.statusCode = jqXHR.status;
-                  self.form.resultData = jqXHR.responseJSON;
-                  self.form.resultHead = jqXHR.getAllResponseHeaders()
-                }
-              })*/
-              console.log(11)
-              this.$axios.post('/interface/test',{_parameter}).then(response => {
-                  console.log(response.data)
-              }).catch(error => {
-                console.log(error)
-              })
-
-              console.log(22)
-
-            }
-          } else {
-            console.log(5)
-
-            this.axios({
-              url: '/api/interface/test',
-              method: 'post',
-              data:{
-                _parameter
+              if(_parameter){
+                _parameter = JSON.stringify(_parameter)
               }
-            }).then(response => {
-              console.log(response.data)
-            }).catch(error => {
-              console.log(error)
-            })
-
-            /*$.ajax({
-              type: self.form.methods,
-              url: url,
-              async: true,
-              data: _parameter,
-              headers: headers,
-              timeout: 5000,
-              success: function (data, status, jqXHR) {
-                self.loadingSend = false;
-                self.form.statusCode = jqXHR.status;
-                self.form.resultData = data;
-                self.form.resultHead = jqXHR.getAllResponseHeaders()
-              },
-              error: function (jqXHR, error, errorThrown) {
-                self.loadingSend = false;
-                self.form.statusCode = jqXHR.status;
-                self.form.resultData = jqXHR.responseJSON;
-                self.form.resultHead = jqXHR.getAllResponseHeaders()
-              }
-            })*/
-
           }
+
+          if (this.form.parameterRaw && _type === "raw") {
+            _parameter = this.form.parameterRaw
+          }
+
+          this.$axios.post('/interface/test', {
+            'method': this.form.methods,
+            'url':  this.form.addr,
+            'headers': _headers,
+            'body': _parameter
+          }).then(response => {
+
+            this.loadingSend = false
+            console.log(response)
+            this.form.statusCode = response.status
+            this.form.resultData = response.data
+            this.form.resultHead = response.headers
+
+          }).catch(error => {
+
+            this.loadingSend = false
+            console.log(error)
+            this.form.statusCode = error.status
+            this.form.resultData = error.data
+            this.form.resultHead = error.headers
+
+          })
         }
       })
     },
     neatenFormat() {
-      let demo = document.getElementsByTagName('pre')[0];
+      /*let demo = document.getElementsByTagName('pre')[0];
       console.log(demo)
       hljs.highlightBlock(demo);
-      this.format = !this.format
+      this.format = !this.format*/
     },
     addHead() {
       let headers = {name: "", value: ""};
@@ -413,11 +388,6 @@ export default {
     this.toggleHeadSelection(this.form.head);
     this.toggleParameterSelection(this.form.parameter);
   },
-  /*computed: {
-    ...mapGetters([
-      'name'
-    ])
-  }*/
 }
 </script>
 
@@ -446,23 +416,9 @@ export default {
   display: none;
 }
 .selectInput {
-  /*position:absolute;*/
-  /*margin-left:7px;*/
-  /*padding-left:10px;*/
-  /*width: 63%;*/
-  /*height:25px;*/
-  /*left:1px;*/
-  /*top:1px;*/
-  /*border-bottom:0px;*/
-  /*border-right:0px;*/
-  /*border-left:0px;*/
-  /*border-top:0px;*/
   position: absolute;
-  /*margin-left: 7px;*/
   padding-left: 9px;
   width: 180px;
-  /*border-radius:0px;*/
-  /*height: 38px;*/
   left: 1px;
   border-right: 0px;
 }
