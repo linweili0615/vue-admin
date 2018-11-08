@@ -107,9 +107,9 @@
                   <el-button type="primary" @click="neatenFormat">格式转换</el-button>
                 </div>
                 <el-card class="box-card">
-                  <div slot="header" class="clearfix">
+                  <!--<div slot="header" class="clearfix">-->
                     <span v-model="form.statusCode" style="font-size: 25px">{{form.statusCode}}</span>
-                  </div>
+                  <!--</div>-->
                   <div v-model="form.resultData" :class="resultShow? 'parameter-a': 'parameter-b'" v-show="!format">
                     <div style="word-break: break-all;overflow:auto;overflow-x:hidden">{{form.resultData}}</div>
                   </div>
@@ -306,7 +306,7 @@ export default {
 
             this.loadingSend = false
             console.log(response)
-            this.form.statusCode = response.status
+            this.form.statusCode = response.status + ' ' + response.statusText
             this.form.resultData = response.data
             this.form.resultHead = response.headers
 
