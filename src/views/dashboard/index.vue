@@ -264,7 +264,6 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loadingSend = true;
-          let self = this;
           let _parameter = new Object();
           let _headers = new Object();
           this.form.statusCode = '';
