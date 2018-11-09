@@ -75,12 +75,19 @@ export const constantRouterMap = [
   {
     path: '/test',
     component: Layout,
+    name: 'Test',
+    meta: { title: 'Test', icon: 'example' },
     children: [
       {
         path: 'caselist',
-        name: 'test',
+        name: 'caselist',
         component: () => import('@/views/test/index'),
-        meta: { title: 'TestCase', icon: 'form' }
+        meta: { title: 'CaseList', icon: 'form' }
+      },{
+        path: 'interface/add',
+        name: 'addInterface',
+        component: () => import('@/views/test/interface/index'),
+        meta: { title: 'addInterface', icon: 'form' }
       }
     ]
   },
