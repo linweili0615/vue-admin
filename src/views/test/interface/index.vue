@@ -104,7 +104,7 @@
                 <div style="margin-bottom: 10px">
                   <el-button @click="showBody">Body</el-button>
                   <el-button @click="showHeader">Head</el-button>
-                  <el-button type="primary" @click="neatenFormat">格式转换</el-button>
+                  <!--<el-button type="primary" @click="neatenFormat">格式转换</el-button>-->
                 </div>
                 <el-card class="box-card">
                   <!--<div slot="header" class="clearfix">-->
@@ -297,7 +297,7 @@ export default {
             _parameter = this.form.parameterRaw
           }
 
-          this.$axios.post('/interface/test', {
+          this.$axios.post(url, {
             'method': this.form.methods,
             'url':  this.form.addr,
             'headers': _headers,
@@ -306,17 +306,18 @@ export default {
 
             this.loadingSend = false
             console.log(response)
-            this.form.statusCode = response.status + ' ' + response.statusText
-            this.form.resultData = response.data
-            this.form.resultHead = response.headers
+            this.form.statusCode = response.data.status
+            this.form.resultHead = response.data.resheaders
+            this.form.resultData = response.data.resbody
+
 
           }).catch(error => {
 
             this.loadingSend = false
             console.log(error)
-            this.form.statusCode = error.status
-            this.form.resultData = error.data
-            this.form.resultHead = error.headers
+            this.form.statusCode = error.statusCode
+            this.form.resultHead = ""
+            this.form.resultData = "请求异常"
 
           })
         }
