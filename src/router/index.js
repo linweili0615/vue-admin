@@ -34,9 +34,9 @@ export const constantRouterMap = [
     children: [
       {
         path: 'api/list',
-        name: 'API管理',
+        name: 'API列表',
         component: () => import('@/views/test/Projectlist'),
-        meta: { title: 'API管理', icon: 'form' }
+        meta: { title: 'API列表', icon: 'form' }
       },{
         path: 'api/add',
         name: '新增API接口',

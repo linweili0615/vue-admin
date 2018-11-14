@@ -15,10 +15,8 @@ router.beforeEach((to, from, next) => {
         store.dispatch('GetInfo').then(response => { // 拉取用户信息
           const data = response.data
           if(data != ''){
-            console.log(1)
             next()
           }else {
-            console.log(2)
             store.dispatch('FedLogOut').then(() => {
               next({ path: '/' })
             })

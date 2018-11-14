@@ -7,7 +7,10 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                    <el-input v-model="filters.name" placeholder="名称" @keyup.enter.native="getProjectList"></el-input>
+                    <el-input v-model="filters.id" placeholder="请输入项目ID" @keyup.enter.native="getProjectList"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-input v-model="filters.project_name" placeholder="请输入项目名称" @keyup.enter.native="getProjectList"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="getProjectList">查询</el-button>
@@ -20,43 +23,36 @@
 
         <!--列表-->
         <el-table :data="project" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-            <el-table-column type="selection" min-width="5%">
-            </el-table-column>
-            <el-table-column prop="name" label="项目名称" min-width="30%" sortable show-overflow-tooltip>
-                <template slot-scope="scope">
-                    <el-icon name="name"></el-icon>
-                    <router-link v-if="scope.row.status" :to="{ name: '项目概况', params: {project_id: scope.row.id}}" style='text-decoration: none;color: #000000;'>
-                        {{ scope.row.name }}
-                    </router-link>
-                    {{ !scope.row.status?scope.row.name:""}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="version" label="项目版本" min-width="12%" sortable>
-            </el-table-column>
-            <el-table-column prop="type" label="类型" min-width="9%" sortable>
-            </el-table-column>
-            <el-table-column prop="LastUpdateTime" label="最后修改时间" min-width="16%" sortable>
-            </el-table-column>
-            <el-table-column prop="status" label="状态" min-width="9%" sortable>
-                <template slot-scope="scope">
-                      <!--<img v-show="scope.row.status" src="../assets/icon-yes.svg"/>
-                      <img v-show="!scope.row.status" src="../assets/icon-no.svg"/>-->
-                </template>
-            </el-table-column>
+            <!--<el-table-column min-width="2%" label="index">{{scope.$index}}</el-table-column>-->
+          <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
+            <el-table-column prop="id" min-width="23%" label="项目ID"></el-table-column>
+            <el-table-column prop="project_name" label="项目名称" min-width="15%" sortable show-overflow-tooltip></el-table-column>
+            <el-table-column prop="author" label="创建人" min-width="8%" sortable></el-table-column>
+            <el-table-column prop="update_author" label="最后修改人" min-width="8%" sortable></el-table-column>
+            <el-table-column prop="create_time" label="创建时间" min-width="10%" sortable></el-table-column>
+            <el-table-column prop="modify_time" label="最后修改时间" min-width="10%" sortable></el-table-column>
+            <el-table-column prop="status" label="项目状态" min-width="8%" sortable></el-table-column>
             <el-table-column label="操作" min-width="19%">
                 <template slot-scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+                    <el-button type="danger" size="small" @click="(scope.$index, scope.row)">删除</el-button>
                     <el-button type="info" size="small" @click="handleChangeStatus(scope.$index, scope.row)">{{scope.row.status===false?'启用':'禁用'}}</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
-        <!--工具条-->
         <el-col :span="24" class="toolbar">
-            <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-            <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :page-count="total" style="float:right;">
+          <div class="block">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="curentpage"
+              :page-sizes="sizes"
+              :page-size="pagesize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total">
             </el-pagination>
+          </div>
         </el-col>
 
         <!--编辑界面-->
@@ -126,20 +122,20 @@
   </div>
 </template>
 <script>
-    //import NProgress from 'nprogress'
-    /*import { getProject, delProject, disableProject, enableProject,
-        updateProject, addProject} from '../api/api';*/
-    // import ElRow from "element-ui/packages/row/src/row";
+
     export default {
-        // components: {ElRow},
         data() {
             return {
                 filters: {
-                    name: ''
+                    id:'',
+                  project_name: ''
                 },
                 project: [],
                 total: 0,
+                sizes: [10, 20, 30, 40],
+                pagesize:0,
                 page: 1,
+                curentpage: 0,
                 listLoading: false,
                 sels: [],//列表选中列
 
@@ -203,27 +199,31 @@
         methods: {
             // 获取项目列表
             getProjectList() {
-                /*this.listLoading = true;
-                let self = this;
-                let params = { page: self.page, name: self.filters.name};
-                let headers = {Authorization: 'Token '+JSON.parse(sessionStorage.getItem('token'))};
-                getProject(headers, params).then((res) => {
-                    self.listLoading = false;
-                    let { msg, code, data } = res;
-                    if (code === '999999') {
-                        self.total = data.total;
-                        self.project = data.data
+                this.listLoading = true;
+                this.$axios.get('/project/list').then(response =>{
+                    this.listLoading = false;
+                    if(response.data.status === 'success'){
+                        this.project = response.data.projectDTOList;
+                        this.total = response.data.total;
+                    }else{
+                      this.$message.error({
+                        message:'获取项目列表失败',
+                        center:false
+                      })
                     }
-                    else {
-                        self.$message.error({
-                            message: msg,
-                            center: true,
-                        })
-                    }
-                })*/
+
+                  }).catch(error => {
+                  this.listLoading = false;
+                  this.$message.error({
+                    message:'获取项目列表异常',
+                    center:false
+                  })
+                })
+
             },
             //删除
             handleDel: function (index, row) {
+              console.log(index, row)
                 /*this.$confirm('确认删除该记录吗?', '提示', {
                     type: 'warning'
                 }).then(() => {
@@ -255,6 +255,7 @@
             },
             // 改变项目状态
             handleChangeStatus: function(index, row) {
+              console.log(index, row)
                 /*let self = this;
                 this.listLoading = true;
                 let params = { project_id: row.id};
@@ -302,12 +303,17 @@
                     });
                 }*/
             },
+            handleSizeChange(val) {
+              this.pagesize = val;
+              this.getProjectList();
+            },
             handleCurrentChange(val) {
                 this.page = val;
                 this.getProjectList()
             },
             //显示编辑界面
             handleEdit: function (index, row) {
+              console.log(index,row)
                 this.editFormVisible = true;
                 this.editForm = Object.assign({}, row);
             },
