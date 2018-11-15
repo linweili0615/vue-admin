@@ -13,7 +13,7 @@
                   <el-input v-model="filters.project_name" placeholder="请输入项目名称"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="getProjectList">查询</el-button>
+                    <el-button type="primary" @click="getProjectList(10,1)">查询</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="handleAdd">新增</el-button>
@@ -25,6 +25,8 @@
         <el-table :data="project.slice(0, pagesize)"
                   highlight-current-row v-loading="listLoading"
                   @row-click="handleclick"
+                  border
+                  height="700"
                   @selection-change="selsChange"
                   style="width: 100%;">
             <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
@@ -44,7 +46,7 @@
             </el-table-column>
         </el-table>
 
-        <el-col :span="24" class="toolbar">
+        <el-col :span="12" :offset="6" class="toolbar" style="margin-top: 10px">
           <div class="block">
             <el-pagination
               @size-change="handleSizeChange"
@@ -52,6 +54,7 @@
               :current-page="currentpage"
               :page-sizes="sizes"
               :page-size="pagesize"
+              :pager-count="7"
               layout="total, sizes, prev, pager, next, jumper"
               :total="total">
             </el-pagination>
