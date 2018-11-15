@@ -7,10 +7,10 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                    <el-input v-model="filters.id" placeholder="请输入项目ID" @keyup.enter.native="getProjectList"></el-input>
+                    <el-input v-model="filters.id" placeholder="请输入项目ID"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-input v-model="filters.project_name" placeholder="请输入项目名称" @keyup.enter.native="getProjectList"></el-input>
+                  <el-input v-model="filters.project_name" placeholder="请输入项目名称"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="getProjectList">查询</el-button>
@@ -22,10 +22,11 @@
         </el-col>
 
         <!--列表-->
-        <el-table :data="project.slice((currentpage - 1) * pagesize, currentpage * pagesize)"
+        <el-table :data="project.slice(0, pagesize)"
                   highlight-current-row v-loading="listLoading"
                   @row-click="handleclick"
-                  @selection-change="selsChange" style="width: 100%;">
+                  @selection-change="selsChange"
+                  style="width: 100%;">
             <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
             <el-table-column prop="id" min-width="23%" label="项目ID"></el-table-column>
             <el-table-column prop="project_name" label="项目名称" min-width="16%" sortable show-overflow-tooltip></el-table-column>
@@ -203,15 +204,17 @@
             getProjectList(pageSize,pageNo) {
                 this.listLoading = true;
                 this.$axios.post('/project/list',{
+                    'id': this.filters.id,
+                    'project_name': this.filters.project_name,
                     'pageSize': pageSize,
                     'pageNo': pageNo
                 }).then(response =>{
 
                     if(response.data.status === 'success'){
-                      this.project = response.data.projectDTOList;
-                      this.total = response.data.length;
+                      this.total = response.data.total;
                       this.pagesize = response.data.pageSize;
                       this.currentpage = response.data.pageNo;
+                      this.project = response.data.projectDTOList;
                       this.listLoading = false;
                     }else{
                       this.listLoading = false;
@@ -264,7 +267,7 @@
             },
             //点击行响应
             handleclick: function(row, event, column){
-              console.log(row, event, column)
+              // console.log(row, event, column)
             },
             // 改变项目状态
             handleChangeStatus: function(index, row) {
@@ -470,7 +473,7 @@
         },
         mounted() {
             // this.getProjectList(this.pagesize,this.currentpage);
-            this.getProjectList();
+            this.getProjectList(10,1);
         }
     }
 
