@@ -22,16 +22,18 @@
         </el-col>
 
         <!--列表-->
-        <el-table :data="project" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-            <!--<el-table-column min-width="2%" label="index">{{scope.$index}}</el-table-column>-->
-          <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
+        <el-table :data="project.slice((currentpage - 1) * pagesize, currentpage * pagesize)"
+                  highlight-current-row v-loading="listLoading"
+                  @row-click="handleclick"
+                  @selection-change="selsChange" style="width: 100%;">
+            <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
             <el-table-column prop="id" min-width="23%" label="项目ID"></el-table-column>
-            <el-table-column prop="project_name" label="项目名称" min-width="15%" sortable show-overflow-tooltip></el-table-column>
+            <el-table-column prop="project_name" label="项目名称" min-width="16%" sortable show-overflow-tooltip></el-table-column>
             <el-table-column prop="author" label="创建人" min-width="8%" sortable></el-table-column>
             <el-table-column prop="update_author" label="最后修改人" min-width="8%" sortable></el-table-column>
             <el-table-column prop="create_time" label="创建时间" min-width="10%" sortable></el-table-column>
             <el-table-column prop="modify_time" label="最后修改时间" min-width="10%" sortable></el-table-column>
-            <el-table-column prop="status" label="项目状态" min-width="8%" sortable></el-table-column>
+            <el-table-column prop="status" label="状态" min-width="6%" sortable></el-table-column>
             <el-table-column label="操作" min-width="19%">
                 <template slot-scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -46,7 +48,7 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page="curentpage"
+              :current-page="currentpage"
               :page-sizes="sizes"
               :page-size="pagesize"
               layout="total, sizes, prev, pager, next, jumper"
@@ -133,9 +135,9 @@
                 project: [],
                 total: 0,
                 sizes: [10, 20, 30, 40],
-                pagesize:0,
+                pagesize:10,
                 page: 1,
-                curentpage: 0,
+                currentpage: 1,
                 listLoading: false,
                 sels: [],//列表选中列
 
@@ -198,14 +200,21 @@
         },
         methods: {
             // 获取项目列表
-            getProjectList() {
+            getProjectList(pageSize,pageNo) {
                 this.listLoading = true;
-                this.$axios.get('/project/list').then(response =>{
-                    this.listLoading = false;
+                this.$axios.post('/project/list',{
+                    'pageSize': pageSize,
+                    'pageNo': pageNo
+                }).then(response =>{
+
                     if(response.data.status === 'success'){
-                        this.project = response.data.projectDTOList;
-                        this.total = response.data.total;
+                      this.project = response.data.projectDTOList;
+                      this.total = response.data.length;
+                      this.pagesize = response.data.pageSize;
+                      this.currentpage = response.data.pageNo;
+                      this.listLoading = false;
                     }else{
+                      this.listLoading = false;
                       this.$message.error({
                         message:'获取项目列表失败',
                         center:false
@@ -252,6 +261,10 @@
                         self.getProjectList()
                     });
                 })*/
+            },
+            //点击行响应
+            handleclick: function(row, event, column){
+              console.log(row, event, column)
             },
             // 改变项目状态
             handleChangeStatus: function(index, row) {
@@ -305,11 +318,12 @@
             },
             handleSizeChange(val) {
               this.pagesize = val;
-              this.getProjectList();
+              this.getProjectList(this.pagesize, 1);
             },
             handleCurrentChange(val) {
-                this.page = val;
-                this.getProjectList()
+              this.currentpage = val;
+              this.getProjectList(this.pagesize,this.currentpage)
+
             },
             //显示编辑界面
             handleEdit: function (index, row) {
@@ -455,6 +469,7 @@
             }
         },
         mounted() {
+            // this.getProjectList(this.pagesize,this.currentpage);
             this.getProjectList();
         }
     }
