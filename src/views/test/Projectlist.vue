@@ -93,28 +93,12 @@
         </el-dialog>
 
         <!--新增界面-->
-        <el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false" style="width: 75%; left: 12.5%">
+        <el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false"
+                   :before-close="handleClose"
+                   style="width: 80%; left: 12.5%">
             <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-                <el-form-item label="项目名称" prop="name">
-                    <el-input v-model.trim="addForm.name" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-row :gutter="24">
-                    <el-col :span="12">
-                        <el-form-item label="类型" prop='type'>
-                            <el-select v-model="addForm.type" placeholder="请选择">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="版本号" prop='version'>
-                            <el-input v-model.trim="addForm.version" auto-complete="off"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-form-item label="描述" prop='description'>
-                    <el-input type="textarea" :rows="6" v-model="addForm.description"></el-input>
+                <el-form-item label="项目名称" prop="project_name">
+                    <el-input v-model.trim="addForm.project_name" auto-complete="off" placeholder="请输入项目名称"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -131,6 +115,17 @@
 
     export default {
         data() {
+          const validProjectName =(rule,value,callback)=>{
+            if(!value){
+              callback(new Error('请输入项目名称'))
+            }else if(value.length < 2 ){
+              callback(new Error('请输入长度在2到30个字符的项目名称'))
+            }else if(value.length > 30){
+              callback(new Error('请输入长度在2到30个字符的项目名称'))
+            }else{
+              callback()
+            }
+          }
             return {
                 filters: {
                     id:'',
@@ -177,28 +172,15 @@
                 addFormVisible: false,//新增界面是否显示
                 addLoading: false,
                 addFormRules: {
-                    name: [
-                        { required: true, message: '请输入名称', trigger: 'blur' },
-                        { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
-                    ],
-                    type: [
-                        { required: true, message: '请选择类型', trigger: 'blur' }
-                    ],
-                    version: [
-                        { required: true, message: '请输入版本号', trigger: 'blur' },
-                        { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-                    ],
-                    description: [
-                        { required: false, message: '请输入版本号', trigger: 'blur' },
-                        { max: 1024, message: '不能超过1024个字符', trigger: 'blur' }
+                    project_name: [
+                        { required: true, message: '请输入项目名称', trigger: 'blur' },
+                        { min: 2, max: 30, message: '请输入长度在2到30个字符的项目名称', trigger: 'blur' },
+                        { required: true, trigger: 'blur', validator: validProjectName }
                     ]
                 },
                 //新增界面数据
                 addForm: {
-                    name: '',
-                    version: '',
-                    type: '',
-                    description: ''
+                  project_name: ''
                 }
 
             }
@@ -277,6 +259,9 @@
             handleclick: function(row, event, column){
               // console.log(row, event, column)
             },
+           /* handleClose(){
+              this.addForm.project_name = ''
+            },*/
             // 改变项目状态
             handleChangeStatus: function(index, row) {
               console.log(index, row)
@@ -395,6 +380,43 @@
             },
             //新增
             addSubmit: function () {
+            this.$refs.addForm.validate(valid => {
+              if(valid){
+                this.addLoading = true;
+                this.$axios.post('/project/add',{
+                    'project_name' : this.addForm.project_name
+                  }).then(response => {
+                    console.log(response);
+                  if(response.data.status === 'success'){
+                    this.addLoading = false;
+                    this.addFormVisible = false;
+                    this.$message.success({
+                      message:'新增项目成功',
+                      center:false
+                    })
+                    this.getProjectList(10,1);
+                  }else {
+                    this.addLoading = false;
+                    this.$message.error({
+                      message:'新增项目失败',
+                      center:false
+                    })
+                  }
+
+                }).catch(error => {
+                  console.log(error)
+                  this.addLoading = false;
+                  this.$message.error({
+                    message:'新增项目异常',
+                    center:false
+                  })
+                })
+
+              }
+            })
+
+
+
                 /*this.$refs.addForm.validate((valid) => {
                     if (valid) {
                         let self = this;
