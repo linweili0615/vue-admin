@@ -140,6 +140,7 @@
                 total: 0,
                 sizes: [10, 20, 30, 40],
                 pagesize:10,
+                pageCount:1,
                 page: 1,
                 currentpage: 1,
                 listLoading: false,
@@ -205,6 +206,9 @@
         methods: {
             // 获取项目列表
             getProjectList(pageSize,pageNo) {
+              if(pageNo > this.pageCount){
+                pageNo = this.pageCount;
+              }
                 this.listLoading = true;
                 this.$axios.post('/project/list',{
                     'id': this.filters.id,
@@ -217,6 +221,7 @@
                       this.total = response.data.total;
                       this.pagesize = response.data.pageSize;
                       this.currentpage = response.data.pageNo;
+                      this.pageCount = response.data.pageCount;
                       this.project = response.data.projectDTOList;
                       this.listLoading = false;
                     }else{

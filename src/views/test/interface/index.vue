@@ -323,10 +323,10 @@ export default {
       })
     },
     fastTest: function() {
-      this.commonTest('/interface/test')
+      this.commonTest('/api/test')
     },
     SaveTest(){
-      this.commonTest('/interface/save')
+      this.commonTest('/api/save')
     },
     neatenFormat() {
       /*let demo = document.getElementsByTagName('pre')[0];
