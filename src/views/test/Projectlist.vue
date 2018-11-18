@@ -36,12 +36,14 @@
             <el-table-column prop="update_author" label="最后修改人" min-width="8%" sortable></el-table-column>
             <el-table-column prop="create_time" label="创建时间" min-width="10%" sortable></el-table-column>
             <el-table-column prop="modify_time" label="最后修改时间" min-width="10%" sortable></el-table-column>
-            <el-table-column prop="status" label="状态" min-width="6%" sortable></el-table-column>
+            <el-table-column label="状态" min-width="6%" sortable>
+              <template slot-scope="scope">{{scope.row.status===1?'启用':'禁用'}}</template>
+            </el-table-column>
             <el-table-column label="操作" min-width="19%">
                 <template slot-scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button type="danger" size="small" @click="(scope.$index, scope.row)">删除</el-button>
-                    <el-button type="info" size="small" @click="handleChangeStatus(scope.$index, scope.row)">{{scope.row.status===false?'启用':'禁用'}}</el-button>
+                    <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+                    <el-button type="info" size="small" @click="handleChangeStatus(scope.$index, scope.row)">{{scope.row.status===1?'禁用':'启用'}}</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -225,92 +227,77 @@
             },
             //删除
             handleDel: function (index, row) {
-              console.log(index, row)
-                /*this.$confirm('确认删除该记录吗?', '提示', {
-                    type: 'warning'
-                }).then(() => {
-                    this.listLoading = true;
-                    //NProgress.start();
-                    let self = this;
-                    let params = {ids: [row.id, ]};
-                    let header = {
-                        "Content-Type": "application/json",
-                        Authorization: 'Token '+JSON.parse(sessionStorage.getItem('token'))
-                    };
-                    delProject(header, params).then(_data => {
-                        let { msg, code, data } = _data;
-                        if (code === '999999') {
-                            self.$message({
-                                message: '删除成功',
-                                center: true,
-                                type: 'success'
-                            })
-                        } else {
-                            self.$message.error({
-                                message: msg,
-                                center: true,
-                            })
-                        }
-                        self.getProjectList()
+              // console.log(index, row)
+              this.$confirm('确认删除该记录吗？','提示',{
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                this.$axios.post('/project/del', row.id).then(response => {
+                  // console.log(response.data);
+                  if(response.data.status === 'success'){
+                    this.$message({
+                      type: 'success',
+                      message: '删除成功!'
                     });
-                })*/
+                    this.filters.id = ''
+                    this.filters.project_name = ''
+                    this.getProjectList(10,1);
+                  }else{
+                    this.$message({
+                      type: 'success',
+                      message: '删除失败!'
+                    });
+                  }
+
+                }).catch(error => {
+                  this.$message.error({
+                    message:'删除异常',
+                    center:false
+                  })
+                })
+
+              }).catch(error => {
+                console.log(error);
+              })
+
             },
             //点击行响应
             handleclick: function(row, event, column){
               // console.log(row, event, column)
             },
-           /* handleClose(){
+            handleClose(){
               this.addForm.project_name = ''
-            },*/
+            },
             // 改变项目状态
             handleChangeStatus: function(index, row) {
-              console.log(index, row)
-                /*let self = this;
-                this.listLoading = true;
-                let params = { project_id: row.id};
-                let headers = {
-                    "Content-Type": "application/json",
-                    Authorization: 'Token '+JSON.parse(sessionStorage.getItem('token'))
-                };
-                if (row.status) {
-                    disableProject(headers, params).then(_data => {
-                        let { msg, code, data } = _data;
-                        self.listLoading = false;
-                        if (code === '999999') {
-                            self.$message({
-                                message: '禁用成功',
-                                center: true,
-                                type: 'success'
-                            });
-                            row.status = !row.status;
-                        }
-                        else {
-                            self.$message.error({
-                                message: msg,
-                                center: true,
-                            })
-                        }
-                    });
-                } else {
-                    enableProject(headers, params).then(_data => {
-                        let { msg, code, data } = _data;
-                        self.listLoading = false;
-                        if (code === '999999') {
-                            self.$message({
-                                message: '启用成功',
-                                center: true,
-                                type: 'success'
-                            });
-                            row.status = !row.status;
-                        }
-                        else {
-                            self.$message.error({
-                                message: msg,
-                                center: true,
-                            })
-                        }
-                    });
-                }*/
+              console.log(row)
+              this.$axios.post('/project/handle',{
+                'id':row.id,
+                'status': row.status
+              }).then(response => {
+                if(response.data.status === 'success'){
+                  row.status = !row.status;
+                  this.$message.success({
+                    message:'禁用成功',
+                    center:true
+                  })
+                }else {
+                  this.listLoading = false;
+                  this.$message.error({
+                    message:'禁用失败',
+                    center:true
+                  })
+                }
+
+              }).catch(error => {
+                console.log(error)
+                this.listLoading = false;
+                this.$message.error({
+                  message:'禁用异常',
+                  center:false
+                })
+              })
             },
             handleSizeChange(val) {
               this.pagesize = val;
@@ -383,17 +370,20 @@
             this.$refs.addForm.validate(valid => {
               if(valid){
                 this.addLoading = true;
-                this.$axios.post('/project/add',{
-                    'project_name' : this.addForm.project_name
-                  }).then(response => {
+                this.$axios.post('/project/add',
+                    this.addForm.project_name
+                  ).then(response => {
                     console.log(response);
                   if(response.data.status === 'success'){
                     this.addLoading = false;
                     this.addFormVisible = false;
+                    this.addForm.project_name = ''
                     this.$message.success({
                       message:'新增项目成功',
                       center:false
                     })
+                    this.filters.id = ''
+                    this.filters.project_name = ''
                     this.getProjectList(10,1);
                   }else {
                     this.addLoading = false;
@@ -415,54 +405,6 @@
               }
             })
 
-
-
-                /*this.$refs.addForm.validate((valid) => {
-                    if (valid) {
-                        let self = this;
-                        this.$confirm('确认提交吗？', '提示', {}).then(() => {
-                            self.addLoading = true;
-                            //NProgress.start();
-                            let params = JSON.stringify({
-                                name: self.addForm.name,
-                                type: self.addForm.type,
-                                version: self.addForm.version,
-                                description: self.addForm.description
-                            });
-                            let header = {
-                                "Content-Type": "application/json",
-                                Authorization: 'Token '+JSON.parse(sessionStorage.getItem('token'))
-                            };
-                            addProject(header, params).then(_data => {
-                                let {msg, code, data} = _data;
-                                self.addLoading = false;
-                                if (code === '999999') {
-                                    self.$message({
-                                        message: '添加成功',
-                                        center: true,
-                                        type: 'success'
-                                    });
-                                    self.$refs['addForm'].resetFields();
-                                    self.addFormVisible = false;
-                                    self.getProjectList()
-                                } else if (code === '999997') {
-                                    self.$message.error({
-                                        message: msg,
-                                        center: true,
-                                    })
-                                } else {
-                                    self.$message.error({
-                                        message: msg,
-                                        center: true,
-                                    });
-                                    self.$refs['addForm'].resetFields();
-                                    self.addFormVisible = false;
-                                    self.getProjectList()
-                                }
-                            })
-                        });
-                    }
-                });*/
             },
             selsChange: function (sels) {
                 this.sels = sels;
@@ -502,7 +444,6 @@
             }
         },
         mounted() {
-            // this.getProjectList(this.pagesize,this.currentpage);
             this.getProjectList(10,1);
         }
     }

@@ -7,6 +7,20 @@ const service = axios.create({
   timeout: 8000 // 请求超时时间
 })
 
+service.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
+service.defaults.withCredentials = true
+
+// service.defaults.headers = {
+//   "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+// }
+// service.defaults.transformRequest = [function (data) {
+//   var newData = "";
+//   for (var k in data) {
+//     newData += encodeURIComponent(k) + '=' + encodeURIComponent(data[k]) + '&'
+//   }
+//   return newData
+// }]
+
 // request拦截器
 /*service.interceptors.request.use(
   config => {
