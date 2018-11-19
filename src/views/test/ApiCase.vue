@@ -67,7 +67,7 @@
 </template>
 
 <script>
-    import {addApiGroup, delApiGroup, getApiGroupList, updateApiGroup} from '../../../api/api'
+    // import {addApiGroup, delApiGroup, getApiGroupList, updateApiGroup} from '../../../api/api'
     export default {
         data() {
             return {
@@ -118,6 +118,9 @@
             },
             // 获取api分组
             getApiGroup() {
+
+
+
                 let self = this;
                 let params = {
                     project_id: this.$route.params.project_id

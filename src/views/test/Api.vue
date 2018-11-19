@@ -131,7 +131,6 @@
 </template>
 
 <script>
-import request from '@/utils/request'
 
 export default {
   name: 'Dashboard',
@@ -152,8 +151,8 @@ export default {
       methods: [
         {value: 'get', label: 'GET'},
         {value: 'post', label: 'POST'},
-        {value: 'put', label: 'PUT'},
-        {value: 'delete', label: 'DELETE'}
+        // {value: 'put', label: 'PUT'},
+        // {value: 'delete', label: 'DELETE'}
         ],
       ParameterType: true,
       radio: "form-data",

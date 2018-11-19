@@ -260,13 +260,13 @@
                 if(response.data.status === 'success'){
                   row.status = -row.status;
                   this.$message.success({
-                    message:'禁用成功',
+                    message:'操作成功',
                     center:true
                   })
                 }else {
                   this.listLoading = false;
                   this.$message.error({
-                    message:'禁用失败',
+                    message:'操作失败',
                     center:true
                   })
                 }
@@ -275,7 +275,7 @@
                 console.log(error)
                 this.listLoading = false;
                 this.$message.error({
-                  message:'禁用异常',
+                  message:'操作异常',
                   center:false
                 })
               })
