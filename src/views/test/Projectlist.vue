@@ -66,27 +66,16 @@
         <!--编辑界面-->
         <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false" style="width: 75%; left: 12.5%">
             <el-form :model="editForm" label-width="80px"  :rules="editFormRules" ref="editForm">
-                <el-form-item label="项目名称" prop="name">
-                    <el-input v-model="editForm.name" auto-complete="off"></el-input>
+                <el-form-item label="项目名称" prop="project_name">
+                    <el-input v-model="editForm.project_name" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-row :gutter="24">
-                    <el-col :span="12">
-                        <el-form-item label="类型" prop='type'>
-                            <el-select v-model="editForm.type" placeholder="请选择">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="版本号" prop='version'>
-                            <el-input v-model="editForm.version" auto-complete="off"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-form-item label="描述" prop='description'>
-                    <el-input type="textarea" :rows="6" v-model="editForm.description"></el-input>
-                </el-form-item>
+                  <el-col :span="12">
+                    <el-form-item label="状态" prop='status'>
+                      <el-select v-model="editForm.status" placeholder="请选择">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="editFormVisible = false">取消</el-button>
@@ -145,30 +134,22 @@
 
                 editFormVisible: false,//编辑界面是否显示
                 editLoading: false,
-                options: [{ label: "Web", value: "Web"}, { label: "App", value: "App"}],
+                options: [{ label: "启用", value: 1}, { label: "禁用", value: -1}],
                 editFormRules: {
-                    name: [
-                        { required: true, message: '请输入名称', trigger: 'blur' },
-                        { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
-                    ],
-                    type: [
-                        { required: true, message: '请选择类型', trigger: 'blur' }
-                    ],
-                    version: [
-                        { required: true, message: '请输入版本号', trigger: 'blur' },
-                        { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-                    ],
-                    description: [
-                        { required: false, message: '请输入描述', trigger: 'blur' },
-                        { max: 1024, message: '不能超过1024个字符', trigger: 'blur' }
+                  project_name: [
+                        { required: true, message: '请输入项目名称', trigger: 'blur' },
+                        { min: 2, max: 15, message: '请输入长度在2到30个字符的项目名称', trigger: 'blur' }
                     ]
                 },
                 //编辑界面数据
                 editForm: {
-                    name: '',
-                    version: '',
-                    type: '',
-                    description: ''
+                    id: '',
+                    project_name: '',
+                    status: '',
+                    author: '',
+                    update_author: '',
+                    create_time: '',
+                    modify_time: ''
                 },
 
                 addFormVisible: false,//新增界面是否显示
@@ -271,13 +252,13 @@
             },
             // 改变项目状态
             handleChangeStatus: function(index, row) {
-              console.log(row)
+              // console.log(row)
               this.$axios.post('/project/handle',{
                 'id':row.id,
                 'status': row.status
               }).then(response => {
                 if(response.data.status === 'success'){
-                  row.status = !row.status;
+                  row.status = -row.status;
                   this.$message.success({
                     message:'禁用成功',
                     center:true
@@ -310,7 +291,7 @@
             },
             //显示编辑界面
             handleEdit: function (index, row) {
-              console.log(index,row)
+              // console.log(index,row)
                 this.editFormVisible = true;
                 this.editForm = Object.assign({}, row);
             },
@@ -320,50 +301,37 @@
             },
             //编辑
             editSubmit: function () {
-                /*let self = this;
-                this.$refs.editForm.validate((valid) => {
-                    if (valid) {
-                        this.$confirm('确认提交吗？', '提示', {}).then(() => {
-                            self.editLoading = true;
-                            //NProgress.start();
-                            let params = {
-                                project_id: self.editForm.id,
-                                name: self.editForm.name,
-                                type: self.editForm.type,
-                                version: self.editForm.version,
-                                description: self.editForm.description
-                            };
-                            let header = {
-                                "Content-Type": "application/json",
-                                Authorization: 'Token '+JSON.parse(sessionStorage.getItem('token'))
-                            };
-                            updateProject(header, params).then(_data => {
-                                let {msg, code, data} = _data;
-                                self.editLoading = false;
-                                if (code === '999999') {
-                                    self.$message({
-                                        message: '修改成功',
-                                        center: true,
-                                        type: 'success'
-                                    });
-                                    self.$refs['editForm'].resetFields();
-                                    self.editFormVisible = false;
-                                    self.getProjectList()
-                                } else if (code === '999997'){
-                                    self.$message.error({
-                                        message: msg,
-                                        center: true,
-                                    })
-                                } else {
-                                    self.$message.error({
-                                        message: msg,
-                                        center: true,
-                                    })
-                                }
-                            });
-                        });
-                    }
-                });*/
+              this.$refs.editForm.validate(valid => {
+                if(valid){
+                  this.$axios.post('/project/update',{
+                    'id': this.editForm.id,
+                    'project_name': this.editForm.project_name,
+                    'status': this.editForm.status
+                  }).then(response => {
+                      if(response.data.status === 'success'){
+                        this.$message.success({
+                          message:'更新项目成功',
+                          center:true
+                        })
+                        this.editFormVisible = false;
+                        this.filters.id = ''
+                        this.filters.project_name = ''
+                        this.getProjectList(10,1);
+                      }else{
+                        this.$message.error({
+                          message:'更新项目异常',
+                          center:false
+                        })
+                      }
+                  }).catch(error => {
+                    this.$message.error({
+                      message:'更新项目异常',
+                      center:false
+                    })
+                  })
+                }
+              })
+
             },
             //新增
             addSubmit: function () {
@@ -373,7 +341,7 @@
                 this.$axios.post('/project/add',
                     this.addForm.project_name
                   ).then(response => {
-                    console.log(response);
+                    // console.log(response);
                   if(response.data.status === 'success'){
                     this.addLoading = false;
                     this.addFormVisible = false;
