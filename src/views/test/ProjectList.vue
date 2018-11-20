@@ -245,7 +245,14 @@
             },
             //点击行响应
             handleclick: function(row, event, column){
-              // console.log(row, event, column)
+              console.log(row, event, column);
+              this.$router.push({
+                path: '/api',
+                name: '接口列表',
+                params:{
+                  project_id : row.id
+                }
+              })
             },
             handleClose(){
               this.addForm.project_name = ''
