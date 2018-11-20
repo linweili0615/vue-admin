@@ -57,7 +57,7 @@ export const constantRouterMap = [
         name: '测试基类',
         children: [
           {   path: '/ApiList/project=:project_id', component: () => import('@/views/test/ApiCaseList'), name: '接口列表'},
-          {   path: '/apiList/project=:id/first=:firstGroup', component: ApiListGroup, name: '分组接口列表'},
+          {   path: '/apiList/project=:id/first=:firstGroup', component: () => import('@/views/test/ApiListGroup'), name: '分组接口列表'},
           /*{   path: '/fastTest/project=:id', component: FestTest, name: '快速测试'},
           {   path: '/addApi/project=:id', component: addApi, name: '新增接口'},
           {   path: '/detail/project=:id/api=:api_id',

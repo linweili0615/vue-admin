@@ -129,7 +129,7 @@
                     "Content-Type": "application/json",
                     Authorization: 'Token '+JSON.parse(sessionStorage.getItem('token'))
                 };
-                getApiGroupList(headers, params).then(_data => {
+                /*getApiGroupList(headers, params).then(_data => {
                     let {msg, code, data} = _data;
                     if (code === '999999') {
                         self.groupData = data;
@@ -141,7 +141,7 @@
                             center: true,
                         })
                     }
-                })
+                })*/
             },
             // 添加分组弹窗显示
             handleAddGroup() {
