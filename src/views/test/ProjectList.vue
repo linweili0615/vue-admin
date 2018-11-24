@@ -24,13 +24,16 @@
         <!--列表-->
         <el-table :data="project.slice(0, pagesize)"
                   highlight-current-row v-loading="listLoading"
-                  @row-click="handleclick"
                   border
                   height="700"
                   @selection-change="selsChange"
                   style="width: 100%;">
             <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
-            <el-table-column prop="id" min-width="23%" label="项目ID"></el-table-column>
+            <el-table-column min-width="23%" label="项目ID">
+              <template slot-scope="scope">
+                <a @click="handleclick(scope.row)">{{scope.row.id}}</a>
+              </template>
+            </el-table-column>
             <el-table-column prop="project_name" label="项目名称" min-width="16%" sortable show-overflow-tooltip></el-table-column>
             <el-table-column prop="author" label="创建人" min-width="8%" sortable></el-table-column>
             <el-table-column prop="update_author" label="最后修改人" min-width="8%" sortable></el-table-column>
@@ -244,8 +247,7 @@
 
             },
             //点击行响应
-            handleclick: function(row, event, column){
-              console.log(row, event, column);
+            handleclick: function(row){
               this.$router.push({
                 path: '/api',
                 name: '接口列表',

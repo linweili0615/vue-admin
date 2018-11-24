@@ -100,23 +100,23 @@
                 </template>
               </el-collapse-item>
               <el-collapse-item title="响应结果" name="4">
-                <div style="margin-bottom: 10px">
-                  <el-button @click="showBody">Body</el-button>
-                  <el-button @click="showHeader">Head</el-button>
-                  <!--<el-button type="primary" @click="neatenFormat">格式转换</el-button>-->
-                </div>
                 <el-card class="box-card">
+
                   <!--<div slot="header" class="clearfix">-->
                     <span v-model="form.statusCode" style="font-size: 25px">{{form.statusCode}}</span>
                   <!--</div>-->
-                  <div v-model="form.resultData" :class="resultShow? 'parameter-a': 'parameter-b'" v-show="!format">
-                    <div style="word-break: break-all;overflow:auto;overflow-x:hidden">{{form.resultData}}</div>
+                  <div v-model="form.resultData" :class="resultShow? 'parameter-a': 'parameter-b'" v-show="!format"
+                       >
+                    <pre>{{form.resultData}}</pre>
                   </div>
-                  <div v-model="form.resultHead" :class="resultShow? 'parameter-b': 'parameter-a'">{{form.resultHead}}</div>
+                  <!--<div v-model="form.resultHead" :class="resultShow? 'parameter-b': 'parameter-a'">{{form.resultHead}}</div>
                   <div :class="resultShow? 'parameter-a': 'parameter-b'" v-show="format && form.resultData">
-                    <pre style="border: 1px solid #e6e6e6;word-break: break-all;overflow:auto;overflow-x:hidden">{{form.resultData}}</pre>
+                    <pre>{{form.resultData}}</pre>
                   </div>
+                  style="word-wrap: break-word; white-space: pre-wrap;"
                   <div v-show="!form.resultData&&!form.resultHead" class="raw">暂无数据</div>
+-->
+
                 </el-card>
               </el-collapse-item>
             </el-collapse>
@@ -170,7 +170,7 @@ export default {
       formchange: true,
       form: {
         url:"",
-        methods: 'POST',
+        methods: 'GET',
         addr: '',
         head: [
           {name: "", value: ""},
@@ -304,9 +304,9 @@ export default {
 
             this.loadingSend = false
             console.log(response)
-            this.form.statusCode = response.data.status
-            this.form.resultHead = response.data.resheaders
-            this.form.resultData = response.data.resbody
+            this.form.statusCode = response.data.data.status
+            this.form.resultHead = response.data.data.headers
+            this.form.resultData = JSON.stringify(JSON.parse(response.data.data.content), null, 5);
 
 
           }).catch(error => {
@@ -370,12 +370,6 @@ export default {
       } else {
         this.ParameterType = !this.ParameterType
       }
-    },
-    showBody() {
-      this.resultShow = true
-    },
-    showHeader() {
-      this.resultShow = false
     },
     handleChange(val) {
     },
