@@ -100,24 +100,43 @@
                 </template>
               </el-collapse-item>
               <el-collapse-item title="响应结果" name="4">
+
+                <div style="margin-bottom: 10px">
+                  <el-button @click="showBody">request</el-button>
+                  <el-button @click="showHeader">response data</el-button>
+                </div>
+
                 <el-card class="box-card">
 
-                  <!--<div slot="header" class="clearfix">-->
-                    <span v-model="form.statusCode" style="font-size: 25px">{{form.statusCode}}</span>
-                  <!--</div>-->
-                  <div v-model="form.resultData" :class="resultShow? 'parameter-a': 'parameter-b'" v-show="!format"
-                       >
-                    <pre>{{form.resultData}}</pre>
+                  <div v-show="form.statusCode">
+                    状态码：<pre>{{form.statusCode}}</pre> <br/>
+                    响应头部：<pre>{{form.resultHead}}</pre>
                   </div>
-                  <!--<div v-model="form.resultHead" :class="resultShow? 'parameter-b': 'parameter-a'">{{form.resultHead}}</div>
-                  <div :class="resultShow? 'parameter-a': 'parameter-b'" v-show="format && form.resultData">
-                    <pre>{{form.resultData}}</pre>
+
+                  <div v-model="form.resultData" v-show="form.resultData">
+                    响应内容：<pre>{{form.resultData}}</pre>
                   </div>
-                  style="word-wrap: break-word; white-space: pre-wrap;"
+
                   <div v-show="!form.resultData&&!form.resultHead" class="raw">暂无数据</div>
--->
+
 
                 </el-card>
+
+
+
+                <!--<el-card class="box-card">
+                  &lt;!&ndash;<div slot="header" class="clearfix">&ndash;&gt;
+                  <span v-model="form.statusCode" style="font-size: 25px">{{form.statusCode}}</span>
+                  &lt;!&ndash;</div>&ndash;&gt;
+                  <div v-model="form.resultData" :class="resultShow? 'parameter-a': 'parameter-b'" v-show="!format">
+                    <div style="word-break: break-all;overflow:auto;overflow-x:hidden">{{form.resultData}}</div>
+                  </div>
+                  <div v-model="form.resultHead" :class="resultShow? 'parameter-b': 'parameter-a'">{{form.resultHead}}</div>
+                  <div :class="resultShow? 'parameter-a': 'parameter-b'" v-show="format && form.resultData">
+                    <pre style="border: 1px solid #e6e6e6;word-break: break-all;overflow:auto;overflow-x:hidden">{{form.resultData}}</pre>
+                  </div>
+                  <div v-show="!form.resultData&&!form.resultHead" class="raw">暂无数据</div>
+                </el-card>-->
               </el-collapse-item>
             </el-collapse>
           </el-row>
@@ -304,18 +323,19 @@ export default {
 
             this.loadingSend = false
             console.log(response)
-            this.form.statusCode = response.data.data.status
+            this.form.statusCode = response.data.data.code
             this.form.resultHead = response.data.data.headers
-            this.form.resultData = JSON.stringify(JSON.parse(response.data.data.content), null, 5);
+            this.form.resultData = response.data.data.content
+//            this.form.resultData = JSON.stringify(JSON.parse(response.data.data.content), null, 5);
 
 
           }).catch(error => {
 
             this.loadingSend = false
             console.log(error)
-            this.form.statusCode = error.statusCode
-            this.form.resultHead = ""
-            this.form.resultData = "请求异常"
+            this.form.statusCode = error.code
+            this.form.resultHead = error.headers
+            this.form.resultData = error
 
           })
         }
@@ -363,6 +383,12 @@ export default {
       if (this.form.response.length !== 1) {
         this.form.response.splice(index, 1)
       }
+    },
+    showBody() {
+      this.resultShow = true
+    },
+    showHeader() {
+      this.resultShow = false
     },
     changeParameterType() {
       if (this.radio === 'form-data') {
