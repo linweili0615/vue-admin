@@ -1,10 +1,10 @@
 import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken,getName,setName,removeName } from '@/utils/auth'
 
 const user = {
   state: {
     token: getToken(),
-    name: '',
+    name: getName(),
     avatar: '',
     roles: []
   },
@@ -25,13 +25,14 @@ const user = {
       return new Promise((resolve, reject) => {
         login(telno, userInfo.pwd).then(response => {
           const data = response.data
-          if(data.code == '200'){
+          if(data.code === '200'){
             setToken(data.token)
-            commit('SET_NAME',data.user_name)
+            setName(data.user_name)
           }
           resolve(response)
         }).catch(error => {
           removeToken()
+          removerName()
           commit('SET_TOKEN','')
           commit('SET_NAME','')
           reject(error)
@@ -44,12 +45,13 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
           const data = response.data
-          if(data.username != ''){
-            commit('SET_NAME',data.username)
+          if(data.user_name !== ''){
+            setName(data.user_name)
           }
           resolve(response)
         }).catch(error => {
           removeToken()
+          removeName()
           commit('SET_TOKEN','')
           commit('SET_NAME','')
           reject(error)
@@ -61,6 +63,7 @@ const user = {
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         removeToken()
+        removeName()
         commit('SET_TOKEN','')
         commit('SET_NAME','')
         resolve()
@@ -71,6 +74,7 @@ const user = {
     FedLogOut({ commit }) {
       return new Promise(resolve => {
         removeToken()
+        removeName()
         commit('SET_TOKEN','')
         commit('SET_NAME','')
         resolve()
