@@ -200,6 +200,7 @@ export default {
           {name: "", value: ""},
           {name: "", value: ""}
           ],
+        paramstype: "",
         statusCode: "",
         resultData: "",
         resultHead: "",
@@ -281,8 +282,8 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loadingSend = true;
-          let _parameter = new Object();
           let _headers = new Object();
+          let _parameter = new Object();
           this.form.statusCode = '';
           this.form.resultData = '';
           this.form.resultHead = '';
@@ -308,17 +309,20 @@ export default {
             if(_parameter){
               _parameter = JSON.stringify(_parameter)
             }
+            this.form.paramstype = "from"
           }
 
           if (this.form.parameterRaw && _type === "raw") {
             _parameter = this.form.parameterRaw
+            this.form.paramstype = "raw"
           }
 
           this.$axios.post(url, {
             'method': this.form.methods,
             'url':  this.form.addr,
             'headers': _headers,
-            'body': _parameter
+            'body': _parameter,
+            'paramstype': this.form.paramstype
           }).then(response => {
 
             this.loadingSend = false
@@ -327,8 +331,6 @@ export default {
             this.form.resultHead = response.data.data.headers
             this.form.resultData = response.data.data.content
 //            this.form.resultData = JSON.stringify(JSON.parse(response.data.data.content), null, 5);
-
-
           }).catch(error => {
 
             this.loadingSend = false
