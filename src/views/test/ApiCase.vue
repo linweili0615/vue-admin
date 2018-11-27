@@ -18,7 +18,7 @@
             <el-input
               placeholder="输入关键字进行过滤"
               v-model="filterText">
-            </el-input>
+            </el-input><br/>
 
             <el-tree
               class="filter-tree"
