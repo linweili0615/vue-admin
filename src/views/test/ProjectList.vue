@@ -249,10 +249,10 @@
             //点击行响应
             handleclick: function(row){
               this.$router.push({
-                path: '/api',
-                name: '接口列表',
+                path: '/project',
+                name: '测试分组',
                 params:{
-                  project_id : row.id
+                  id : row.id
                 }
               })
             },

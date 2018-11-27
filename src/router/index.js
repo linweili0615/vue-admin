@@ -46,31 +46,18 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/api/project:project_id',
+    path: '/project/:id',
     component: Layout,
+    redirect: '/project/:id/list',
     name: '测试集',
+    meta: { title: '测试集', icon: 'example' },
     hidden: true,
     children: [
       {
-        path: '/ApiList/project=:project_id',
+        path: '/project/:id/list',
         component: () => import('@/views/test/ApiCase'),
-        name: '测试基类',
-        children: [
-          {   path: '/ApiList/project=:project_id', component: () => import('@/views/test/ApiCaseList'), name: '接口列表'},
-          {   path: '/apiList/project=:id/first=:firstGroup', component: () => import('@/views/test/ApiListGroup'), name: '分组接口列表'},
-          /*{   path: '/fastTest/project=:id', component: FestTest, name: '快速测试'},
-          {   path: '/addApi/project=:id', component: addApi, name: '新增接口'},
-          {   path: '/detail/project=:id/api=:api_id',
-            component: detail,
-            name: '接口',
-            children: [
-              { path: '/apiInfo/project=:project_id/api=:api_id', component: ApiInfo, name: '基础信息'},
-              { path: '/testApi/project=:project_id/api=:api_id', component: testApi, name: '测试'},
-              { path: '/apiDynamic/project=:project_id/api=:api_id', component: ApiDynamic, name: '历史'},
-            ]
-          },
-          { path: '/updateApi/project=:project_id/api=:api_id', component: UpdateApi, name: '修改'},*/
-        ]
+        name: '测试分组',
+        meta: { title: '测试分组', icon: 'example' },
       }
     ],
   },

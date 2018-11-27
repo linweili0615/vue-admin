@@ -1,13 +1,96 @@
 <template>
 	<section>
-    <el-row>
-      <el-col :span="12"><div class="grid-content bg-purple"></div></el-col>
-      <el-col :span="12"><div class="grid-content bg-purple-light"></div></el-col>
-    </el-row>
+		<!--工具条-->
+		<el-col :span="24" style="height: 46px">
+			<el-form :inline="true" :model="filters" @submit.native.prevent>
+				<el-form-item>
+					<el-input v-model.trim="filters.name" placeholder="名称" @keyup.enter.native="getApiList"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="getApiList">查询</el-button>
+				</el-form-item>
+				<el-form-item>
+					<router-link :to="{ name: '新增接口', params: {project_id: this.$route.params.project_id}}" style='text-decoration: none;color: aliceblue;'>
+						<el-button type="primary">新增</el-button>
+					</router-link>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" :disabled="update" @click="changeGroup">修改分组</el-button>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click.native="DownloadApi">下载接口文档</el-button>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click.native="loadSwaggerApi = true">导入接口</el-button>
+					<el-dialog title="导入swagger接口" :visible.sync="loadSwaggerApi" :close-on-click-modal="false">
+						<el-input v-model.trim="swaggerUrl" placeholder="请输入swagger接口地址" style="width:90%"></el-input>
+						<el-button type="primary" @click="addSubmit" :loading="addLoading">导入</el-button>
+						<P v-if="!swaggerUrl" style="color: red; margin: 0px">不能为空</P>
+					</el-dialog>
+				</el-form-item>
+			</el-form>
+		</el-col>
+		<el-dialog title="修改所属分组" :visible.sync="updateGroupFormVisible" :close-on-click-modal="false" style="width: 60%; left: 20%">
+			<el-form :model="updateGroupForm" label-width="80px" :rules="updateGroupFormRules" ref="updateGroupForm">
+				<el-form-item label="分组名称" prop="firstGroup">
+					<el-select v-model="updateGroupForm.firstGroup" placeholder="请选择">
+						<el-option v-for="(item,index) in group" :key="index+''" :label="item.name" :value="item.id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click.native="updateGroupFormVisible = false">取消</el-button>
+				<el-button type="primary" @click.native="updateGroupSubmit" :loading="updateGroupLoading">提交</el-button>
+			</div>
+		</el-dialog>
+
+		<!--列表-->
+		<el-table :data="api" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+			<el-table-column type="selection" min-width="5%">
+			</el-table-column>
+			<el-table-column prop="name" label="接口名称" min-width="17%" sortable show-overflow-tooltip>
+				<template slot-scope="scope">
+					<el-icon name="name"></el-icon>
+					<router-link :to="{ name: '基础信息', params: {api_id: scope.row.id}}" style='text-decoration: none;'>{{ scope.row.name }}</router-link>
+				</template>
+			</el-table-column>
+			<el-table-column prop="requestType" label="请求方式" min-width="11%" sortable show-overflow-tooltip>
+			</el-table-column>
+			<el-table-column prop="apiAddress" label="接口地址" min-width="19%" sortable show-overflow-tooltip>
+			</el-table-column>
+			<el-table-column prop="userUpdate" label="最近更新者" min-width="13%" sortable show-overflow-tooltip>
+			</el-table-column>
+			<el-table-column prop="lastUpdateTime" label="更新日期" min-width="15%" sortable show-overflow-tooltip>
+			</el-table-column>
+			<el-table-column label="Mock" min-width="7%">
+				<template slot-scope="scope">
+					<el-button v-if="scope.row.mockStatus" type="success" size="small" @click="checkMockStatus(scope.row)">关闭</el-button>
+					<el-button v-if="!scope.row.mockStatus" type="info" size="small"  @click="checkMockStatus(scope.row)">启动</el-button>
+				</template>
+			</el-table-column>
+			<el-table-column label="操作" min-width="13%">
+				<template slot-scope="scope">
+					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+					<router-link :to="{ name: '修改', params: {api_id: scope.row.id}}" style='text-decoration: none;color: aliceblue;'>
+						<el-button type="info" size="small">修改</el-button>
+					</router-link>
+				</template>
+			</el-table-column>
+		</el-table>
+
+		<!--工具条-->
+		<el-col :span="24" class="toolbar">
+			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
+			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :page-count="total" style="float:right;">
+			</el-pagination>
+		</el-col>
 	</section>
 </template>
 
 <script>
+    // import { test } from '../../../api/api'
+    // import $ from 'jquery'
     export default {
         data() {
             return {
