@@ -18,16 +18,22 @@
             <el-input
               placeholder="输入关键字进行过滤"
               v-model="filterText">
-            </el-input><br/>
+            </el-input>
+            <br/>
+            <br/>
 
-            <el-tree
-              class="filter-tree"
-              :data="data2"
-              :props="defaultProps"
-              default-expand-all
-              :filter-node-method="filterNode"
-              ref="tree2">
-            </el-tree>
+            <el-scrollbar>
+              <el-tree
+                class="filter-tree"
+                :data="data2"
+                :props="defaultProps"
+                default-expand-all
+                highlight-current
+                :filter-node-method="filterNode"
+                ref="tree2">
+              </el-tree>
+            </el-scrollbar>
+
           </div>
         </el-col>
         <el-col :span="16" :offset="2">
@@ -175,8 +181,10 @@
               //新增界面数据
               swaggerUrl: "",
               filterText: '',
+              data1:[],
               data2: [
-                /*{
+
+                {
                 id: 1,
                 label: '一级 1',
                 children: [{
@@ -190,27 +198,8 @@
                     label: '三级 1-1-2'
                   }]
                 }]
-              }, {
-                id: 2,
-                label: '一级 2',
-                children: [{
-                  id: 5,
-                  label: '二级 2-1'
-                }, {
-                  id: 6,
-                  label: '二级 2-2'
-                }]
-              }, {
-                id: 3,
-                label: '一级 3',
-                children: [{
-                  id: 7,
-                  label: '二级 3-1'
-                }, {
-                  id: 8,
-                  label: '二级 3-2'
-                }]
-              }*/
+              }
+
               ],
               defaultProps: {
                 children: 'children',
@@ -238,11 +227,30 @@
               .then(response => {
                   console.log(response)
                 if(response.data.status === 'success'){
-                  this.data2 = response.data.data.caseExtends
+                  this.data1 = response.data.data
+                  let dd = [];
+                  let pid = this.data1.id
+                  let pname = this.data1.name
+                  this.data1.children.forEach(function (dta) {
+                    let obj = {
+                      id : dta.id,
+                      label : dta.name
+                    }
+                    dd.push(obj)
+                  })
+                  this.data2 = [{
+                    id : pid,
+                    label : pname,
+                    children : dd
+                  }]
+                }else{
+                  this.data2 = [];
+                  this.$message.error("获取测试集失败")
                 }
               })
               .catch(error => {
-
+                this.data2 = [];
+                this.$message.error("获取测试集失败")
               })
 
           },
@@ -359,25 +367,26 @@
 </script>
 
 <style lang="scss" scoped>
-    .api-title {
-        padding: 15px;
-        margin: 0px;
-        text-align: center;
-        border-radius:5px;
-        font-size: 15px;
-        color: aliceblue;
-        background-color: rgb(32, 160, 255);
-        font-family: PingFang SC;
-    }
-    .group .editGroup {
-        float:right;
-    }
-    .row-title {
-        margin: 35px;
-    }
-    .addGroup {
-        margin-top: 0px;
-        margin-bottom: 10px;
-        border-radius: 25px;
-    }
+.api-title {
+    padding: 15px;
+    margin: 0px;
+    text-align: center;
+    border-radius:5px;
+    font-size: 15px;
+    color: aliceblue;
+    background-color: rgb(32, 160, 255);
+    font-family: PingFang SC;
+}
+.group .editGroup {
+    float:right;
+}
+.row-title {
+    margin: 35px;
+}
+.addGroup {
+    margin-top: 0px;
+    margin-bottom: 10px;
+    border-radius: 25px;
+}
+
 </style>
