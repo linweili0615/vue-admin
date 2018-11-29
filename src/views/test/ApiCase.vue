@@ -43,9 +43,10 @@
                   <!--<el-button type="primary" @click="getApiList">查询</el-button>-->
                 </el-form-item>
                 <el-form-item>
-                  <router-link :to="{ name: '新增接口', params: {project_id: this.$route.params.project_id}}" style='text-decoration: none;color: aliceblue;'>
+                 <!-- <router-link :to="{ name: '新增接口', params: {project_id: this.$route.params.project_id}}" style='text-decoration: none;color: aliceblue;'>
                     <el-button type="primary">新增</el-button>
-                  </router-link>
+                  </router-link>-->
+                  <el-button type="primary">新增</el-button>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" :disabled="update">修改分组</el-button>
@@ -174,7 +175,8 @@
               //新增界面数据
               swaggerUrl: "",
               filterText: '',
-              data2: [{
+              data2: [
+                /*{
                 id: 1,
                 label: '一级 1',
                 children: [{
@@ -208,7 +210,8 @@
                   id: 8,
                   label: '二级 3-2'
                 }]
-              }],
+              }*/
+              ],
               defaultProps: {
                 children: 'children',
                 label: 'label'
@@ -221,6 +224,28 @@
           }
         },
         methods: {
+          getApiList(){
+            //获取api分组列表
+            if(this.project === ''){
+              this.$router.push({
+                path: '/404'
+              })
+            }
+
+            this.$axios.post('/case/list',
+              this.project
+            )
+              .then(response => {
+                  console.log(response)
+                if(response.data.status === 'success'){
+                  this.data2 = response.data.data.caseExtends
+                }
+              })
+              .catch(error => {
+
+              })
+
+          },
           filterNode(value, data) {
             if (!value) return true;
             return data.label.indexOf(value) !== -1;
@@ -325,6 +350,8 @@
           }
         },
         mounted() {
+          this.project = this.$route.params.id
+          this.getApiList();
 
         }
     }
