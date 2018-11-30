@@ -4,6 +4,8 @@
       <el-row class="row-title">
 
         <el-col :span="6">
+          <el-button class="addGroup" @click="handleAddGroup">新增分组</el-button>
+          <el-button class="addGroup">快速测试</el-button>
           <!--新增-->
           <el-dialog title="新增分组" :visible.sync="addGroupFormVisible" :close-on-click-modal="false" style="width: 60%; left: 20%">
             <el-form :model="addGroupForm" label-width="80px"  :rules="addGroupFormRules" ref="addGroupForm">
@@ -393,7 +395,7 @@
 }
 
 .el-scrollbar {
-  height: 750px;
+  height: 700px;
 }
 
 </style>
