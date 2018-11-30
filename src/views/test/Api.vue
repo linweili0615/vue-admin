@@ -13,27 +13,28 @@
           <el-button  type="primary" size="medium" @click="SaveTest">保存接口</el-button>
         </div>
 
-        <el-form :model="form" ref="form" :rules="formRules" label-width="100px" size="mini">
+        <el-form :model="form" ref="form" :rules="formRules" label-width="100px">
 
           <div style="border: 1px solid #e6e6e6;margin-bottom: 10px;padding:15px;padding-bottom: 0px">
             <el-form-item label="所属项目：">
               <el-cascader
                 placeholder="试试搜索：指南"
                 :options="options"
+                v-model="project"
                 filterable
                 change-on-select
               ></el-cascader>
             </el-form-item>
-            <el-form-item label="接口名称：">
+            <el-form-item label="接口名称：" prop="name">
                   <el-input v-model="form.name"></el-input>
             </el-form-item>
-            <el-form-item label="请求方法：">
+            <el-form-item label="请求方法：" prop="methods">
               <el-select v-model="form.methods" placeholder="Method" @change="checkRequest">
                 <el-option v-for="(item,index) in methods" :key="index+''" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="请求地址：">
-                  <el-input type="textarea" v-model="form.desc"></el-input>
+            <el-form-item label="请求地址：" prop="addr">
+                  <el-input type="textarea" v-model="form.addr"></el-input>
             </el-form-item>
           </div>
           <el-row :span="24">
@@ -178,6 +179,7 @@ export default {
     }
 
     return {
+      project : '',
       options: [{
         value: 'zhinan',
         label: '指南',
@@ -412,6 +414,9 @@ export default {
         resultHead: "",
       },
       formRules: {
+        name: [
+          {required: true, message:'请输入接口名称',trigger:'blur'}
+        ],
         addr: [
           { required: true, message: '请输入URL地址', trigger: 'blur' },
           { required: true, validator: validHttp, trigger: 'blur' },
@@ -524,6 +529,8 @@ export default {
           }
 
           this.$axios.post(url, {
+            'project_id': '24719c71-e80d-11e8-9ff0-0242ac110002',
+            'name':this.form.name,
             'method': this.form.methods,
             'url':  this.form.addr,
             'headers': _headers,
