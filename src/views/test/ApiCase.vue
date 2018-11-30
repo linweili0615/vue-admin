@@ -1,6 +1,8 @@
 <template>
     <section>
+
       <el-row class="row-title">
+
         <el-col :span="6">
           <!--新增-->
           <el-dialog title="新增分组" :visible.sync="addGroupFormVisible" :close-on-click-modal="false" style="width: 60%; left: 20%">
@@ -14,6 +16,7 @@
               <el-button type="primary" @click.native="addGroupSubmit" :loading="addGroupLoading">提交</el-button>
             </div>
           </el-dialog>
+
           <div class="grid-content bg-purple">
             <el-input
               placeholder="输入关键字进行过滤"
@@ -22,7 +25,7 @@
             <br/>
             <br/>
 
-            <el-scrollbar>
+            <el-scrollbar warp-class="scrollbar-wrap">
               <el-tree
                 class="filter-tree"
                 :data="data2"
@@ -366,7 +369,7 @@
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .api-title {
     padding: 15px;
     margin: 0px;
@@ -387,6 +390,10 @@
     margin-top: 0px;
     margin-bottom: 10px;
     border-radius: 25px;
+}
+
+.el-scrollbar {
+  height: 750px;
 }
 
 </style>
