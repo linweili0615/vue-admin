@@ -4,8 +4,8 @@
       <el-row class="row-title">
 
         <el-col :span="6">
-          <el-button class="addGroup" @click="handleAddGroup">新增分组</el-button>
-          <el-button class="addGroup">快速测试</el-button>
+          <el-button class="addGroup" type="primary" round @click="handleAddGroup">新增分组</el-button>
+          <el-button class="addGroup" @click="toApi">快速测试</el-button>
           <!--新增-->
           <el-dialog title="新增分组" :visible.sync="addGroupFormVisible" :close-on-click-modal="false" style="width: 60%; left: 20%">
             <el-form :model="addGroupForm" label-width="80px"  :rules="addGroupFormRules" ref="addGroupForm">
@@ -70,8 +70,7 @@
                   <el-button type="primary" @click.native="loadSwaggerApi = true">导入接口</el-button>
                   <el-dialog title="导入swagger接口" :visible.sync="loadSwaggerApi" :close-on-click-modal="false">
                     <el-input v-model.trim="swaggerUrl" placeholder="请输入swagger接口地址" style="width:90%"></el-input>
-                    <el-button type="primary" @click="addSubmit" :loading="addLoading">导入</el-button>
-                    <P v-if="!swaggerUrl" style="color: red; margin: 0px">不能为空</P>
+                    <el-button type="primary" @click="addSubmit" :loading="addLoading" style="padding-top: 10px">导入</el-button>
                   </el-dialog>
                 </el-form-item>
               </el-form>
@@ -218,6 +217,11 @@
           }
         },
         methods: {
+          toApi(){
+            this.$router.push({
+              path: '/test/api/add'
+            })
+          },
           getApiList(){
             //获取api分组列表
             if(this.project === ''){
@@ -226,33 +230,16 @@
               })
             }
 
-            this.$axios.post('/case/list',
-              this.project
-            )
+            this.$axios.post('/case/list', this.project)
               .then(response => {
-                  console.log(response)
-                if(response.data.status === 'success'){
-                  this.data1 = response.data.data
-                  let dd = [];
-                  let pid = this.data1.id
-                  let pname = this.data1.name
-                  this.data1.children.forEach(function (dta) {
-                    let obj = {
-                      id : dta.id,
-                      label : dta.name
-                    }
-                    dd.push(obj)
-                  })
-                  this.data2 = [{
-                    id : pid,
-                    label : pname,
-                    children : dd
-                  }]
-                }else{
-                  this.data2 = [];
-                  this.$message.error("获取测试集失败")
+                  if (response.data.status === 'success') {
+                    this.data2 = response.data.data
+                  }else{
+                    this.data2 = [];
+                    this.$message.error("获取测试集失败")
+                  }
                 }
-              })
+              )
               .catch(error => {
                 this.data2 = [];
                 this.$message.error("获取测试集失败")
@@ -395,7 +382,7 @@
 }
 
 .el-scrollbar {
-  height: 700px;
+  height: 670px;
 }
 
 </style>
