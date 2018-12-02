@@ -105,21 +105,29 @@
                   <el-collapse-item title="响应结果" name="4">
 
                     <div style="margin-bottom: 10px">
-                      <el-button @click="showBody">request</el-button>
-                      <el-button @click="showHeader">response data</el-button>
+
+                      <el-button @click="showResponse">response data</el-button>
+                      <el-button @click="showRequest">request</el-button>
+
                     </div>
 
                     <el-card class="box-card">
 
-                      <div v-show="form.statusCode">
-                        状态码：<pre>{{form.statusCode}}</pre> <br/>
-                        响应头部：<pre>{{form.resultHead}}</pre>
+                      <div :class="resultShow? 'parameter-a': 'parameter-b'" v-show="!form.resultHead && !format">
+                        <pre style="border: 1px solid #e6e6e6;word-break: break-all;overflow:auto;overflow-x:hidden">
+                          请求头部：<pre v-model="reqheaders"></pre>
+                          请求参数：<pre v-model="reqbody"></pre>
+                        </pre>
                       </div>
 
-                      <div v-model="form.resultData" v-show="form.resultData">
-                        响应内容：<pre>{{form.resultData}}</pre>
+                      <div :class="resultShow? 'parameter-a': 'parameter-b'" v-show="form.resultHead && format">
+                        <div style="word-break: break-all;overflow:auto;overflow-x:hidden">
+                          状态码：<pre>{{form.statusCode}}</pre>
+                          响应头部：<pre>{{form.resultHead}}</pre>
+                          响应内容：<pre>{{form.resultData}}</pre>
+                        </div>
                       </div>
-                      <div v-show="!form.resultData&&!form.resultHead" class="raw">暂无数据</div>
+                      <div v-show="!form.resultHead" class="raw">暂无数据</div>
 
                     </el-card>
                   </el-collapse-item>
@@ -225,7 +233,9 @@ export default {
       headers: "",
       parameters: "",
       resultShow: true,
-      format: false,
+      format: true,
+      reqheaders: "",
+      reqbody: ""
     }
   },
   methods: {
@@ -238,6 +248,7 @@ export default {
         }
         return false;
     },
+
 /*    changeRaw(){
       for (let i = 0; i < this.form.parameter.length; i++) {
         var a = this.form.parameter[i]["name"];
@@ -265,6 +276,7 @@ export default {
       }
 
     },*/
+
     getApiTree(){
       this.$axios.post('/case/list')
         .then(response => {
@@ -309,49 +321,53 @@ export default {
     selsChangeParameter: function (sels) {
       this.parameters = sels
     },
+    getheaders(){
+      let _headers = new Object();
+      for (let i = 0; i < this.form.head.length; i++) {
+        var a = this.form.head[i]["name"];
+        if (a) {
+          _headers[a] = this.form.head[i]["value"]
+        }
+      }
+      if(_headers){
+        _headers = JSON.stringify(_headers)
+      }
+      return _headers;
+    },
+    getparams(){
+      let _parameter = new Object();
+      let _type = this.radio;
+      if (_type === 'form-data') {
+        for (let i = 0; i < this.form.parameter.length; i++) {
+          var a = this.form.parameter[i]["name"];
+          if (a) {
+            _parameter[a] = this.form.parameter[i]["value"];
+          }
+        }
+        if(_parameter){
+          _parameter = JSON.stringify(_parameter)
+        }
+        this.form.paramstype = "from"
+      }
+      if (this.form.parameterRaw && _type === "raw") {
+        _parameter = this.form.parameterRaw
+        this.form.paramstype = "raw"
+      }
+      return _parameter
+    },
     commonTest(url){
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loadingSend = true;
-          let _headers = new Object();
-          let _parameter = new Object();
+          let _headers = this.getheaders();
+          let _parameter = this.getparams();
           this.form.statusCode = '';
           this.form.resultData = '';
           this.form.resultHead = '';
 
-          for (let i = 0; i < this.form.head.length; i++) {
-            var a = this.form.head[i]["name"];
-            if (a) {
-              _headers[a] = this.form.head[i]["value"]
-            }
-          }
-          if(_headers){
-            _headers = JSON.stringify(_headers)
-          }
-
-          let _type = this.radio;
-          if (_type === 'form-data') {
-            for (let i = 0; i < this.form.parameter.length; i++) {
-              var a = this.form.parameter[i]["name"];
-              if (a) {
-                _parameter[a] = this.form.parameter[i]["value"];
-              }
-            }
-            if(_parameter){
-              _parameter = JSON.stringify(_parameter)
-            }
-            this.form.paramstype = "from"
-          }
-
-          if (this.form.parameterRaw && _type === "raw") {
-            _parameter = this.form.parameterRaw
-            this.form.paramstype = "raw"
-          }
-
           if(this.form.selectedOptions3.length === 2){
             this.project_id = this.form.selectedOptions3[0]
             this.case_id = this.form.selectedOptions3[1]
-
           }else{
             this.project_id = this.form.selectedOptions3[0]
           }
@@ -368,10 +384,10 @@ export default {
           }).then(response => {
 
             this.loadingSend = false
-            console.log(response)
-            this.form.statusCode = response.data.data.content.code
+            this.form.statusCode = response.data.data.code
             this.form.resultHead = response.data.data.headers
             this.form.resultData = response.data.data.content
+
 //            this.form.resultData = JSON.stringify(JSON.parse(response.data.data.content), null, 5);
           }).catch(error => {
 
@@ -429,11 +445,17 @@ export default {
         this.form.response.splice(index, 1)
       }
     },
-    showBody() {
-      this.resultShow = true
-    },
-    showHeader() {
+    showRequest() {
+      this.reqheaders = this.getheaders()
+      this.reqbody = this.getparams()
+      console.log(this.reqheaders)
+      console.log(this.reqbody)
       this.resultShow = false
+      this.format = false
+
+    },
+    showResponse() {
+      this.resultShow = true
     },
     changeParameterType() {
       if (this.radio === 'form-data') {
