@@ -4,137 +4,139 @@
     <template>
       <section>
 
-        <el-row :gutter="22">
-          <el-col :span="22" :offset="1">
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <div style="border: 1px solid #e6e6e6;margin-bottom: 10px;padding:15px;padding-bottom: 0px">
 
-            <div class="return-list">
-              <el-button  plain size="medium" @click="fastTest" :loading="loadingSend">模拟请求</el-button>
-              <el-button  type="primary" size="medium" @click="SaveTest">保存接口</el-button>
-            </div>
-            <el-form :model="form" ref="form" :rules="formRules" label-width="100px">
-
-              <div style="border: 1px solid #e6e6e6;margin-bottom: 10px;padding:15px;padding-bottom: 0px">
-                <el-form-item label="所属项目：" prop="selectedOptions3">
-                  <el-cascader
-                    placeholder="搜索：  用户项目"
-                    :options="options"
-                    v-model="form.selectedOptions3"
-                    @change="handleOptionsChange"
-                    filterable
-                    change-on-select></el-cascader>
-                </el-form-item>
-                <el-form-item label="接口名称：" prop="name">
-                      <el-input v-model="form.name" placeholder="请输入接口名称"></el-input>
-                </el-form-item>
-                <el-form-item label="请求方法：" prop="methods">
-                  <el-select v-model="form.methods" placeholder="Method" @change="checkRequest">
-                    <el-option v-for="(item,index) in methods" :key="index+''" :label="item.label" :value="item.value"></el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="请求地址：" prop="addr">
-                      <el-input type="textarea" v-model="form.addr" placeholder="请输入请求地址"></el-input>
-                </el-form-item>
+              <div class="return-list">
+                <el-button  plain size="medium" @click="fastTest" :loading="loadingSend">模拟请求</el-button>
+                <el-button  type="primary" size="medium" @click="SaveTest">保存接口</el-button>
               </div>
-              <el-row :span="24">
-                <el-collapse v-model="activeNames" @change="handleChange">
-                  <el-collapse-item title="请求头部" name="1">
-                    <el-table :data="form.head" highlight-current-row ref="multipleHeadTable">
-                      <el-table-column type="selection" min-width="5%" label="头部">
-                      </el-table-column>
-                      <el-table-column prop="name" label="Name" min-width="20%">
-                        <template slot-scope="scope">
-                          <el-input  v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入标签"></el-input>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="value" label="Value" min-width="40%">
-                        <template slot-scope="scope">
-                          <el-input v-model.trim="scope.row.value" :value="scope.row.value" placeholder="请输入内容"></el-input>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="操作" min-width="7%">
-                        <template slot-scope="scope">
-                          <i class="el-icon-delete" style="font-size:30px;cursor:pointer;" @click="delHead(scope.$index)"></i>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="" min-width="10%">
-                        <template slot-scope="scope">
-                          <el-button v-if="scope.$index===(form.head.length-1)" size="mini" class="el-icon-plus" @click="addHead"></el-button>
-                        </template>
-                      </el-table-column>
-                      <el-table-column min-width="18%">
 
-                      </el-table-column>
-                    </el-table>
-                  </el-collapse-item>
-                  <el-collapse-item title="请求参数" name="2">
-                    <div style="margin: 5px">
-                      <el-row :span="24">
-                        <el-col :span="4"><el-radio v-model="radio" label="form-data">Parameters</el-radio></el-col>
-                        <el-col :span="4"><el-radio v-model="radio" label="raw" v-if="formchange">Body Data</el-radio></el-col>
-                      </el-row>
-                    </div>
-                    <el-table ref="multipleParameterTable" :data="form.parameter" highlight-current-row :class="ParameterType? 'parameter-a': 'parameter-b'" @selection-change="selsChangeParameter">
-                      <el-table-column type="selection" min-width="5%" label="头部">
-                      </el-table-column>
-                      <el-table-column prop="name" label="Name" min-width="20%">
-                        <template slot-scope="scope">
-                          <el-input v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入参数名"></el-input>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="value" label="Value" min-width="40%">
-                        <template slot-scope="scope">
-                          <el-input v-model.trim="scope.row.value" :value="scope.row.value" placeholder="请输入参数值"></el-input>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="操作" min-width="7%">
-                        <template slot-scope="scope">
-                          <i class="el-icon-delete" style="font-size:30px;cursor:pointer;" @click="delParameter(scope.$index)"></i>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="" min-width="10%">
-                        <template slot-scope="scope">
-                          <el-button v-if="scope.$index===(form.parameter.length-1)" size="mini" class="el-icon-plus" @click="addParameter"></el-button>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="" min-width="18%"></el-table-column>
-                    </el-table>
-                    <template>
-                      <el-input :class="ParameterType? 'parameter-b': 'parameter-a'" type="textarea" :rows="5" placeholder="请输入请求参数" v-model.trim="form.parameterRaw"></el-input>
-                    </template>
-                  </el-collapse-item>
-                  <el-collapse-item title="响应结果" name="4">
+              <el-form :model="form" ref="form" :rules="formRules" label-width="100px">
 
-                    <div style="margin-bottom: 10px">
+                  <el-form-item label="所属项目：" prop="selectedOptions3">
+                    <el-cascader
+                      placeholder="搜索：  用户项目"
+                      :options="options"
+                      v-model="form.selectedOptions3"
+                      @change="handleOptionsChange"
+                      filterable
+                      change-on-select></el-cascader>
+                  </el-form-item>
+                  <el-form-item label="接口名称：" prop="name">
+                        <el-input v-model="form.name" placeholder="请输入接口名称"></el-input>
+                  </el-form-item>
+                  <el-form-item label="请求方法：" prop="methods">
+                    <el-select v-model="form.methods" placeholder="Method" @change="checkRequest">
+                      <el-option v-for="(item,index) in methods" :key="index+''" :label="item.label" :value="item.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="请求地址：" prop="addr">
+                        <el-input type="textarea" v-model="form.addr" :rows="4" placeholder="请输入请求地址"></el-input>
+                  </el-form-item>
 
-                      <el-button @click="showResponse">response data</el-button>
-                      <el-button @click="showRequest">request</el-button>
+                  <el-row :span="24">
+                    <el-collapse v-model="activeNames" @change="handleChange">
+                      <el-collapse-item title="请求头部" name="1">
+                        <el-table :data="form.head" highlight-current-row ref="multipleHeadTable">
+                          <el-table-column type="selection" min-width="5%" label="头部">
+                          </el-table-column>
+                          <el-table-column prop="name" label="Name" min-width="20%">
+                            <template slot-scope="scope">
+                              <el-input  v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入标签"></el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="value" label="Value" min-width="40%">
+                            <template slot-scope="scope">
+                              <el-input v-model.trim="scope.row.value" :value="scope.row.value" placeholder="请输入内容"></el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="操作" min-width="7%">
+                            <template slot-scope="scope">
+                              <i class="el-icon-delete" style="font-size:30px;cursor:pointer;" @click="delHead(scope.$index)"></i>
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="" min-width="10%">
+                            <template slot-scope="scope">
+                              <el-button v-if="scope.$index===(form.head.length-1)" size="mini" class="el-icon-plus" @click="addHead"></el-button>
+                            </template>
+                          </el-table-column>
+                          <el-table-column min-width="18%">
 
-                    </div>
-
-                    <el-card class="box-card">
-
-                      <div :class="resultShow? 'parameter-a': 'parameter-b'" v-show="!form.resultHead && !format">
-                        <pre style="border: 1px solid #e6e6e6;word-break: break-all;overflow:auto;overflow-x:hidden">
-                          请求头部：<pre v-model="reqheaders"></pre>
-                          请求参数：<pre v-model="reqbody"></pre>
-                        </pre>
-                      </div>
-
-                      <div :class="resultShow? 'parameter-a': 'parameter-b'" v-show="form.resultHead && format">
-                        <div style="word-break: break-all;overflow:auto;overflow-x:hidden">
-                          状态码：<pre>{{form.statusCode}}</pre>
-                          响应头部：<pre>{{form.resultHead}}</pre>
-                          响应内容：<pre>{{form.resultData}}</pre>
+                          </el-table-column>
+                        </el-table>
+                      </el-collapse-item>
+                      <el-collapse-item title="请求参数" name="2">
+                        <div style="margin: 5px">
+                          <el-row :span="24">
+                            <el-col :span="8"><el-radio v-model="radio" label="form-data">Parameters</el-radio></el-col>
+                            <el-col :span="8"><el-radio v-model="radio" label="raw" v-if="formchange">Body Data</el-radio></el-col>
+                          </el-row>
                         </div>
-                      </div>
-                      <div v-show="!form.resultHead" class="raw">暂无数据</div>
+                        <el-table ref="multipleParameterTable" :data="form.parameter" highlight-current-row :class="ParameterType? 'parameter-a': 'parameter-b'" @selection-change="selsChangeParameter">
+                          <el-table-column type="selection" min-width="5%" label="头部">
+                          </el-table-column>
+                          <el-table-column prop="name" label="Name" min-width="20%">
+                            <template slot-scope="scope">
+                              <el-input v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入参数名"></el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column prop="value" label="Value" min-width="40%">
+                            <template slot-scope="scope">
+                              <el-input v-model.trim="scope.row.value" :value="scope.row.value" placeholder="请输入参数值"></el-input>
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="操作" min-width="7%">
+                            <template slot-scope="scope">
+                              <i class="el-icon-delete" style="font-size:30px;cursor:pointer;" @click="delParameter(scope.$index)"></i>
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="" min-width="10%">
+                            <template slot-scope="scope">
+                              <el-button v-if="scope.$index===(form.parameter.length-1)" size="mini" class="el-icon-plus" @click="addParameter"></el-button>
+                            </template>
+                          </el-table-column>
+                          <el-table-column label="" min-width="18%"></el-table-column>
+                        </el-table>
+                        <template>
+                          <el-input :class="ParameterType? 'parameter-b': 'parameter-a'" type="textarea" :rows="7" placeholder="请输入请求参数" v-model.trim="form.parameterRaw"></el-input>
+                        </template>
+                      </el-collapse-item>
+                    </el-collapse>
+                  </el-row>
 
-                    </el-card>
-                  </el-collapse-item>
-                </el-collapse>
-              </el-row>
-            </el-form>
+              </el-form>
 
+            </div>
+          </el-col>
+
+          <el-col :span="12">
+            <div style="border: 1px solid #e6e6e6;margin-bottom: 10px;padding:15px;padding-bottom: 0px;">
+
+              <div style="margin-bottom: 10px">
+                <el-button @click="showRequest">request</el-button>
+                <el-button @click="showResponse">response data</el-button>
+              </div>
+              <el-card class="box-card">
+                <div v-show="resultShow">
+                  <div style="word-break: break-all;overflow:auto;overflow-x:hidden;min-height: 640px">
+                    请求头部：<pre>{{ reqheaders }}</pre>
+                    请求地址：<pre>{{ reqaddr }}</pre>
+                    请求参数：<pre>{{ reqbody }}</pre>
+                  </div>
+                </div>
+                <div  v-show="!resultShow">
+                  <div style="word-break: break-all;overflow:auto;overflow-x:hidden;min-height: 640px">
+                    响应状态码：<pre>{{form.statusCode}}</pre>
+                    响应头部：<pre>{{form.resultHead}}</pre>
+                    响应cookies：<pre>{{form.resultCookies}}</pre>
+                    响应内容：<pre>{{form.resultData}}</pre>
+                  </div>
+                </div>
+              </el-card>
+
+            </div>
           </el-col>
         </el-row>
 
@@ -205,16 +207,20 @@ export default {
         methods: 'GET',
         addr: '',
         head: [
+          {name: "", value: ""},
           {name: "", value: ""}
+
           ],
         parameterRaw: "",
         parameter: [
+          {name: "", value: ""},
           {name: "", value: ""}
           ],
         paramstype: "",
         statusCode: "",
         resultData: "",
         resultHead: "",
+        resultCookies: ""
       },
       formRules: {
         selectedOptions3: [
@@ -232,21 +238,25 @@ export default {
       case_id: "",
       headers: "",
       parameters: "",
-      resultShow: true,
+      resultShow: false,
       format: true,
       reqheaders: "",
-      reqbody: ""
+      reqbody: "",
+      reqaddr: ""
+
     }
   },
   methods: {
-    isJsonString(str) {
+    toJSON(str) {
         try {
           if (typeof JSON.parse(str) === "object") {
-            return true;
+            return JSON.parse(str);
+          }else{
+            return str;
           }
         } catch(e) {
+          return str;
         }
-        return false;
     },
 
 /*    changeRaw(){
@@ -332,6 +342,7 @@ export default {
       if(_headers){
         _headers = JSON.stringify(_headers)
       }
+      this.reqheaders = _headers;
       return _headers;
     },
     getparams(){
@@ -353,6 +364,7 @@ export default {
         _parameter = this.form.parameterRaw
         this.form.paramstype = "raw"
       }
+      this.reqbody = _parameter;
       return _parameter
     },
     commonTest(url){
@@ -364,6 +376,7 @@ export default {
           this.form.statusCode = '';
           this.form.resultData = '';
           this.form.resultHead = '';
+          this.form.resultCookies = '';
 
           if(this.form.selectedOptions3.length === 2){
             this.project_id = this.form.selectedOptions3[0]
@@ -385,8 +398,10 @@ export default {
 
             this.loadingSend = false
             this.form.statusCode = response.data.data.code
-            this.form.resultHead = response.data.data.headers
-            this.form.resultData = response.data.data.content
+            this.form.resultHead = this.toJSON(response.data.data.headers)
+            this.form.resultData = this.toJSON(response.data.data.content)
+            this.form.resultCookies = this.toJSON(response.data.data.cookies)
+            this.showResponse()
 
 //            this.form.resultData = JSON.stringify(JSON.parse(response.data.data.content), null, 5);
           }).catch(error => {
@@ -446,16 +461,13 @@ export default {
       }
     },
     showRequest() {
-      this.reqheaders = this.getheaders()
-      this.reqbody = this.getparams()
-      console.log(this.reqheaders)
-      console.log(this.reqbody)
-      this.resultShow = false
-      this.format = false
-
+      this.resultShow = true
+      this.reqaddr = this.form.addr
+      this.reqheaders = this.toJSON(this.getheaders())
+      this.reqbody = this.toJSON(this.getparams())
     },
     showResponse() {
-      this.resultShow = true
+      this.resultShow = false
     },
     changeParameterType() {
       if (this.radio === 'form-data') {

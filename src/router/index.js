@@ -26,19 +26,19 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/test',
+    path: '/api',
     component: Layout,
-    redirect: '/test/project/list',
+    redirect: '/list',
     name: 'API管理',
     meta: { title: 'API管理', icon: 'example' },
     children: [
       {
-        path: 'project/list',
+        path: '/list',
         name: '项目列表',
         component: () => import('@/views/test/ProjectList'),
         meta: { title: '项目列表', icon: 'form' }
       },{
-        path: 'api/add',
+        path: '/add',
         name: 'API接口',
         component: () => import('@/views/test/Api'),
         meta: { title: 'API接口', icon: 'form' }

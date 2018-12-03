@@ -219,7 +219,8 @@
         methods: {
           toApi(){
             this.$router.push({
-              path: '/test/api/add'
+              path: '/api',
+              name: 'API接口'
             })
           },
           getApiList(){
