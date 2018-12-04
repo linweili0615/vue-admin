@@ -41,6 +41,7 @@
 
           </div>
         </el-col>
+
         <el-col :span="16" :offset="2">
           <div class="grid-content bg-purple-light">
             <el-col :span="24" style="height: 46px">
@@ -139,6 +140,7 @@
         data() {
             return {
               project: "",
+              case: "",
               groupData: [],
               addGroupFormVisible: false,
               addGroupLoading: false,
@@ -224,7 +226,18 @@
             })
           },
           getApiList(){
-            //获取api分组列表
+            //获取project分组列表
+            if(this.project === ''){
+              this.$router.push({
+                path: '/404'
+              })
+            }
+            this.$axios.post('/')
+
+
+          },
+          getProjectList(){
+            //获取project分组列表
             if(this.project === ''){
               this.$router.push({
                 path: '/404'
@@ -352,7 +365,7 @@
         },
         mounted() {
           this.project = this.$route.params.id
-          this.getApiList();
+          this.getProjectList();
 
         }
     }
