@@ -42,10 +42,17 @@ export const constantRouterMap = [
         name: 'API接口',
         component: () => import('@/views/test/Api'),
         meta: { title: 'API接口', icon: 'form' }
+      },{
+        path: '/project/:id',
+        hidden: true,
+        component: () => import('@/views/test/ApiCase'),
+        name: '测试分组',
+        meta: { title: '测试分组', icon: 'example' }
       }
+
     ]
   },
-  {
+  /*{
     path: '/project/:id',
     component: Layout,
     redirect: '/project/:id/list',
@@ -60,7 +67,7 @@ export const constantRouterMap = [
         meta: { title: '测试分组', icon: 'example' },
       }
     ],
-  },
+  },*/
   { path: '*', redirect: '/404', hidden: true }
 ]
 

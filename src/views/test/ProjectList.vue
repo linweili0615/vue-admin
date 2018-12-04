@@ -249,7 +249,7 @@
             //点击行响应
             handleclick: function(row){
               this.$router.push({
-                path: '/project',
+                path: '/api',
                 name: '测试分组',
                 params:{
                   id : row.id
