@@ -79,8 +79,8 @@
     margin-left:20px;
     padding:6px 5px;
   }
-.el-transfer-panel__list.is-filterable{
-  min-height: 500px;
-}
+  .el-transfer-panel__body {
+    min-height: 500px;
+  }
 
 </style>

@@ -32,6 +32,7 @@
                 class="filter-tree"
                 :data="data2"
                 :props="defaultProps"
+                @check-change="handleCheckChange"
                 default-expand-all
                 highlight-current
                 :filter-node-method="filterNode"
@@ -76,35 +77,34 @@
                 </el-form-item>
               </el-form>
               <!--列表-->
-              <el-table :data="api" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+              <el-table :data="apilist"
+                        highlight-current-row
+                        v-loading="listLoading"
+                        height="680"
+                        @selection-change="selsChange"
+                        style="width: 100%;">
                 <el-table-column type="selection" min-width="5%">
                 </el-table-column>
                 <el-table-column prop="name" label="接口名称" min-width="17%" sortable show-overflow-tooltip>
                   <template slot-scope="scope">
                     <el-icon name="name"></el-icon>
-                    <router-link :to="{ name: '基础信息', params: {api_id: scope.row.id}}" style='text-decoration: none;'>{{ scope.row.name }}</router-link>
+                    <!--<router-link :to="{ name: '基础信息', params: {api_id: scope.row.id}}" style='text-decoration: none;'>{{ scope.row.name }}</router-link>-->
                   </template>
                 </el-table-column>
-                <el-table-column prop="requestType" label="请求方式" min-width="11%" sortable show-overflow-tooltip>
+                <el-table-column prop="method" label="请求方式" min-width="11%" sortable show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="apiAddress" label="接口地址" min-width="19%" sortable show-overflow-tooltip>
+                <el-table-column prop="paramstype" label="接口地址" min-width="19%" sortable show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="userUpdate" label="最近更新者" min-width="13%" sortable show-overflow-tooltip>
+                <el-table-column prop="update_author" label="最近更新者" min-width="13%" sortable show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="lastUpdateTime" label="更新日期" min-width="15%" sortable show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column label="Mock" min-width="7%">
-                  <template slot-scope="scope">
-                    <el-button v-if="scope.row.mockStatus" type="success" size="small" @click="checkMockStatus(scope.row)">关闭</el-button>
-                    <el-button v-if="!scope.row.mockStatus" type="info" size="small"  @click="checkMockStatus(scope.row)">启动</el-button>
-                  </template>
+                <el-table-column prop="modify_time" label="更新日期" min-width="15%" sortable show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column label="操作" min-width="13%">
                   <template slot-scope="scope">
                     <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
-                    <router-link :to="{ name: '修改', params: {api_id: scope.row.id}}" style='text-decoration: none;color: aliceblue;'>
+                  <!--  <router-link :to="{ name: '修改', params: {api_id: scope.row.id}}" style='text-decoration: none;color: aliceblue;'>
                       <el-button type="info" size="small">修改</el-button>
-                    </router-link>
+                    </router-link>-->
                   </template>
                 </el-table-column>
               </el-table>
@@ -167,7 +167,7 @@
               filters: {
                 name: ''
               },
-              api: [],
+              apilist: [],
               total: 0,
               page: 1,
               listLoading: false,
@@ -227,12 +227,18 @@
           },
           getApiList(){
             //获取project分组列表
-            if(this.project === ''){
-              this.$router.push({
-                path: '/404'
+            this.$axios.post('/api/list',{
+              'project_id': this.$route.params.id,
+              'case_id' : this.case
+            })
+              .then(response => {
+                if(response.data.status === "success"){
+                  this.apilist = response.data.apiDTOList
+                }
               })
-            }
-            this.$axios.post('/')
+              .catch(error => {
+                this.$message.error("获取测试集异常")
+              })
 
 
           },
@@ -259,6 +265,10 @@
                 this.$message.error("获取测试集失败")
               })
 
+          },
+          handleCheckChange(data, checked, indeterminate) {
+            console.log(222)
+            console.log(data, checked, indeterminate);
           },
           filterNode(value, data) {
             if (!value) return true;
@@ -315,6 +325,7 @@
             this.getApiList()
           },
           selsChange: function (sels) {
+            console.log(sels)
             if (sels.length>0) {
               this.sels = sels;
               this.update = false
@@ -366,6 +377,7 @@
         mounted() {
           this.project = this.$route.params.id
           this.getProjectList();
+          this.getApiList()
 
         }
     }
