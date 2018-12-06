@@ -48,6 +48,11 @@ export const constantRouterMap = [
         component: () => import('@/views/test/ApiCase'),
         name: '测试分组',
         meta: { title: '测试分组', icon: 'example' }
+      },{
+        path: '/taskcase',
+        component: () => import('@/views/test/TaskCase'),
+        name: '定时任务',
+        meta: { title: '定时任务', icon: 'example' }
       }
 
     ]
