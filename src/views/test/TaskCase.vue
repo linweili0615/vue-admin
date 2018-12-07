@@ -4,7 +4,7 @@
     <template>
       <div style="text-align:center">
         <el-transfer
-          style="text-align:left; display:inline-block"
+          style="text-align:left; display:inline-block;width: 100%;"
           v-model="value4"
           filterable
           :left-default-checked="[2, 3]"
@@ -81,6 +81,15 @@
   }
   .el-transfer-panel__body {
     min-height: 500px;
+  }
+  /deep/ .el-transfer-panel {
+    width: 42%;
+  }
+  /deep/ .el-transfer-panel__body {
+    min-height: 650px;
+  }
+  /deep/ .el-transfer-panel__list.is-filterable {
+    min-height: 650px;
   }
 
 </style>
