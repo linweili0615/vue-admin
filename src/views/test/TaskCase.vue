@@ -86,10 +86,10 @@
     width: 42%;
   }
   /deep/ .el-transfer-panel__body {
-    min-height: 650px;
+    height: 650px;
   }
   /deep/ .el-transfer-panel__list.is-filterable {
-    min-height: 650px;
+    height: 650px;
   }
 
 </style>
