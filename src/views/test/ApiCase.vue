@@ -32,7 +32,7 @@
                 class="filter-tree"
                 :data="data2"
                 :props="defaultProps"
-                @check-change="handleCheckChange"
+                @current-change="handleCheckChange"
                 default-expand-all
                 highlight-current
                 :filter-node-method="filterNode"
@@ -80,16 +80,16 @@
               <el-table :data="apilist"
                         highlight-current-row
                         v-loading="listLoading"
-                        height="680"
+                        max-height="680"
                         @selection-change="selsChange"
                         style="width: 100%;">
                 <el-table-column type="selection" min-width="5%">
                 </el-table-column>
                 <el-table-column prop="name" label="接口名称" min-width="17%" sortable show-overflow-tooltip>
-                  <template slot-scope="scope">
+                  <!--<template slot-scope="scope">
                     <el-icon name="name"></el-icon>
-                    <!--<router-link :to="{ name: '基础信息', params: {api_id: scope.row.id}}" style='text-decoration: none;'>{{ scope.row.name }}</router-link>-->
-                  </template>
+                    &lt;!&ndash;<router-link :to="{ name: '基础信息', params: {api_id: scope.row.id}}" style='text-decoration: none;'>{{ scope.row.name }}</router-link>&ndash;&gt;
+                  </template>-->
                 </el-table-column>
                 <el-table-column prop="method" label="请求方式" min-width="11%" sortable show-overflow-tooltip>
                 </el-table-column>
@@ -267,8 +267,22 @@
 
           },
           handleCheckChange(data, checked, indeterminate) {
-            console.log(222)
-            console.log(data, checked, indeterminate);
+            console.log(data);
+            if(!data.children){
+              this.$axios.post('/api/list',{
+                'project_id': this.project,
+                'case_id' : data.id
+              })
+                .then(response => {
+                  if(response.data.status === "success"){
+                    this.apilist = response.data.apiDTOList
+                  }
+                })
+                .catch(error => {
+                  this.$message.error("获取测试集异常")
+                })
+            }
+
           },
           filterNode(value, data) {
             if (!value) return true;
@@ -325,7 +339,7 @@
             this.getApiList()
           },
           selsChange: function (sels) {
-            console.log(sels)
+            console.log(666)
             if (sels.length>0) {
               this.sels = sels;
               this.update = false
