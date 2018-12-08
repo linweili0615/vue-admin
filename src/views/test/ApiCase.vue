@@ -128,7 +128,7 @@
                 </div>
               </el-dialog>
               <!--工具条-->
-              <el-col :span="12" :offset="6" class="toolbar" style="margin-top: 10px">
+              <el-col :span="18" :offset="6" class="toolbar" style="margin-top: 10px">
                 <div class="block">
                   <el-pagination
                     @size-change="handleSizeChange"
@@ -207,25 +207,7 @@
               swaggerUrl: "",
               filterText: '',
               data1:[],
-              data2: [
-
-                {
-                id: 1,
-                label: '一级 1',
-                children: [{
-                  id: 4,
-                  label: '二级 1-1',
-                  children: [{
-                    id: 9,
-                    label: '三级 1-1-1'
-                  }, {
-                    id: 10,
-                    label: '三级 1-1-2'
-                  }]
-                }]
-              }
-
-              ],
+              data2: [],
               defaultProps: {
                 children: 'children',
                 label: 'label'
@@ -244,11 +226,13 @@
               name: 'API接口'
             })
           },
-          getApiList(){
+          getApiList(pageSize, pageNo){
             //获取project分组列表
             this.$axios.post('/api/list',{
               'project_id': this.$route.params.id,
-              'case_id' : this.case
+              'case_id' : this.case,
+              'pageSize' : pageSize,
+              'pageNo' : pageNo
             })
               .then(response => {
                 if(response.data.status === "success"){
@@ -316,38 +300,7 @@
             this.addLoading = true;
             console.log(this.swaggerUrl);
             if (this.swaggerUrl){
-              /*$.ajax({
-                          type: "post",
-                          url: test+"/api/api/lead_swagger",
-                          async: true,
-                          data:JSON.stringify({ project_id: Number(this.$route.params.project_id), url: this.swaggerUrl}),
-                          headers: {
-                              "Content-Type": "application/json",
-                              Authorization: 'Token '+JSON.parse(sessionStorage.getItem('token'))
-                          },
-                          timeout: 5000,
-                          success: function(data) {
-                              if (data.code === '999999') {
-                                  self.$message({
-                                      message: '添加成功',
-                                      center: true,
-                                      type: 'success'
-                                  });
-                                  self.listLoading = true;
-                                  self.addLoading = false;
-                                  self.loadSwaggerApi = false;
-                                  self.getApiList()
-                              }
-                              else {
-                                  self.addLoading = false;
-                                  self.$message.error({
-                                      message: "导入失败，请检查地址是否正确",
-                                      center: true,
-                                  })
-                              }
-                              self.getApiList();
-                          },
-                      })*/
+
             } else {
               this.addLoading = false
             }
@@ -372,11 +325,11 @@
           },
           handleSizeChange(val) {
             this.pagesize = val;
-            this.getProjectList(this.pagesize, 1);
+            this.getApiList(this.pagesize, 1);
           },
           handleCurrentChange(val) {
             this.currentpage = val;
-            this.getProjectList(this.pagesize,this.currentpage)
+            this.getApiList(this.pagesize,this.currentpage)
 
           },
           //批量删除
@@ -423,7 +376,7 @@
         mounted() {
           this.project = this.$route.params.id
           this.getProjectList();
-          this.getApiList()
+          this.getApiList(15,1)
 
         }
     }
@@ -454,11 +407,13 @@
 }
 
 .el-scrollbar {
-  height: 670px;
+  height: 660px;
 }
 .el-tag {
-  font-size: 20px;
+  font-size: 15px;
   border-radius: 0px;
 }
-
+.el-table td, .el-table th{
+  padding: 10px 0;
+}
 </style>
