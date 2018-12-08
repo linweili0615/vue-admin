@@ -3,7 +3,7 @@
 
       <el-row class="row-title">
 
-        <el-col :span="6">
+        <el-col :span="5">
           <el-button class="addGroup" type="primary" round @click="handleAddGroup">新增分组</el-button>
           <el-button class="addGroup" @click="toApi">快速测试</el-button>
           <!--新增-->
@@ -21,7 +21,7 @@
 
           <div class="grid-content bg-purple">
             <el-input
-              placeholder="输入关键字进行过滤"
+              placeholder="输入分组名称进行过滤"
               v-model="filterText">
             </el-input>
             <br/>
@@ -43,17 +43,14 @@
           </div>
         </el-col>
 
-        <el-col :span="16" :offset="2">
+        <el-col :span="18" :offset="1">
           <div class="grid-content bg-purple-light">
-            <el-col :span="24" style="height: 46px">
+            <el-col :span="24" style="height: 33px">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                  <el-input v-model.trim="filters.name" placeholder="名称"></el-input>
-                  <!--<el-input v-model.trim="filters.name" placeholder="名称" @keyup.enter.native="getApiList"></el-input>-->
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary">查询</el-button>
-                  <!--<el-button type="primary" @click="getApiList">查询</el-button>-->
+                  <el-input v-model.trim="filters.name" placeholder="请输入接口名称">
+                    <el-button slot="append" icon="el-icon-search"></el-button>
+                  </el-input>
                 </el-form-item>
                 <el-form-item>
                  <!-- <router-link :to="{ name: '新增接口', params: {project_id: this.$route.params.project_id}}" style='text-decoration: none;color: aliceblue;'>
@@ -70,6 +67,7 @@
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click.native="loadSwaggerApi = true">导入接口</el-button>
+                  <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
                   <el-dialog title="导入swagger接口" :visible.sync="loadSwaggerApi" :close-on-click-modal="false">
                     <el-input v-model.trim="swaggerUrl" placeholder="请输入swagger接口地址" style="width:90%"></el-input>
                     <el-button type="primary" @click="addSubmit" :loading="addLoading" style="padding-top: 10px">导入</el-button>
@@ -80,31 +78,38 @@
               <el-table :data="apilist"
                         highlight-current-row
                         v-loading="listLoading"
-                        max-height="680"
+                        max-height="685"
                         @selection-change="selsChange"
                         style="width: 100%;">
                 <el-table-column type="selection" min-width="5%">
                 </el-table-column>
-                <el-table-column prop="name" label="接口名称" min-width="17%" sortable show-overflow-tooltip>
+                <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
+                <el-table-column prop="name" label="接口名称" min-width="18%"  show-overflow-tooltip>
                   <!--<template slot-scope="scope">
                     <el-icon name="name"></el-icon>
                     &lt;!&ndash;<router-link :to="{ name: '基础信息', params: {api_id: scope.row.id}}" style='text-decoration: none;'>{{ scope.row.name }}</router-link>&ndash;&gt;
                   </template>-->
                 </el-table-column>
-                <el-table-column prop="method" label="请求方式" min-width="11%" sortable show-overflow-tooltip>
+                <el-table-column  label="请求方式" min-width="8%" show-overflow-tooltip>
+                  <template slot-scope="scope">
+                    <el-tag type="success" v-show="scope.row.method === 'post'">{{ scope.row.method }}</el-tag>
+                    <el-tag v-show="scope.row.method === 'get'">{{ scope.row.method }}</el-tag>
+                  </template>
                 </el-table-column>
-                <el-table-column prop="paramstype" label="接口地址" min-width="19%" sortable show-overflow-tooltip>
+                <el-table-column prop="paramstype" label="提交方式" min-width="6%"  show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="update_author" label="最近更新者" min-width="13%" sortable show-overflow-tooltip>
+                <el-table-column prop="url" label="URL地址" min-width="15%"  show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="modify_time" label="更新日期" min-width="15%" sortable show-overflow-tooltip>
+                <el-table-column prop="update_author" label="最近更新人" min-width="7%"  show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column label="操作" min-width="13%">
+                <el-table-column prop="modify_time" label="更新日期" min-width="13%" sortable show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column label="操作" min-width="10%">
                   <template slot-scope="scope">
                     <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
-                  <!--  <router-link :to="{ name: '修改', params: {api_id: scope.row.id}}" style='text-decoration: none;color: aliceblue;'>
-                      <el-button type="info" size="small">修改</el-button>
-                    </router-link>-->
+                    <router-link :to="{ name: '修改API接口', params: { source : scope.row}}" style='text-decoration: none;color: aliceblue;'>
+                      <el-button type="info" size="small">编辑</el-button>
+                    </router-link>
                   </template>
                 </el-table-column>
               </el-table>
@@ -123,14 +128,24 @@
                 </div>
               </el-dialog>
               <!--工具条-->
-              <el-col :span="24" class="toolbar">
-                <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-                <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :page-count="total" style="float:right;">
-                </el-pagination>
+              <el-col :span="12" :offset="6" class="toolbar" style="margin-top: 10px">
+                <div class="block">
+                  <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentpage"
+                    :page-sizes="sizes"
+                    :page-size="pagesize"
+                    :pager-count="7"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total">
+                  </el-pagination>
+                </div>
               </el-col>
             </el-col>
           </div>
         </el-col>
+
       </el-row>
     </section>
 </template>
@@ -169,7 +184,11 @@
               },
               apilist: [],
               total: 0,
+              sizes: [15, 20, 30, 40],
+              pagesize:15,
+              pageCount:1,
               page: 1,
+              currentpage: 1,
               listLoading: false,
               sels: [],//列表选中列
               updateGroupFormVisible: false,
@@ -234,6 +253,10 @@
               .then(response => {
                 if(response.data.status === "success"){
                   this.apilist = response.data.apiDTOList
+                  this.total = response.data.total
+                  this.pageSize = response.data.pageSize
+                  this.pageNo = response.data.pageNo
+                  this.pageCount = response.data.pageCount
                 }
               })
               .catch(error => {
@@ -347,6 +370,15 @@
               this.update = true
             }
           },
+          handleSizeChange(val) {
+            this.pagesize = val;
+            this.getProjectList(this.pagesize, 1);
+          },
+          handleCurrentChange(val) {
+            this.currentpage = val;
+            this.getProjectList(this.pagesize,this.currentpage)
+
+          },
           //批量删除
           batchRemove: function () {
             let ids = this.sels.map(item => item.id);
@@ -423,6 +455,10 @@
 
 .el-scrollbar {
   height: 670px;
+}
+.el-tag {
+  font-size: 20px;
+  border-radius: 0px;
 }
 
 </style>

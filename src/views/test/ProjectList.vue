@@ -13,7 +13,7 @@
                   <el-input v-model="filters.project_name" placeholder="请输入项目名称"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="getProjectList(10,1)">查询</el-button>
+                    <el-button type="primary" @click="getProjectList(15,1)">查询</el-button>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="handleAdd">新增</el-button>
@@ -127,8 +127,8 @@
                 },
                 project: [],
                 total: 0,
-                sizes: [10, 20, 30, 40],
-                pagesize:10,
+                sizes: [15, 20, 30, 40],
+                pagesize:15,
                 pageCount:1,
                 page: 1,
                 currentpage: 1,
@@ -226,7 +226,7 @@
                     });
                     this.filters.id = ''
                     this.filters.project_name = ''
-                    this.getProjectList(10,1);
+                    this.getProjectList(15,1);
                   }else{
                     this.$message({
                       type: 'success',
@@ -325,7 +325,7 @@
                         this.editFormVisible = false;
                         this.filters.id = ''
                         this.filters.project_name = ''
-                        this.getProjectList(10,1);
+                        this.getProjectList(15,1);
                       }else{
                         this.$message.error({
                           message:'更新项目异常',
@@ -361,7 +361,7 @@
                     })
                     this.filters.id = ''
                     this.filters.project_name = ''
-                    this.getProjectList(10,1);
+                    this.getProjectList(15,1);
                   }else {
                     this.addLoading = false;
                     this.$message.error({
@@ -421,7 +421,7 @@
             }
         },
         mounted() {
-            this.getProjectList(10,1);
+            this.getProjectList(15,1);
         }
     }
 
@@ -433,8 +433,8 @@
       margin: 30px;
     }
     &-text {
-      font-size: 30px;
-      line-height: 46px;
+      font-size: 35px;
+      line-height: 50px;
     }
   }
 </style>
