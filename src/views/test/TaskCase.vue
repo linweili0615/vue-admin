@@ -1,6 +1,5 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">定时任务</div>
     <template>
       <div style="text-align:center">
         <el-transfer
@@ -9,8 +8,8 @@
           filterable
           :left-default-checked="[2, 3]"
           :right-default-checked="[1]"
-          :titles="['Source', 'Target']"
-          :button-texts="['到左边', '到右边']"
+          :titles="['任务步骤', '接口列表']"
+          :button-texts="['添加步骤', '移除步骤']"
           :format="{
         noChecked:'${total}',
         hasChecked:'${checked}/${total}'
@@ -18,8 +17,11 @@
           @change="handleChange"
           :data="data">
           <span slot-scope="{ option }">{{ option.key }} - {{ option.label }}</span>
-          <el-button class="transfer-footer" slot="left-footer" size="small">操作</el-button>
-          <el-button class="transfer-footer" slot="right-footer" size="small">操作</el-button>
+          <el-button class="transfer-footer" slot="left-footer" type="primary" size="medium">保存任务内容</el-button>
+          <el-button class="transfer-footer" slot="left-footer" type="primary" size="medium">发送测试</el-button>
+          <el-button class="transfer-footer" slot="left-footer" type="info" plain>返回任务列表</el-button>
+
+          <!--<el-button class="transfer-footer" slot="right-footer" size="small">操作</el-button>-->
         </el-transfer>
       </div>
     </template>
