@@ -31,7 +31,9 @@
             <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
             <el-table-column min-width="23%" label="项目ID">
               <template slot-scope="scope">
-                <a @click="handleclick(scope.row)">{{scope.row.id}}</a>
+                <router-link :to="{ name: '测试分组', params: { id: scope.row.id}}">
+                  <span style="color:#409EFF">{{scope.row.id}}</span>
+                </router-link>
               </template>
             </el-table-column>
             <el-table-column prop="project_name" label="项目名称" min-width="16%" sortable show-overflow-tooltip></el-table-column>
@@ -246,16 +248,6 @@
               })
 
             },
-            //点击行响应
-            handleclick: function(row){
-              this.$router.push({
-                path: '/api',
-                name: '测试分组',
-                params:{
-                  id : row.id
-                }
-              })
-            },
             handleClose(){
               this.addForm.project_name = ''
             },
@@ -385,39 +377,6 @@
             },
             selsChange: function (sels) {
                 this.sels = sels;
-            },
-            //批量删除
-            batchRemove: function () {
-               /* let ids = this.sels.map(item => item.id);
-                let self = this;
-                this.$confirm('确认删除选中记录吗？', '提示', {
-                    type: 'warning'
-                }).then(() => {
-                    this.listLoading = true;
-                    //NProgress.start();
-                    let self = this;
-                    let params = {ids: ids};
-                    let header = {
-                        "Content-Type": "application/json",
-                        Authorization: 'Token ' + JSON.parse(sessionStorage.getItem('token'))
-                    };
-                    delProject(header, params).then(_data => {
-                        let {msg, code, data} = _data;
-                        if (code === '999999') {
-                            self.$message({
-                                message: '删除成功',
-                                center: true,
-                                type: 'success'
-                            })
-                        } else {
-                            self.$message.error({
-                                message: msg,
-                                center: true,
-                            })
-                        }
-                        self.getProjectList()
-                    });
-                })*/
             }
         },
         mounted() {

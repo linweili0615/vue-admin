@@ -223,7 +223,11 @@
           toApi(){
             this.$router.push({
               path: '/api',
-              name: 'API接口'
+              name: 'API接口',
+              params : {
+                project_id: this.apilist[0].id,
+                case_id: this.case
+              }
             })
           },
           getApiList(pageSize, pageNo){
@@ -274,7 +278,8 @@
 
           },
           handleCheckChange(data, checked, indeterminate) {
-            console.log(data);
+            // console.log(data);
+            this.case = data.id
             if(!data.children){
               this.$axios.post('/api/list',{
                 'project_id': this.project,
@@ -308,11 +313,6 @@
           // 添加分组弹窗显示
           handleAddGroup() {
             this.addGroupFormVisible = true;
-          },
-          // 翻页
-          handleCurrentChange(val) {
-            this.page = val;
-            this.getApiList()
           },
           selsChange: function (sels) {
             console.log(666)

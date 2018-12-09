@@ -304,8 +304,8 @@ export default {
         })
     },
     handleOptionsChange(){
-      // console.log(this.form.selectedOptions3)
-      // console.log(this.form.selectedOptions3.length)
+      console.log(this.form.selectedOptions3)
+      console.log(this.form.selectedOptions3.length)
     },
     checkRequest(){
       let request = this.form.methods;
@@ -488,6 +488,7 @@ export default {
     }
   },
   mounted() {
+    this.form.selectedOptions3 = [this.$route.params.project_id,this.$route.params.case_id ]
     this.getApiTree();
     this.toggleHeadSelection(this.form.head);
     this.toggleParameterSelection(this.form.parameter);
