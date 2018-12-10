@@ -27,7 +27,7 @@
             <br/>
             <br/>
 
-            <el-scrollbar warp-class="scrollbar-wrap">
+            <el-scrollbar wrap-class="scrollbar-wrap" class="el-scrollbar-wrap">
               <el-tree
                 class="filter-tree"
                 :data="data2"
@@ -224,8 +224,8 @@
             this.$router.push({
               path: '/api',
               name: 'API接口',
-              params : {
-                project_id: this.apilist[0].id,
+              query : {
+                project_id: this.$route.query.id,
                 case_id: this.case
               }
             })
@@ -340,41 +340,12 @@
               type: 'warning'
             }).then(() => {
               self.listLoading = true;
-              //NProgress.start();
-              /*$.ajax({
-                  type: "post",
-                  url: test+"/api/api/del_api",
-                  async: true,
-                  data:JSON.stringify({ project_id: Number(this.$route.params.project_id), ids: ids}),
-                  headers: {
-                      "Content-Type": "application/json",
-                      Authorization: 'Token '+JSON.parse(sessionStorage.getItem('token'))
-                  },
-                  timeout: 5000,
-                  success: function(data) {
-                      self.listLoading = false;
-                      if (data.code === '999999') {
-                          self.$message({
-                              message: '删除成功',
-                              center: true,
-                              type: 'success'
-                          })
-                      }
-                      else {
-                          self.$message.error({
-                              message: data.msg,
-                              center: true,
-                          })
-                      }
-                      self.getApiList();
-                  },
-              })*/
             }).catch(() => {
             });
           }
         },
         mounted() {
-          this.project = this.$route.params.id
+          this.project = this.$route.query.id
           this.getProjectList();
           this.getApiList(15,1)
 
@@ -406,8 +377,11 @@
     border-radius: 25px;
 }
 
-.el-scrollbar {
-  height: 660px;
+.el-scrollbar-wrap {
+  height: 70vh;
+}
+.scrollbar-wrap {
+  overflow-x: hidden !important;
 }
 .el-tag {
   font-size: 15px;

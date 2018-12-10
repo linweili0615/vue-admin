@@ -28,34 +28,35 @@ export const constantRouterMap = [
   {
     path: '/api',
     component: Layout,
-    redirect: '/list',
+    redirect: '/api/list',
     name: 'API管理',
     meta: { title: 'API管理', icon: 'example' },
     children: [
       {
-        path: '/list',
+        path: '/api/list',
         name: '项目列表',
         component: () => import('@/views/test/ProjectList'),
         meta: { title: '项目列表', icon: 'form' }
-      },{
-        path: '/add',
+      },
+      {
+        path: '/api/add',
         name: 'API接口',
         component: () => import('@/views/test/Api'),
         meta: { title: 'API接口', icon: 'form' }
       },{
-        path: '/edit',
+        path: '/api/edit',
         name: '修改API接口',
         hidden: true,
         component: () => import('@/views/test/Api'),
         meta: { title: '修改API接口', icon: 'form' }
       },{
-        path: '/project',
+        path: '/api/project',
         hidden: true,
         component: () => import('@/views/test/ApiCase'),
         name: '测试分组',
         meta: { title: '测试分组', icon: 'example' }
       },{
-        path: '/taskcase',
+        path: '/api/taskcase',
         component: () => import('@/views/test/TaskCase'),
         name: '定时任务',
         meta: { title: '定时任务', icon: 'example' }

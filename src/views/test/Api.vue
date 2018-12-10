@@ -19,7 +19,7 @@
                     <el-cascader
                       placeholder="搜索：  用户项目"
                       :options="options"
-                      v-model="form.selectedOptions3"
+                      :value="form.selectedOptions3"
                       @change="handleOptionsChange"
                       filterable
                       change-on-select></el-cascader>
@@ -292,6 +292,7 @@ export default {
         .then(response => {
           if (response.data.status === 'success') {
             this.options = response.data.data
+            console.log(this.options)
           }else{
             this.options = [];
             this.$message.error("获取测试集失败")
@@ -487,8 +488,15 @@ export default {
       this.changeParameterType()
     }
   },
+  created () {
+    if(this.$route.query.project_id) {
+      this.form.selectedOptions3 = [this.$route.query.project_id]
+      if(this.$route.query.case_id){
+        this.form.selectedOptions3 = [this.$route.query.project_id,this.$route.query.case_id ]
+      }
+    }
+  },
   mounted() {
-    this.form.selectedOptions3 = [this.$route.params.project_id,this.$route.params.case_id ]
     this.getApiTree();
     this.toggleHeadSelection(this.form.head);
     this.toggleParameterSelection(this.form.parameter);
