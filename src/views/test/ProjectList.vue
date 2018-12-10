@@ -31,7 +31,7 @@
             <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
             <el-table-column min-width="23%" label="项目ID">
               <template slot-scope="scope">
-                <router-link :to="{ name: '测试分组', query: { id: scope.row.id}}">
+                <router-link :to="{ name: '测试分组', query: { project_id: scope.row.id}}">
                   <span style="color:#409EFF">{{scope.row.id}}</span>
                 </router-link>
               </template>

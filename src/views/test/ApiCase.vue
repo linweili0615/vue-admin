@@ -34,6 +34,7 @@
                 :props="defaultProps"
                 @current-change="handleCheckChange"
                 default-expand-all
+                :default-checked-keys="checkedkeys"
                 highlight-current
                 :filter-node-method="filterNode"
                 ref="tree2">
@@ -154,8 +155,8 @@
     export default {
         data() {
             return {
-              project: "",
-              case: "",
+              project_id: "",
+              case_id: "",
               groupData: [],
               addGroupFormVisible: false,
               addGroupLoading: false,
@@ -183,6 +184,7 @@
                 name: ''
               },
               apilist: [],
+              checkedkeys : [],
               total: 0,
               sizes: [15, 20, 30, 40],
               pagesize:15,
@@ -225,16 +227,16 @@
               path: '/api',
               name: 'API接口',
               query : {
-                project_id: this.$route.query.id,
-                case_id: this.case
+                project_id: this.$route.query.project_id,
+                case_id: this.case_id
               }
             })
           },
           getApiList(pageSize, pageNo){
             //获取project分组列表
             this.$axios.post('/api/list',{
-              'project_id': this.$route.query.id,
-              'case_id' : this.case,
+              'project_id': this.$route.query.project_id,
+              'case_id' : this.case_id,
               'pageSize' : pageSize,
               'pageNo' : pageNo
             })
@@ -278,12 +280,13 @@
 
           },
           handleCheckChange(data, checked, indeterminate) {
-            // console.log(data);
-            this.case = data.id
+            console.log(data, checked, indeterminate);
+            debugger
+            this.case_id = data.value
             if(!data.children){
               this.$axios.post('/api/list',{
-                'project_id': this.project,
-                'case_id' : data.id
+                'project_id': this.project_id,
+                'case_id' : data.value
               })
                 .then(response => {
                   if(response.data.status === "success"){
@@ -344,8 +347,17 @@
             });
           }
         },
+      created(){
+          if(this.$route.query.project_id){
+            this.checkedkeys = [this.$route.query.project_id]
+            if(this.$route.query.case_id){
+              this.checkedkeys = [this.$route.query.project_id, this.$route.query.case_id]
+            }
+          }
+
+      },
         mounted() {
-          this.project = this.$route.query.id
+          this.project_id = this.$route.query.project_id
           this.getProjectList();
           this.getApiList(15,1)
 
