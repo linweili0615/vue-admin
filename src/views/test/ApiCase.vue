@@ -233,7 +233,7 @@
           getApiList(pageSize, pageNo){
             //获取project分组列表
             this.$axios.post('/api/list',{
-              'project_id': this.$route.params.id,
+              'project_id': this.$route.query.id,
               'case_id' : this.case,
               'pageSize' : pageSize,
               'pageNo' : pageNo
