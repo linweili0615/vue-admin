@@ -79,7 +79,7 @@
               <el-table :data="apilist"
                         highlight-current-row
                         v-loading="listLoading"
-                        max-height="685"
+                        max-height="690"
                         @selection-change="selsChange"
                         style="width: 100%;">
                 <el-table-column type="selection" min-width="5%">
@@ -155,9 +155,10 @@
     export default {
         data() {
             return {
-              project_id: "",
-              case_id: "",
+              project_id:'',
+              case_id: '',
               groupData: [],
+              checkedproject:'',
               addGroupFormVisible: false,
               addGroupLoading: false,
               addFormVisible: false,//新增界面是否显示
@@ -263,7 +264,7 @@
               })
             }
 
-            this.$axios.post('/case/list', this.project)
+            this.$axios.post('/case/list', this.project_id)
               .then(response => {
                   if (response.data.status === 'success') {
                     this.data2 = response.data.data
@@ -280,13 +281,11 @@
 
           },
           handleCheckChange(data, checked, indeterminate) {
-            console.log(data, checked, indeterminate);
-            debugger
-            this.case_id = data.value
+            this.case_id = data.id
             if(!data.children){
               this.$axios.post('/api/list',{
                 'project_id': this.project_id,
-                'case_id' : data.value
+                'case_id' : this.case_id
               })
                 .then(response => {
                   if(response.data.status === "success"){
@@ -348,12 +347,12 @@
           }
         },
       created(){
-          if(this.$route.query.project_id){
-            this.checkedkeys = [this.$route.query.project_id]
+            debugger
             if(this.$route.query.case_id){
-              this.checkedkeys = [this.$route.query.project_id, this.$route.query.case_id]
+              this.case_id = this.$route.query.case_id
+              this.checkedkeys = [this.$route.query.case_id]
             }
-          }
+
 
       },
         mounted() {
@@ -402,4 +401,8 @@
 .el-table td, .el-table th{
   padding: 10px 0;
 }
+.el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+  background-color: #66b1ffba;
+}
+
 </style>
