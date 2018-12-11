@@ -40,8 +40,6 @@
                     <el-collapse v-model="activeNames" @change="handleChange">
                       <el-collapse-item title="请求头部" name="1">
                         <el-table :data="form.head" highlight-current-row ref="multipleHeadTable">
-                          <el-table-column type="selection" min-width="5%" label="头部">
-                          </el-table-column>
                           <el-table-column prop="name" label="Name" min-width="20%">
                             <template slot-scope="scope">
                               <el-input  v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入标签"></el-input>
@@ -75,8 +73,6 @@
                           </el-row>
                         </div>
                         <el-table ref="multipleParameterTable" :data="form.parameter" highlight-current-row :class="ParameterType? 'parameter-a': 'parameter-b'" @selection-change="selsChangeParameter">
-                          <el-table-column type="selection" min-width="5%" label="头部">
-                          </el-table-column>
                           <el-table-column prop="name" label="Name" min-width="20%">
                             <template slot-scope="scope">
                               <el-input v-model.trim="scope.row.name" :value="scope.row.name" placeholder="请输入参数名"></el-input>
@@ -120,14 +116,14 @@
               </div>
               <el-card class="box-card">
                 <div v-show="resultShow">
-                  <div style="word-break: break-all;overflow:auto;overflow-x:hidden;min-height: 640px">
+                  <div style="word-break: break-all;overflow:auto;overflow-x:hidden;min-height: 655px">
                     请求头部：<pre>{{ reqheaders }}</pre>
                     请求地址：<pre>{{ reqaddr }}</pre>
                     请求参数：<pre>{{ reqbody }}</pre>
                   </div>
                 </div>
                 <div  v-show="!resultShow">
-                  <div style="word-break: break-all;overflow:auto;overflow-x:hidden;min-height: 640px">
+                  <div style="word-break: break-all;overflow:auto;overflow-x:hidden;min-height: 655px">
                     响应状态码：<pre>{{form.statusCode}}</pre>
                     响应头部：<pre>{{form.resultHead}}</pre>
                     响应cookies：<pre>{{form.resultCookies}}</pre>
@@ -207,14 +203,12 @@ export default {
         methods: 'GET',
         addr: '',
         head: [
-          {name: "", value: ""},
           {name: "", value: ""}
 
           ],
         parameterRaw: "",
         parameter: [
-          {name: "", value: ""},
-          {name: "", value: ""}
+          { name: "", value: ""}
           ],
         paramstype: "",
         statusCode: "",
@@ -291,12 +285,43 @@ export default {
       this.$axios.post('/api/detail', this.api_id)
         .then(response => {
           if (response.data.status === 'success') {
+            this.form.name = response.data.data.name
+            this.form.methods = response.data.data.method
+            this.form.addr = response.data.data.url
+            if(response.data.data.headers){
+              var head_obj = JSON.parse(response.data.data.headers)
+              let head = []
+              for(var i=0;i<Object.keys(head_obj).length;i++) {
+                for(var item in head_obj){
+                    let hd = new Object();
+                    hd.name = item
+                    hd.value = head_obj[item]
+                    head.push(hd)
+                }
+              }
+              this.form.head = head
+            }
+            if(response.data.data.body){
+              if(response.data.data.paramstype === 'raw'){
+                this.form.parameterRaw = response.data.data.body
+              }else{
+                var bd_obj = JSON.parse(response.data.data.body)
+                let bd = []
+                for(var i=0;i<Object.keys(bd_obj).length;i++) {
+                  for(var item in bd_obj){
+                    let hd = new Object();
+                    hd.name = item
+                    hd.value = bd_obj[item]
+                    bd.push(hd)
+                  }
+                }
+                this.form.parameterRaw = bd
+              }
 
+            }
+            this.radio = response.data.data.paramstype
 
-          }else{
-            this.$message.error("获取API详情为空")
           }
-
         })
         .catch(error => {
           this.$message.error("获取API详情失败")
@@ -307,7 +332,7 @@ export default {
         .then(response => {
           if (response.data.status === 'success') {
             this.options = response.data.data
-            console.log(this.options)
+            // console.log(this.options)
           }else{
             this.options = [];
             this.$message.error("获取测试集失败")
@@ -320,8 +345,8 @@ export default {
         })
     },
     handleOptionsChange(){
-      console.log(this.form.selectedOptions3)
-      console.log(this.form.selectedOptions3.length)
+      // console.log(this.form.selectedOptions3)
+      // console.log(this.form.selectedOptions3.length)
     },
     checkRequest(){
       let request = this.form.methods;
@@ -423,7 +448,7 @@ export default {
           }).catch(error => {
 
             this.loadingSend = false
-            console.log(error)
+            // console.log(error)
             this.form.statusCode = error.code
             this.form.resultHead = error.headers
             this.form.resultData = error
@@ -451,31 +476,35 @@ export default {
       let rows = [this.form.head[this.form.head.length-1]];
       this.toggleHeadSelection(rows)
     },
-    delHead(index) {
-      if (this.form.head.length !== 1) {
-        this.form.head.splice(index, 1)
-      }
-    },
     addParameter() {
       let headers = {name: "", value: "", required:"True", restrict: "", description: ""};
       this.form.parameter.push(headers);
       let rows = [this.form.parameter[this.form.parameter.length-1]];
       this.toggleParameterSelection(rows)
     },
+    delHead(index) {
+      if (this.form.head.length !== 1) {
+        this.form.head.splice(index, 1)
+      }else{
+        this.form.head = [{ name: "", value: ""}]
+      }
+    },
     delParameter(index) {
       if (this.form.parameter.length !== 1) {
         this.form.parameter.splice(index, 1)
+      }else {
+        this.form.parameter = [{ name: "", value: ""}]
       }
     },
-    addResponse() {
-      let headers = {name: "", value: "", required:"True", restrict: "", description: ""};
-      this.form.response.push(headers)
-    },
-    delResponse(index) {
-      if (this.form.response.length !== 1) {
-        this.form.response.splice(index, 1)
-      }
-    },
+    // addResponse() {
+    //   let headers = {name: "", value: "", required:"True", restrict: "", description: ""};
+    //   this.form.response.push(headers)
+    // },
+    // delResponse(index) {
+    //   if (this.form.response.length !== 1) {
+    //     this.form.response.splice(index, 1)
+    //   }
+    // },
     showRequest() {
       this.resultShow = true
       this.reqaddr = this.form.addr
@@ -495,7 +524,7 @@ export default {
     handleChange(val) {
     },
     onSubmit() {
-      console.log('submit!');
+      // console.log('submit!');
     },
   },
   watch: {
@@ -572,16 +601,10 @@ export default {
       border-radius: 4px 0px 0px 4px;
     }
   }
-  .el-input__inner {
-    height: 30px;
-    line-height: 40px;
-  }
-  .el-table td, .el-table th{
-    padding: 4px 0;
-  }
   .el-collapse-item__header{
-    height: 30px;
-    line-height: 30px;
+    margin-top: 10px;
+    height: 15px;
+    line-height: 15px;
     font-size: 15px;
   }
   .el-cascader {
