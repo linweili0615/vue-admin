@@ -236,6 +236,7 @@ export default {
       },
       project_id: "",
       case_id: "",
+      api_id: '',
       headers: "",
       parameters: "",
       resultShow: false,
@@ -286,7 +287,21 @@ export default {
       }
 
     },*/
+    getApi(){
+      this.$axios.post('/api/detail', this.api_id)
+        .then(response => {
+          if (response.data.status === 'success') {
 
+
+          }else{
+            this.$message.error("获取API详情为空")
+          }
+
+        })
+        .catch(error => {
+          this.$message.error("获取API详情失败")
+        })
+    },
     getApiTree(){
       this.$axios.post('/case/list')
         .then(response => {
@@ -495,6 +510,10 @@ export default {
         this.form.selectedOptions3 = [this.$route.query.project_id,this.$route.query.case_id ]
       }
     }
+    if(this.$route.query.id){
+      this.api_id = this.$route.query.id
+      this.getApi()
+    }
   },
   mounted() {
     this.getApiTree();
@@ -546,7 +565,7 @@ export default {
   top: 0px;
 }
 </style>
-<style lang="scss">
+<style lang="scss" >
   .selectInput{
     input{
       border-right: 0px;

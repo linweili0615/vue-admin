@@ -58,8 +58,8 @@ export const constantRouterMap = [
       },{
         path: '/api/taskcase',
         component: () => import('@/views/test/TaskCase'),
-        name: '定时任务',
-        meta: { title: '定时任务', icon: 'example' }
+        name: '任务列表',
+        meta: { title: '任务列表', icon: 'example' }
       }
     ]
   },

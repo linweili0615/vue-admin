@@ -5,17 +5,33 @@
 
         <el-col :span="5">
           <el-button class="addGroup" type="primary" round @click="handleAddGroup">新增分组</el-button>
+          <el-button type="primary" round :disabled="update" @click="handleEditGroup">修改分组</el-button>
           <el-button class="addGroup" @click="toApi">快速测试</el-button>
+
           <!--新增-->
           <el-dialog title="新增分组" :visible.sync="addGroupFormVisible" :close-on-click-modal="false" style="width: 60%; left: 20%">
-            <el-form :model="addGroupForm" label-width="80px"  :rules="addGroupFormRules" ref="addGroupForm">
-              <el-form-item label="分组名称" prop='firstgroup'>
-                <el-input v-model.trim="addGroupForm.firstgroup" auto-complete="off" style="width: 90%"></el-input>
+            <el-form :model="addGroupForm" label-width="90px"  :rules="addGroupFormRules" ref="addGroupForm">
+              <el-form-item label="分组名称: " prop='groupname'>
+                <el-input v-model.trim="addGroupForm.groupname" auto-complete="off" style="width: 90%"></el-input>
               </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
               <el-button @click.native="addGroupFormVisible = false">取消</el-button>
               <el-button type="primary" @click.native="addGroupSubmit" :loading="addGroupLoading">提交</el-button>
+            </div>
+          </el-dialog>
+
+          <!--修改-->
+          <el-dialog title="修改分组" :visible.sync="editGroupFormVisible" :close-on-click-modal="false" style="width: 60%; left: 20%">
+            <el-form :model="addGroupForm" label-width="90px"  :rules="addGroupFormRules" ref="addGroupForm">
+              <el-form-item label="分组名称: " prop='groupname'>
+                <el-input v-model.trim="addGroupForm.groupname" auto-complete="off" style="width: 90%"></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click.native="editGroupFormVisible = false">取消</el-button>
+              <el-button type="danger" @click.native="editGroupSubmit(1)" :loading="addGroupLoading">删除</el-button>
+              <el-button type="primary" @click.native="editGroupSubmit(0)" :loading="addGroupLoading">提交</el-button>
             </div>
           </el-dialog>
 
@@ -48,20 +64,11 @@
           <div class="grid-content bg-purple-light">
             <el-col :span="24" style="height: 33px">
               <el-form :inline="true" :model="filters" @submit.native.prevent>
+
                 <el-form-item>
-                  <el-input v-model.trim="filters.name" placeholder="请输入接口名称">
-                    <el-button slot="append" icon="el-icon-search"></el-button>
-                  </el-input>
-                </el-form-item>
-                <el-form-item>
-                 <!-- <router-link :to="{ name: '新增接口', params: {project_id: this.$route.params.project_id}}" style='text-decoration: none;color: aliceblue;'>
+                 <router-link :to="{ name: 'API接口', query: {project_id: project_id, case_id: case_id}}" style='text-decoration: none;color: aliceblue;'>
                     <el-button type="primary">新增</el-button>
-                  </router-link>-->
-                  <el-button type="primary">新增</el-button>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" :disabled="update">修改分组</el-button>
-                  <!--<el-button type="primary" :disabled="update" @click="changeGroup">修改分组</el-button>-->
+                  </router-link>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click.native="DownloadApi">下载接口文档</el-button>
@@ -74,9 +81,12 @@
                     <el-button type="primary" @click="addSubmit" :loading="addLoading" style="padding-top: 10px">导入</el-button>
                   </el-dialog>
                 </el-form-item>
+                <el-form-item>
+                  <el-input v-model.trim="filters.name" placeholder="输入接口名称进行过滤"></el-input>
+                </el-form-item>
               </el-form>
               <!--列表-->
-              <el-table :data="apilist"
+              <el-table :data="apilist.filter(data => !filters.name || data.name.toLowerCase().includes(filters.name.toLowerCase()))"
                         highlight-current-row
                         v-loading="listLoading"
                         max-height="690"
@@ -85,11 +95,12 @@
                 <el-table-column type="selection" min-width="5%">
                 </el-table-column>
                 <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
-                <el-table-column prop="name" label="接口名称" min-width="18%"  show-overflow-tooltip>
-                  <!--<template slot-scope="scope">
-                    <el-icon name="name"></el-icon>
-                    &lt;!&ndash;<router-link :to="{ name: '基础信息', params: {api_id: scope.row.id}}" style='text-decoration: none;'>{{ scope.row.name }}</router-link>&ndash;&gt;
-                  </template>-->
+                <el-table-column label="接口名称" min-width="15%"  show-overflow-tooltip>
+                  <template slot-scope="scope">
+                    <router-link :to="{ name: '修改API接口', query: { id: scope.row.id, project_id: project_id, case_id: case_id}}">
+                      <span style="color:#409EFF">{{scope.row.name}}</span>
+                    </router-link>
+                  </template>
                 </el-table-column>
                 <el-table-column  label="请求方式" min-width="8%" show-overflow-tooltip>
                   <template slot-scope="scope">
@@ -99,7 +110,7 @@
                 </el-table-column>
                 <el-table-column prop="paramstype" label="提交方式" min-width="6%"  show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="url" label="URL地址" min-width="15%"  show-overflow-tooltip>
+                <el-table-column prop="url" label="URL地址" min-width="18%"  show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column prop="update_author" label="最近更新人" min-width="7%"  show-overflow-tooltip>
                 </el-table-column>
@@ -107,8 +118,8 @@
                 </el-table-column>
                 <el-table-column label="操作" min-width="10%">
                   <template slot-scope="scope">
-                    <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
-                    <router-link :to="{ name: '修改API接口', params: { source : scope.row}}" style='text-decoration: none;color: aliceblue;'>
+                    <el-button type="danger" size="small" @click="handleDel(scope.row.id)">删除</el-button>
+                    <router-link :to="{ name: '修改API接口', query: { id: scope.row.id, project_id: project_id, case_id: case_id }}">
                       <el-button type="info" size="small">编辑</el-button>
                     </router-link>
                   </template>
@@ -157,20 +168,22 @@
             return {
               project_id:'',
               case_id: '',
+              case_name: '',
               groupData: [],
               checkedproject:'',
               addGroupFormVisible: false,
+              editGroupFormVisible: false,
               addGroupLoading: false,
               addFormVisible: false,//新增界面是否显示
               addGroupFormRules: {
-                firstgroup: [
-                  { required: true, message: '请输入子分组名称', trigger: 'blur' },
-                  // { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+                groupname: [
+                  { required: true, message: '请输入分组名称', trigger: 'blur' },
+                  { min: 2, max: 20, message: '请输入长度在 1 到 15 个字符的分组名称', trigger: 'blur' }
                 ]
               },
               //新增界面数据
               addGroupForm: {
-                firstgroup: '',
+                groupname: '',
               },
               editFirstGroupFormVisible: false,
               editFirstGroupLoading: false,
@@ -178,7 +191,7 @@
               editFirstGroupFormRules: {
                 secondFirstGroup: [
                   { required: true, message: '请输入分组名称', trigger: 'blur' },
-                  // { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+                  { min: 2, max: 20, message: '请输入长度在 2 到 20 个字符的分组名称', trigger: 'blur' }
                 ]
               },
               filters: {
@@ -187,8 +200,8 @@
               apilist: [],
               checkedkeys : [],
               total: 0,
-              sizes: [15, 20, 30, 40],
-              pagesize:15,
+              sizes: [30, 60],
+              pagesize:30,
               pageCount:1,
               page: 1,
               currentpage: 1,
@@ -258,12 +271,6 @@
           },
           getProjectList(){
             //获取project分组列表
-            if(this.project === ''){
-              this.$router.push({
-                path: '/404'
-              })
-            }
-
             this.$axios.post('/case/list', this.project_id)
               .then(response => {
                   if (response.data.status === 'success') {
@@ -281,7 +288,11 @@
 
           },
           handleCheckChange(data, checked, indeterminate) {
+            if(data.id){
+              this.update = false
+            }
             this.case_id = data.id
+            this.addGroupForm.groupname = data.label
             if(!data.children){
               this.$axios.post('/api/list',{
                 'project_id': this.project_id,
@@ -305,7 +316,6 @@
           addSubmit(){
             let self = this;
             this.addLoading = true;
-            console.log(this.swaggerUrl);
             if (this.swaggerUrl){
 
             } else {
@@ -314,15 +324,63 @@
           },
           // 添加分组弹窗显示
           handleAddGroup() {
+            this.addGroupForm.groupname = ''
             this.addGroupFormVisible = true;
           },
+          handleEditGroup(){
+            this.editGroupFormVisible = true;
+          },
+          addGroupSubmit(){
+            this.$refs.addGroupForm.validate(valid => {
+                if(valid){
+                  this.$axios.post('/case/add',{
+                    'project_id': this.project_id,
+                    'id': this.case_id,
+                    'name': this.addGroupForm.groupname
+                  })
+                    .then(response => {
+                      if(response.data.status === 'success'){
+                        this.addGroupFormVisible = false;
+                        this.$message.success('分组已添加')
+                        this.getProjectList();
+                      }else {
+                        this.$message.error("添加分组失败")
+                      }
+
+                    }).catch(error => {
+                    this.$message.error("添加分组异常")
+                  })
+                }
+            })
+
+          },
+          editGroupSubmit(author){
+            this.$refs.addGroupForm.validate(valid => {
+              if(valid){
+                this.$axios.post('/case/edit',{
+                  'project_id': this.project_id,
+                  'id': this.case_id,
+                  'author': author,
+                  'name': this.addGroupForm.groupname
+                })
+                  .then(response => {
+                    if(response.data.status === 'success'){
+                      this.editGroupFormVisible = false;
+                      this.$message.success(response.data.msg)
+                      this.getProjectList();
+                    }else {
+                      this.$message.error("操作分组失败")
+                    }
+
+                  }).catch(error => {
+                  this.$message.error("操作分组异常")
+                })
+              }
+            })
+          },
           selsChange: function (sels) {
-            console.log(666)
             if (sels.length>0) {
               this.sels = sels;
-              this.update = false
-            } else {
-              this.update = true
             }
           },
           handleSizeChange(val) {
@@ -332,6 +390,40 @@
           handleCurrentChange(val) {
             this.currentpage = val;
             this.getApiList(this.pagesize,this.currentpage)
+
+          },
+          handleDel: function (id) {
+            this.$confirm('确认删除该记录吗？','提示',{
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.$axios.post('/api/del',  id
+              ).then(response => {
+                if(response.data.status === 'success'){
+                  this.$message({
+                    type: 'success',
+                    message: '删除成功!'
+                  });
+                  this.getApiList(30,1)
+
+                }else{
+                  this.$message({
+                    type: 'error',
+                    message: '删除失败!'
+                  });
+                }
+
+              }).catch(error => {
+                this.$message.error({
+                  message:'删除异常',
+                  center:false
+                })
+              })
+
+            }).catch(error => {
+              console.log(error);
+            })
 
           },
           //批量删除
@@ -347,25 +439,29 @@
           }
         },
       created(){
-            debugger
-            if(this.$route.query.case_id){
-              this.case_id = this.$route.query.case_id
-              this.checkedkeys = [this.$route.query.case_id]
-            }
-
+        if(this.$route.query.project_id === undefined || this.$route.query.project_id ==='' || !this.$route.query.project_id){
+          this.$router.push({
+            path: '/404'
+          })
+        }
+        this.project_id = this.$route.query.project_id
+        if(this.$route.query.case_id){
+          this.case_id = this.$route.query.case_id
+          this.checkedkeys = [this.$route.query.case_id]
+        }
 
       },
         mounted() {
-          this.project_id = this.$route.query.project_id
+
           this.getProjectList();
-          this.getApiList(15,1)
+          this.getApiList(30,1)
 
         }
     }
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .api-title {
     padding: 15px;
     margin: 0px;
