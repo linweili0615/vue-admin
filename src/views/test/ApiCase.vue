@@ -50,10 +50,10 @@
                 :props="defaultProps"
                 @current-change="handleCheckChange"
                 default-expand-all
-                :default-checked-keys="checkedkeys"
+                node-key="id"
                 highlight-current
                 :filter-node-method="filterNode"
-                ref="tree2">
+                ref="tree">
               </el-tree>
             </el-scrollbar>
 
@@ -198,7 +198,7 @@
                 name: ''
               },
               apilist: [],
-              checkedkeys : [],
+              checkedkeys : ['b87908ad-b2e3-4751-be18-ce9f2d4dc09f'],
               total: 0,
               sizes: [30, 60],
               pagesize:30,
@@ -232,7 +232,7 @@
         },
         watch: {
           filterText(val) {
-            this.$refs.tree2.filter(val);
+            this.$refs.tree.filter(val);
           }
         },
         methods: {
@@ -288,25 +288,27 @@
 
           },
           handleCheckChange(data, checked, indeterminate) {
-            if(data.id){
+            console.log(this.$refs.tree.getCurrentKey())
+            if(!data.children){
               this.update = false
             }
             this.case_id = data.id
             this.addGroupForm.groupname = data.label
-            if(!data.children){
-              this.$axios.post('/api/list',{
-                'project_id': this.project_id,
-                'case_id' : this.case_id
-              })
-                .then(response => {
-                  if(response.data.status === "success"){
-                    this.apilist = response.data.apiDTOList
-                  }
-                })
-                .catch(error => {
-                  this.$message.error("获取测试集异常")
-                })
+            if(data.children){
+              this.case_id = ''
             }
+            this.$axios.post('/api/list',{
+              'project_id': this.project_id,
+              'case_id' : this.case_id
+            })
+              .then(response => {
+                if(response.data.status === "success"){
+                  this.apilist = response.data.apiDTOList
+                }
+              })
+              .catch(error => {
+                this.$message.error("获取测试集异常")
+              })
 
           },
           filterNode(value, data) {
@@ -449,19 +451,21 @@
           this.case_id = this.$route.query.case_id
           this.checkedkeys = [this.$route.query.case_id]
         }
-
       },
         mounted() {
-
           this.getProjectList();
           this.getApiList(30,1)
-
+          this.$nextTick((e) => {
+            setTimeout(() => {
+              this.$refs.tree.setCurrentKey(this.case_id)
+            },30)
+          })
         }
     }
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .api-title {
     padding: 15px;
     margin: 0px;
@@ -498,7 +502,7 @@
   padding: 10px 0;
 }
 .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
-  background-color: #66b1ffba;
+  background-color: #66b1ff;
 }
 
 </style>
