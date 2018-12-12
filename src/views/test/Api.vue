@@ -205,7 +205,6 @@ export default {
         addr: '',
         head: [
           {name: "", value: ""}
-
           ],
         parameterRaw: "",
         parameter: [
@@ -262,7 +261,8 @@ export default {
             this.form.name = response.data.data.name
             this.form.methods = response.data.data.method
             this.form.addr = response.data.data.url
-            if(response.data.data.headers){
+
+            if(response.data.data.headers !== '{}'){
               var head_obj = JSON.parse(response.data.data.headers)
               let head = []
               for(var i=0;i<Object.keys(head_obj).length;i++) {
@@ -274,8 +274,12 @@ export default {
                 }
               }
               this.form.head = head
+            }else{
+              this.form.head = [{name: "", value: ""}]
             }
-            if(response.data.data.body){
+
+
+            if(response.data.data.body !== '{}'){
               if(response.data.data.paramstype === 'raw'){
                 this.form.parameterRaw = response.data.data.body
               }else{
@@ -292,8 +296,16 @@ export default {
                 this.form.parameterRaw = bd
               }
 
+            }else{
+              this.form.parameter = [{name: "", value: ""}]
             }
-            this.radio = response.data.data.paramstype
+
+            if(response.data.data.paramstype === 'from'){
+              this.radio = 'form-data'
+            }else {
+              this.radio = response.data.data.paramstype
+            }
+
 
           }
         })
