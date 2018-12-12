@@ -10,7 +10,7 @@
 
               <div class="return-list">
                 <el-button  plain size="medium" @click="fastTest" :loading="loadingSend">模拟请求</el-button>
-                <el-button  type="primary" size="medium" @click="SaveTest">保存接口</el-button>
+                <el-button  type="primary" size="medium" :loading="loadingSave" @click="SaveTest">保存接口</el-button>
               </div>
 
               <el-form :model="form" ref="form" :rules="formRules" label-width="100px">
@@ -158,7 +158,6 @@ export default {
         callback()
       }
     }
-
     const validProject = (rule, value, callback) => {
       if(this.reqstatus){
         if(value.length === 0){
@@ -192,6 +191,7 @@ export default {
       ParameterType: true,
       radio: "form-data",
       loadingSend: false,
+      loadingSave: false,
       radioType: "",
       result: true,
       activeNames: ['1', '2', '3', '4'],
@@ -200,6 +200,7 @@ export default {
       form: {
         selectedOptions3: [],
         url:"",
+        name: '',
         methods: 'GET',
         addr: '',
         head: [
@@ -221,7 +222,8 @@ export default {
           { required: true, validator: validProject,trigger:'blur'}
         ],
         name: [
-          { required: true, validator: validProjectName,trigger:'blur'}
+          { required: true, validator: validProjectName,trigger:'blur'},
+          { min: 2, max: 30, message: '请输入长度在2到30个字符的接口名称', trigger: 'blur'}
         ],
         addr: [
           { required: true, message: '请输入URL地址', trigger: 'blur' },
@@ -253,34 +255,6 @@ export default {
           return str;
         }
     },
-
-/*    changeRaw(){
-      for (let i = 0; i < this.form.parameter.length; i++) {
-        var a = this.form.parameter[i]["name"];
-        if (a) {
-          _parameter[a] = this.form.parameter[i]["value"];
-        }
-      }
-      if(_parameter){
-        _parameter = JSON.stringify(_parameter)
-      }
-    },
-    changeFormdata(){
-      if (!self.isJsonString(self.form.parameterRaw)) {
-
-        self.$message({
-          message: '格式转换错误',
-          center: true,
-          type: 'error'
-        })
-
-      }else{
-        for (let i = 0; i < self.form.parameterRaw.length; i++) {
-          this.form.parameter.push()
-        }
-      }
-
-    },*/
     getApi(){
       this.$axios.post('/api/detail', this.api_id)
         .then(response => {
@@ -344,9 +318,17 @@ export default {
           this.$message.error("获取测试集失败")
         })
     },
-    handleOptionsChange(){
-      // console.log(this.form.selectedOptions3)
-      // console.log(this.form.selectedOptions3.length)
+    handleOptionsChange(val){
+      this.project_id = val[0]
+      if(val.length === 2){
+        this.case_id = val[1]
+      }
+
+      console.log(this.project_id)
+      console.log(this.case_id)
+      // console.log(val.length)
+      // console.log(val[0])
+
     },
     checkRequest(){
       let request = this.form.methods;
@@ -411,7 +393,13 @@ export default {
     commonTest(url){
       this.$refs.form.validate((valid) => {
         if (valid) {
-          this.loadingSend = true;
+
+          if(this.api_id){
+            this.loadingSave = true
+          }else{
+            this.loadingSend = true;
+          }
+
           let _headers = this.getheaders();
           let _parameter = this.getparams();
           this.form.statusCode = '';
@@ -419,14 +407,13 @@ export default {
           this.form.resultHead = '';
           this.form.resultCookies = '';
 
+          this.project_id = this.form.selectedOptions3[0]
           if(this.form.selectedOptions3.length === 2){
-            this.project_id = this.form.selectedOptions3[0]
             this.case_id = this.form.selectedOptions3[1]
-          }else{
-            this.project_id = this.form.selectedOptions3[0]
           }
 
           this.$axios.post(url, {
+            'id': this.api_id,
             'project_id': this.project_id,
             'case_id': this.case_id,
             'name':this.form.name,
@@ -436,19 +423,41 @@ export default {
             'body': _parameter,
             'paramstype': this.form.paramstype
           }).then(response => {
-
             this.loadingSend = false
-            this.form.statusCode = response.data.data.code
-            this.form.resultHead = this.toJSON(response.data.data.headers)
-            this.form.resultData = this.toJSON(response.data.data.content)
-            this.form.resultCookies = this.toJSON(response.data.data.cookies)
-            this.showResponse()
+            this.loadingSave = false
 
-//            this.form.resultData = JSON.stringify(JSON.parse(response.data.data.content), null, 5);
+
+            if(response.data.id){
+              this.$confirm(response.data.msg + '，是否跳转分组页面？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+
+                this.$router.push({
+                  path: '/api',
+                  name: '测试分组',
+                  query : {
+                    project_id: this.project_id,
+                    case_id: this.case_id
+                  }
+                })
+
+              }).catch((error) => {
+                console.log(error)
+              });
+
+            }else {
+              this.form.statusCode = response.data.data.code
+              this.form.resultHead = this.toJSON(response.data.data.headers)
+              this.form.resultData = this.toJSON(response.data.data.content)
+              this.form.resultCookies = this.toJSON(response.data.data.cookies)
+              this.showResponse()
+            }
+
           }).catch(error => {
 
             this.loadingSend = false
-            // console.log(error)
             this.form.statusCode = error.code
             this.form.resultHead = error.headers
             this.form.resultData = error

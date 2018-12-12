@@ -143,7 +143,7 @@
                 editFormRules: {
                   project_name: [
                         { required: true, message: '请输入项目名称', trigger: 'blur' },
-                        { min: 2, max: 15, message: '请输入长度在2到30个字符的项目名称', trigger: 'blur' }
+                        { min: 2, max: 30, message: '请输入长度在2到30个字符的项目名称', trigger: 'blur' }
                     ]
                 },
                 //编辑界面数据
