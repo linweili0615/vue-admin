@@ -293,7 +293,7 @@ export default {
                     bd.push(hd)
                   }
                 }
-                this.form.parameterRaw = bd
+                this.form.parameter = bd
               }
 
             }else{

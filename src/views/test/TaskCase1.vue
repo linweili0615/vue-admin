@@ -25,11 +25,11 @@
               <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
                 <el-tab-pane label="步骤" name="third">
 
-                    <el-checkbox-group class="checkbox-group" v-model="api.list">
+                    <el-checkbox-group class="checkbox-group" v-model="task.list">
                       <el-scrollbar wrap-class="scrollbar-wrap" class="el-scrollbar-wrap">
                       <div class="checkbox-item">
-                        <el-checkbox  v-for="item in apilist" :label="item.id"   :key="item.id">
-                            {{item.name}}
+                        <el-checkbox  v-for="item in tasklist" :label="item.id"   :key="item.id">
+                            {{item.api_name}}
                             <div style="font-size: 5px; display: inline-block; float: right;">
                               <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">入参</el-button>
                               <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
@@ -63,14 +63,15 @@
               <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
 
                 <el-tab-pane label="接口列表" name="third">
-                  <el-form :inline="true" :model="formInline" class="demo-form-inline" size="medium">
+                  <el-form :inline="true" :model="search" class="demo-form-inline" size="medium">
                     <el-form-item label="接口名称：">
-                      <el-input v-model="formInline.user" placeholder="请输入接口名称"></el-input>
+                      <el-input v-model="search.name" placeholder="请输入接口名称"></el-input>
                     </el-form-item>
                     <el-form-item label="所属项目：">
                       <el-cascader
                         placeholder="搜索：  用户项目"
                         :options="options"
+                        :value="search.project"
                         @change="handleOptionsChange"
                         filterable
                         change-on-select></el-cascader>
@@ -143,12 +144,12 @@
         task: {
           list:[]
         },
-        multipleSelection: [],
-        formInline: {
-          user: '',
-          region: ''
+        search: {
+          name: '',
+          project: ''
         },
-        apilist: []
+        apilist: [],
+        tasklist: []
       };
     },
     methods: {
@@ -168,12 +169,23 @@
         }
       },
       handleSelectionChange(val) {
-        this.multipleSelection = val;
+        this.api.list = val;
+      },
+      getTaskList(){
+        this.$axios.post('/task/extend/info','81598efb-ffa9-11e8-a19c-0242ac110002')
+          .then(response => {
+            if(response.data.status === 'success'){
+              this.tasklist = response.data.data;
+            }
+          })
+          .catch(error => {
+
+          })
       },
       getApiList(){
         this.$axios.post('/api/all_list',{
           'pageSize' : 40,
-          'pageNo' : 1
+          'pageNo': 1
         })
           .then(response => {
             if(response.data.status === 'success'){
@@ -189,7 +201,6 @@
           .then(response => {
             if (response.data.status === 'success') {
               this.options = response.data.data
-              // console.log(this.options)
             }else{
               this.options = [];
               this.$message.error("获取测试集失败")
@@ -217,6 +228,7 @@
 
     },
     created(){
+      this.getTaskList()
       this.getApiTree()
       this.getApiList()
     },
@@ -298,9 +310,10 @@ ul li{
   }
 }
 .el-button--mini, .el-button--mini.is-round {
-  padding: 5px 5px;
+  padding: 4px 4px;
   font-size: 14px;
   margin-bottom: 3px;
+  margin-left: 0px;
 
 }
 .el-card__body {
