@@ -490,6 +490,10 @@
 
 .el-scrollbar-wrap {
   height: 70vh;
+  /deep/ .el-scrollbar__thumb {
+    /*margin-left: 20px;*/
+    margin-top: 20px;
+  }
 }
 .scrollbar-wrap {
   overflow-x: hidden !important;
@@ -504,5 +508,6 @@
 .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
   background-color: #66b1ff;
 }
+
 
 </style>
