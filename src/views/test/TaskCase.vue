@@ -32,7 +32,8 @@
                             {{item.api_name}}
                             <div style="font-size: 5px; display: inline-block; float: right;">
                               <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">入参</el-button>
-                              <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
+                              <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">提取</el-button>
+                              <el-button type="warning" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
                               <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;" @click="delTask(item.id)"></el-button>
                             </div>
                         </el-checkbox>
@@ -94,11 +95,10 @@
                         type="selection"
                         width="30">
                       </el-table-column>
-
                       <el-table-column
                         prop="name"
                         label="接口名称"
-                          width="250">
+                          width="220">
                       </el-table-column>
                       <el-table-column  label="请求方式" width="85" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -106,14 +106,20 @@
                           <el-tag v-show="scope.row.method === 'GET'">{{ scope.row.method }}</el-tag>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="paramstype" label="参数类型" width="85" show-overflow-tooltip>
+                      </el-table-column>
+
                       <el-table-column
                         prop="url"
                         label="请求地址"
-                        width="450"
+                        width="300"
                         show-overflow-tooltip>
                       </el-table-column>
-                      <el-table-column prop="paramstype" label="参数类型" width="85" show-overflow-tooltip>
+                      <el-table-column prop="update_author" label="最后修改者" width="90" show-overflow-tooltip>
                       </el-table-column>
+                      <el-table-column prop="modify_time" label="最后修改时间" width="150" show-overflow-tooltip>
+                      </el-table-column>
+
 
 
                     </el-table>
@@ -358,6 +364,9 @@
 .box-card {
   width: 100%;
   height: 850px;
+  /deep/ .el-card__body {
+    padding: 10px;
+  }
 }
 ul li{
   list-style-type:none;
@@ -393,9 +402,8 @@ ul li{
   margin-left: 0px;
 
 }
-.el-card__body {
-  padding: 10px;
-}
+
+
 .el-table--medium  {
   /deep/ td,th{
     padding: 5px 0;
