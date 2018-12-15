@@ -33,7 +33,7 @@
                             <div style="font-size: 5px; display: inline-block; float: right;">
                               <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">入参</el-button>
                               <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
-                              <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;"></el-button>
+                              <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;" @click="delTask(item.id)"></el-button>
                             </div>
                         </el-checkbox>
                       </div>
@@ -43,7 +43,6 @@
                 <el-tab-pane label="文档" name="api">文档</el-tab-pane>
               </el-tabs>
             </template>
-
 
           </el-card>
 
@@ -59,7 +58,7 @@
             <template>
               <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
                 <el-tab-pane label="接口列表" name="interface">
-                  <el-form :inline="true" :model="search" class="demo-form-inline" size="mini">
+                  <el-form :inline="true" class="demo-form-inline" size="mini">
                     <el-form-item label="接口名称：">
                       <el-input v-model="search.name" placeholder="请输入接口名称"></el-input>
                     </el-form-item>
@@ -67,7 +66,6 @@
                       <el-cascader
                         placeholder="搜索：  用户项目"
                         :options="options"
-                        :value="search.project"
                         @change="handleOptionsChange"
                         filterable
                         change-on-select></el-cascader>
@@ -78,7 +76,7 @@
 
                   </el-form>
 
-                  <el-button type="primary" plain size="small" style="font-size: 10px"
+                  <el-button type="primary" plain size="mini" style="font-size: 12px"
                              icon="el-icon-circle-plus-outline">添加至步骤</el-button>
                   <template>
                     <el-table
@@ -160,11 +158,9 @@
                     </el-collapse-item>
                   </el-collapse>
 
-
           </el-card>
         </div>
       </el-col>
-
 
     </el-row>
 
@@ -188,9 +184,10 @@
           list:[]
         },
         search: {
-          name: '',
-          project: ''
+          name: ''
         },
+        project_id:'',
+        case_id:'',
         apilist: [],
         tasklist: []
       };
@@ -200,7 +197,7 @@
         console.log(tab, event);
       },
       onSubmit() {
-        console.log('submit!');
+        this.getApiList()
       },
       changeStatus(){
         this.activeStatus = !this.activeStatus
@@ -222,6 +219,33 @@
           this.$refs.multipleTable.toggleRowSelection(row);
         }
       },
+      delTask(id){
+        if(id){
+          this.$confirm('是否确定删除该记录？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$axios.post('/task/extend/del',id)
+              .then(response => {
+                if(response.data.status === 'success'){
+                  this.$message.success('记录已删除')
+                  this.tasklist.map((value,index) => {
+                    if(value.id === id){
+                      this.tasklist.splice(index,1)
+                    }
+                  })
+                }
+              })
+              .catch(error => {
+                this.$message.error('删除异常')
+              })
+          }).catch((error) => {
+            console.log(error)
+          });
+
+        }
+      },
       getTaskList(){
         this.$axios.post('/task/extend/info','81598efb-ffa9-11e8-a19c-0242ac110002')
           .then(response => {
@@ -236,7 +260,10 @@
       getApiList(){
         this.$axios.post('/api/all_list',{
           'pageSize' : 40,
-          'pageNo': 1
+          'pageNo': 1,
+          'project_id': this.project_id,
+          'case_id': this.case_id,
+          'name': this.search.name
         })
           .then(response => {
             if(response.data.status === 'success'){
@@ -267,16 +294,12 @@
         console.log(val);
       },
       handleOptionsChange(val){
-        // this.project_id = val[0]
-        // if(val.length === 2){
-        //   this.case_id = val[1]
-        // }
-        //
-        // console.log(this.project_id)
-        // console.log(this.case_id)
-        // console.log(val.length)
-        // console.log(val[0])
-
+        if(val.length>0){
+          this.project_id = val[0]
+          if(val.length === 2){
+              this.case_id = val[1]
+            }
+        }
       },
 
 
