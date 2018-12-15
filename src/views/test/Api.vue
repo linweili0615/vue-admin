@@ -116,14 +116,14 @@
               </div>
               <el-card class="box-card">
                 <div v-show="resultShow">
-                  <div style="word-break: break-all;overflow:auto;overflow-x:hidden;min-height: 655px">
+                  <div style="min-height: 655px">
                     请求头部：<pre>{{ reqheaders }}</pre>
                     请求地址：<pre>{{ reqaddr }}</pre>
                     请求参数：<pre>{{ reqbody }}</pre>
                   </div>
                 </div>
                 <div  v-show="!resultShow">
-                  <div style="word-break: break-all;overflow:auto;overflow-x:hidden;min-height: 655px">
+                  <div style="min-height: 655px;">
                     响应状态码：<pre>{{form.statusCode}}</pre>
                     响应头部：<pre>{{form.resultHead}}</pre>
                     响应cookies：<pre>{{form.resultCookies}}</pre>
@@ -147,8 +147,9 @@
 export default {
   name: 'Dashboard',
   data() {
+
     const validProjectName = (rule, value, callback) => {
-      if(this.reqstatus){
+      if(!this.load){
         if(!value){
           callback(new Error('请输入接口名称'))
         }else {
@@ -159,7 +160,8 @@ export default {
       }
     }
     const validProject = (rule, value, callback) => {
-      if(this.reqstatus){
+      if(!this.load){
+        debugger
         if(value.length === 0){
           callback(new Error('请选择所属项目'))
         }else {
@@ -190,13 +192,13 @@ export default {
         ],
       ParameterType: true,
       radio: "form-data",
+      load:true,
       loadingSend: false,
       loadingSave: false,
       radioType: "",
       result: true,
       activeNames: ['1', '2', '3', '4'],
       formchange: true,
-      reqstatus : true,
       form: {
         selectedOptions3: [],
         url:"",
@@ -279,8 +281,8 @@ export default {
             }
 
 
-            if(response.data.data.body !== '{}'){
-              if(response.data.data.paramstype === 'raw'){
+            if(response.data.data.body !== '{}' ){
+              if(response.data.data.paramstype === 'RAW'){
                 this.form.parameterRaw = response.data.data.body
               }else{
                 var bd_obj = JSON.parse(response.data.data.body)
@@ -300,10 +302,10 @@ export default {
               this.form.parameter = [{name: "", value: ""}]
             }
 
-            if(response.data.data.paramstype === 'from'){
+            if(response.data.data.paramstype === 'FORM'){
               this.radio = 'form-data'
             }else {
-              this.radio = response.data.data.paramstype
+              this.radio = 'raw'
             }
 
 
@@ -331,16 +333,11 @@ export default {
         })
     },
     handleOptionsChange(val){
+      debugger
       this.project_id = val[0]
       if(val.length === 2){
         this.case_id = val[1]
       }
-
-      console.log(this.project_id)
-      console.log(this.case_id)
-      // console.log(val.length)
-      // console.log(val[0])
-
     },
     checkRequest(){
       let request = this.form.methods;
@@ -405,13 +402,11 @@ export default {
     commonTest(url){
       this.$refs.form.validate((valid) => {
         if (valid) {
-
-          if(this.api_id){
-            this.loadingSave = true
+          if(this.load){
+            this.loadingSend = true
           }else{
-            this.loadingSend = true;
+            this.loadingSave = true
           }
-
           let _headers = this.getheaders();
           let _parameter = this.getparams();
           this.form.statusCode = '';
@@ -479,10 +474,11 @@ export default {
       })
     },
     fastTest: function() {
-      this.reqstatus = false
+      this.load = true
       this.commonTest('/api/test')
     },
     SaveTest(){
+      this.load = false
       this.commonTest('/api/save')
     },
     neatenFormat() {
@@ -631,4 +627,10 @@ export default {
   .el-cascader {
     min-width: 60%;
   }
+  pre {
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
 </style>
