@@ -19,7 +19,7 @@
                     <el-cascader
                       placeholder="搜索：  用户项目"
                       :options="options"
-                      :value="form.selectedOptions3"
+                      v-model="form.selectedOptions3"
                       @change="handleOptionsChange"
                       filterable
                       change-on-select></el-cascader>
