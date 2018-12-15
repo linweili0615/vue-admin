@@ -281,10 +281,12 @@ export default {
             }
 
 
-            if(response.data.data.body !== '{}' ){
-              if(response.data.data.paramstype === 'RAW'){
+            if(response.data.data.body !== '{}' && response.data.data.body !== ''){
+              if(response.data.data.paramstype === 'raw'){
+                this.radio = 'raw'
                 this.form.parameterRaw = response.data.data.body
               }else{
+                this.radio = 'form-data'
                 var bd_obj = JSON.parse(response.data.data.body)
                 let bd = []
                 for(var i=0;i<Object.keys(bd_obj).length;i++) {
@@ -299,19 +301,13 @@ export default {
               }
 
             }else{
-              this.form.parameter = [{name: "", value: ""}]
-            }
-
-            if(response.data.data.paramstype === 'FORM'){
               this.radio = 'form-data'
-            }else {
-              this.radio = 'raw'
             }
-
 
           }
         })
         .catch(error => {
+          this.radio = 'form-data'
           this.$message.error("获取API详情失败")
         })
     },
