@@ -29,7 +29,11 @@
                       <el-scrollbar wrap-class="scrollbar-wrap" class="el-scrollbar-wrap">
                       <div class="checkbox-item">
                         <el-checkbox  v-for="item in tasklist" :label="item.id"   :key="item.id">
-                            {{item.api_name}}
+
+                          <router-link :to="{ name: '修改API接口', query: { id: item.api_id}}">
+                            <span style="color:#409EFF">{{item.api_name}}</span>
+                          </router-link>
+
                             <div style="font-size: 5px; display: inline-block; float: right;">
                               <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">提取</el-button>
                               <el-button type="warning" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
@@ -224,18 +228,29 @@
           this.$refs.multipleTable.toggleRowSelection(row);
         }
       },
+      toggleSelection(rows) {
+        if (rows) {
+          rows.forEach(row => {
+            this.$refs.multipleTable.toggleRowSelection(row);
+          });
+        } else {
+          this.$refs.multipleTable.clearSelection();
+        }
+        this.api.list = []
+      },
       addStep(){
         if(this.api.list.length > 0){
           console.log(this.api.list)
-
           this.$axios.post('/task/extend/add',
             {
               'list' : this.api.list,
-              'task_id': '81598efb-ffa9-11e8-a19c-0242ac110002'
+              'task_id' : '81598efb-ffa9-11e8-a19c-0242ac110002'
             })
             .then(response => {
               if(response.data.status === 'success'){
                 this.getTaskList()
+                this.toggleSelection()
+                this.changeStatus()
               }else{
                 this.$message.error("添加步骤失败")
               }
