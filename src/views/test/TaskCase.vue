@@ -21,7 +21,7 @@
 
             <template>
               <div style="z-index: 9;float: right;position: relative;">
-                <el-button  type="primary" size="medium">执行测试</el-button>
+                <el-button  type="primary" size="medium" @click="SendTask">执行测试</el-button>
               </div>
               <el-tabs v-model="activeName1" type="card" @tab-click="handleClick">
                 <el-tab-pane label="步骤" name="step">
@@ -31,7 +31,6 @@
                         <el-checkbox  v-for="item in tasklist" :label="item.id"   :key="item.id">
                             {{item.api_name}}
                             <div style="font-size: 5px; display: inline-block; float: right;">
-                              <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">入参</el-button>
                               <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">提取</el-button>
                               <el-button type="warning" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
                               <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;" @click="delTask(item.id)"></el-button>
@@ -192,6 +191,7 @@
         },
         project_id:'',
         case_id:'',
+        // task_id: '',
         apilist: [],
         tasklist: []
       };
@@ -249,6 +249,17 @@
           });
 
         }
+      },
+      SendTask(){
+        this.$axios.post('/task/test', '81598efb-ffa9-11e8-a19c-0242ac110002')
+          .then(response => {
+            if(response.data.status === 'success'){
+              console.log(response.data.data)
+            }
+          })
+          .catch(error => {
+              console.log(error)
+          })
       },
       getTaskList(){
         this.$axios.post('/task/extend/info','81598efb-ffa9-11e8-a19c-0242ac110002')
@@ -309,6 +320,7 @@
 
     },
     created(){
+      // this.task_id = this.$route.query.params.task_id
       this.getTaskList()
       this.getApiTree()
       this.getApiList()
