@@ -77,7 +77,8 @@
                   </el-form>
 
                   <el-button type="primary" plain size="mini" style="font-size: 12px"
-                             icon="el-icon-circle-plus-outline">添加至步骤</el-button>
+                             icon="el-icon-circle-plus-outline"
+                              @click="addStep">添加至步骤</el-button>
                   <template>
                     <el-table
                       ref="multipleTable"
@@ -222,6 +223,34 @@
         if(event.target.nodeName!="INPUT"){
           this.$refs.multipleTable.toggleRowSelection(row);
         }
+      },
+      addStep(){
+        if(this.api.list.length > 0){
+          console.log(this.api.list)
+
+          this.$axios.post('/task/extend/add',
+            {
+              'list' : this.api.list,
+              'task_id': '81598efb-ffa9-11e8-a19c-0242ac110002'
+            })
+            .then(response => {
+              if(response.data.status === 'success'){
+                this.getTaskList()
+              }else{
+                this.$message.error("添加步骤失败")
+              }
+
+            })
+            .catch(error => {
+              console.log(error)
+            })
+
+
+
+        }else{
+          this.$message.info("请选择任意接口再进行添加")
+        }
+
       },
       delTask(id){
         if(id){
