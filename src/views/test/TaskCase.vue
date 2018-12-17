@@ -25,23 +25,30 @@
               </div>
               <el-tabs v-model="activeName1" type="card" @tab-click="handleClick">
                 <el-tab-pane label="步骤" name="step">
-                    <el-checkbox-group class="checkbox-group" v-model="task.list">
+                    <el-checkbox-group class="checkbox-group" v-model="task.list" @change="handleCheckboxChange">
                       <el-scrollbar wrap-class="scrollbar-wrap" class="el-scrollbar-wrap">
                       <div class="checkbox-item">
                         <el-checkbox  v-for="item in tasklist" :label="item.id"   :key="item.id">
-
-                          <router-link :to="{ name: '修改API接口', query: { id: item.api_id}}">
-                            <span style="color:#409EFF">{{item.api_name}}</span>
+                          <router-link :to="{ name: '修改API接口', query: { id: item.api_id, project_id: item.project_id, case_id: item.case_id}}">
+                            <span style="color:#409eff;text-decoration:underline">{{item.api_name}}</span>
                           </router-link>
-
+                          <i class="el-icon-success" v-show="item.status==='1'" style="color: #67c23a"></i>
+                          <i class="el-icon-warning" v-show="item.status!=='1'" style="color: #909399;"></i>
                             <div style="font-size: 5px; display: inline-block; float: right;">
+                              <el-button type="info" v-show="item.status==='1'" size="mini">禁用</el-button>
+                              <el-button type="info" v-show="item.status!=='1'" size="mini">启用</el-button>
                               <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">提取</el-button>
                               <el-button type="warning" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
                               <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;" @click="delTask(item.id)"></el-button>
                             </div>
                         </el-checkbox>
+
                       </div>
                       </el-scrollbar>
+                     <div style="float: right;margin-top: 5px">
+                       <el-button type="danger" plain size="mini"  :disabled="step_status">批量删除</el-button>
+                       <el-button type="danger" plain size="mini" :disabled="step_status" style="margin-left:5px">批量更改状态</el-button>
+                     </div>
                     </el-checkbox-group>
                 </el-tab-pane>
                 <el-tab-pane label="文档" name="api">文档</el-tab-pane>
@@ -88,21 +95,22 @@
                       ref="multipleTable"
                       @row-click="rowClick"
                       :data="apilist"
-                      height="600"
+                      height="650"
                       size="medium"
                       tooltip-effect="dark"
-                      highlight-current-row
                       empty-text="暂无数据"
                       style="width: 100%"
                       @selection-change="handleSelectionChange">
-                      <el-table-column
-                        type="selection"
-                        width="30">
-                      </el-table-column>
-                      <el-table-column
-                        prop="name"
-                        label="接口名称"
-                          width="220">
+                      <el-table-column type="selection" width="30"></el-table-column>
+                      <el-table-column type="index" min-width="8%" label="序号"></el-table-column>
+                      <el-table-column prop="name" label="接口名称" width="220">
+
+                        <template slot-scope="scope">
+                          <router-link :to="{ name: 'API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
+                            <span style="color:#409EFF">{{scope.row.name}}</span>
+                          </router-link>
+                        </template>
+
                       </el-table-column>
                       <el-table-column  label="请求方式" width="85" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -110,19 +118,10 @@
                           <el-tag v-show="scope.row.method === 'GET'">{{ scope.row.method }}</el-tag>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="paramstype" label="参数类型" width="85" show-overflow-tooltip>
-                      </el-table-column>
-
-                      <el-table-column
-                        prop="url"
-                        label="请求地址"
-                        width="300"
-                        show-overflow-tooltip>
-                      </el-table-column>
-                      <el-table-column prop="update_author" label="最后修改者" width="90" show-overflow-tooltip>
-                      </el-table-column>
-                      <el-table-column prop="modify_time" label="最后修改时间" width="150" show-overflow-tooltip>
-                      </el-table-column>
+                      <el-table-column prop="paramstype" label="参数类型" width="85" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="url" label="请求地址" width="300" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="update_author" label="最后修改者" width="90" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="modify_time" label="最后修改时间" width="150" show-overflow-tooltip></el-table-column>
 
                     </el-table>
                   </template>
@@ -181,6 +180,7 @@
     data() {
       return {
         options: [],
+        step_status: true,
         activeName1: 'step',
         activeName2: 'interface',
         activeResult: ['1'],
@@ -254,14 +254,10 @@
               }else{
                 this.$message.error("添加步骤失败")
               }
-
             })
             .catch(error => {
               console.log(error)
             })
-
-
-
         }else{
           this.$message.info("请选择任意接口再进行添加")
         }
@@ -318,7 +314,7 @@
       },
       getApiList(){
         this.$axios.post('/api/all_list',{
-          'pageSize' : 40,
+          'pageSize' : 70,
           'pageNo': 1,
           'project_id': this.project_id,
           'case_id': this.case_id,
@@ -342,7 +338,6 @@
               this.options = [];
               this.$message.error("获取测试集失败")
             }
-
           })
           .catch(error => {
             this.options = [];
@@ -352,6 +347,13 @@
       handleChange(val) {
         console.log(val);
       },
+      handleCheckboxChange(){
+        if (this.task.list.length > 0){
+          this.step_status = false
+        }else{
+          this.step_status = true
+        }
+      },
       handleOptionsChange(val){
         if(val.length>0){
           this.project_id = val[0]
@@ -360,8 +362,6 @@
             }
         }
       },
-
-
     },
     created(){
       // this.task_id = this.$route.query.params.task_id
