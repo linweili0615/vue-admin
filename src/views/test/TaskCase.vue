@@ -32,13 +32,9 @@
                           <router-link :to="{ name: '修改API接口', query: { id: item.api_id, project_id: item.project_id, case_id: item.case_id}}">
                             <span style="color:#409eff;text-decoration:underline">{{item.api_name}}</span>
                           </router-link>
-                          <!--<i class="el-icon-success" v-show="item.status==='1'" style="color: #67c23a"></i>-->
-                          <!--<i class="el-icon-warning" v-show="item.status!=='1'" style="color: #909399;"></i>-->
                             <div style="font-size: 5px; display: inline-block; float: right;">
-                              <!--<el-button type="info" v-show="item.status==='1'" size="mini">禁用</el-button>-->
-                              <!--<el-button type="info" v-show="item.status!=='1'" size="mini">启用</el-button>-->
                                 <el-switch
-                                  @click.native = "handleClickV(item,$event)"
+                                  @click.native = "handleStatus(item,$event)"
                                   v-model="item.status"
                                   active-color="#13ce66"
                                   inactive-color="#ff4949"
@@ -205,24 +201,32 @@
         },
         project_id:'',
         case_id:'',
-        // task_id: '',
         apilist: [],
         tasklist: []
       };
     },
     methods: {
-      handleClickV(item,event) {
+      handleStatus(item,event) {
+        event.preventDefault()
         debugger
-        this.task.list.push(item.id)
-        this.$axios.post('/task/extend/status',this.task.list)
+        this.task.list = [item.id]
+        this.$axios.post('/task/extend/status', {
+          'status': !item.status,
+          'list':this.task.list
+        })
           .then(response => {
-              console.log(response.data)
+            console.log(response.data)
+              if(response.data.status === 'success'){
+                item.status = !item.status
+              }else{
+                item.status = item.status
+              }
           })
           .catch(error => {
-            console.log(error)
+            item.status = item.status
           })
-        event.stopPropagation()
-        event.preventDefault()
+        // event.stopPropagation()
+
       },
       handleClick(tab, event) {
         console.log(tab, event);
