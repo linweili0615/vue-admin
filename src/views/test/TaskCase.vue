@@ -32,12 +32,21 @@
                           <router-link :to="{ name: '修改API接口', query: { id: item.api_id, project_id: item.project_id, case_id: item.case_id}}">
                             <span style="color:#409eff;text-decoration:underline">{{item.api_name}}</span>
                           </router-link>
-                          <i class="el-icon-success" v-show="item.status==='1'" style="color: #67c23a"></i>
-                          <i class="el-icon-warning" v-show="item.status!=='1'" style="color: #909399;"></i>
+                          <!--<i class="el-icon-success" v-show="item.status==='1'" style="color: #67c23a"></i>-->
+                          <!--<i class="el-icon-warning" v-show="item.status!=='1'" style="color: #909399;"></i>-->
                             <div style="font-size: 5px; display: inline-block; float: right;">
-                              <el-button type="info" v-show="item.status==='1'" size="mini">禁用</el-button>
-                              <el-button type="info" v-show="item.status!=='1'" size="mini">启用</el-button>
-                              <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline">提取</el-button>
+                              <!--<el-button type="info" v-show="item.status==='1'" size="mini">禁用</el-button>-->
+                              <!--<el-button type="info" v-show="item.status!=='1'" size="mini">启用</el-button>-->
+                                <el-switch
+                                  @click.native = "handleClickV(item,$event)"
+                                  v-model="item.status"
+                                  active-color="#13ce66"
+                                  inactive-color="#ff4949"
+                                  active-value="1"
+                                  inactive-value="0">
+                                </el-switch>
+
+                              <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline" >提取</el-button>
                               <el-button type="warning" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
                               <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;" @click="delTask(item.id)"></el-button>
                             </div>
@@ -47,7 +56,7 @@
                       </el-scrollbar>
                      <div style="float: right;margin-top: 5px">
                        <el-button type="danger" plain size="mini"  :disabled="step_status">批量删除</el-button>
-                       <el-button type="danger" plain size="mini" :disabled="step_status" style="margin-left:5px">批量更改状态</el-button>
+                       <el-button type="danger" plain size="mini" :disabled="step_status" style="margin-left:5px">批量更改</el-button>
                      </div>
                     </el-checkbox-group>
                 </el-tab-pane>
@@ -202,6 +211,19 @@
       };
     },
     methods: {
+      handleClickV(item,event) {
+        debugger
+        this.task.list.push(item.id)
+        this.$axios.post('/task/extend/status',this.task.list)
+          .then(response => {
+              console.log(response.data)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        event.stopPropagation()
+        event.preventDefault()
+      },
       handleClick(tab, event) {
         console.log(tab, event);
       },
