@@ -25,38 +25,48 @@
               </div>
               <el-tabs v-model="activeName1" type="card" @tab-click="handleClick">
                 <el-tab-pane label="步骤" name="step">
-                    <el-checkbox-group class="checkbox-group" v-model="task.list" @change="handleCheckboxChange">
-                      <el-scrollbar wrap-class="scrollbar-wrap" class="el-scrollbar-wrap">
-                      <div class="checkbox-item">
-                        <el-checkbox  v-for="item in tasklist" :label="item.id"   :key="item.id">
-                          <router-link :to="{ name: '修改API接口', query: { id: item.api_id, project_id: item.project_id, case_id: item.case_id}}">
-                            <span style="color:#409eff;text-decoration:underline">{{item.api_name}}</span>
-                          </router-link>
-                            <div style="font-size: 5px; display: inline-block; float: right;">
-                                <el-switch
-                                  @click.native = "handleStatus(item,$event)"
-                                  v-model="item.status"
-                                  active-color="#13ce66"
-                                  inactive-color="#ff4949"
-                                  active-value="1"
-                                  inactive-value="0">
-                                </el-switch>
 
-                              <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline" >提取</el-button>
-                              <el-button type="warning" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
-                              <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;" @click="delTask(item.id)"></el-button>
-                            </div>
-                        </el-checkbox>
+                  <el-table
+                    ref="multipleTable2"
+                    :data="tasklist"
+                    height="700"
+                    size="medium"
+                    tooltip-effect="dark"
+                    empty-text="暂无数据"
+                    style="width: 100%"
+                    @selection-change="handleSelectionChange">
+                    <el-table-column type="selection" min-width="3%"></el-table-column>
+                    <el-table-column type="index" min-width="7%" label="序号"></el-table-column>
+                    <el-table-column label="接口名称" min-width="48%">
+                      <template slot-scope="scope">
+                        <router-link :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
+                          <span style="color:#409EFF">{{scope.row.api_name}}</span>
+                        </router-link>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="状态" min-width="12%">
+                      <template slot-scope="scope">
+                        <el-switch
+                        @click.native = "handleStatus(scope.row)"
+                        v-model="scope.row.status"
+                        active-color="#13ce66"
+                        inactive-color="#E6A23C"
+                        active-value="1"
+                        inactive-value="-1">
+                        </el-switch>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" min-width="30%">
+                      <template slot-scope="scope">
+                        <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline" >提取</el-button>
+                        <el-button type="warning" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
+                        <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;" @click="delTask(scope.row.id)"></el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
 
-                      </div>
-                      </el-scrollbar>
-                     <div style="float: right;margin-top: 5px">
-                       <el-button type="danger" plain size="mini"  :disabled="step_status">批量删除</el-button>
-                       <el-button type="danger" plain size="mini" :disabled="step_status" style="margin-left:5px">批量更改</el-button>
-                     </div>
-                    </el-checkbox-group>
                 </el-tab-pane>
-                <el-tab-pane label="文档" name="api">文档</el-tab-pane>
+                <!--<el-tab-pane label="文档" name="api">文档</el-tab-pane>-->
               </el-tabs>
             </template>
 
@@ -202,31 +212,29 @@
         project_id:'',
         case_id:'',
         apilist: [],
-        tasklist: []
+        tasklist: [],
+        deal_list:[],
+        deal_status: 0
       };
     },
     methods: {
-      handleStatus(item,event) {
-        event.preventDefault()
+      handleStatus(row) {
         debugger
-        this.task.list = [item.id]
+        this.deal_list = [row.id]
         this.$axios.post('/task/extend/status', {
-          'status': !item.status,
-          'list':this.task.list
+          'status': row.status,
+          'list': this.deal_list
         })
           .then(response => {
-            console.log(response.data)
-              if(response.data.status === 'success'){
-                item.status = !item.status
-              }else{
-                item.status = item.status
+              if(response.data.status !== 'success'){
+                this.$message.error('更改状态失败！')
+                row.status = -row.status
               }
           })
           .catch(error => {
-            item.status = item.status
+            this.$message.error('更改状态异常！')
+            row.status = -row.status
           })
-        // event.stopPropagation()
-
       },
       handleClick(tab, event) {
         console.log(tab, event);
@@ -458,7 +466,7 @@ ul li{
     margin-left: 0;
   }
   /deep/ .el-checkbox__label{
-    font-size: 14px;
+    font-size: 15px;
     width: 100%;
   }
 
@@ -478,7 +486,6 @@ ul li{
 .el-button--mini, .el-button--mini.is-round {
   padding: 4px 4px;
   font-size: 14px;
-  margin-bottom: 3px;
   margin-left: 0px;
 
 }
