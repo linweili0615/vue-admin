@@ -19,7 +19,9 @@
     "js-cookie": "2.2.0",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
+    "sortablejs": "^1.8.0-rc1",
     "vue": "2.5.17",
+    "vue-axios": "^2.1.4",
     "vue-router": "3.0.1",
     "vuex": "3.0.1"
   },
