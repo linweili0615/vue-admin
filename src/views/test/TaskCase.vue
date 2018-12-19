@@ -29,6 +29,7 @@
                   <el-table
                     ref="multipleTable2"
                     :data="tasklist"
+                    row-key="id"
                     height="685"
                     size="medium"
                     tooltip-effect="dark"
@@ -192,6 +193,7 @@
 </template>
 
 <script>
+  import Sortable from 'sortablejs'
   export default {
     name: 'Dashboard',
     data() {
@@ -375,11 +377,36 @@
           .then(response => {
             if(response.data.status === 'success'){
               this.tasklist = response.data.data;
+              this.$nextTick(() => {
+                this.setSort()
+              })
             }
           })
           .catch(error => {
 
           })
+      },
+      setSort() {
+        const el = document.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+        this.sortable = Sortable.create(el, {
+          ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
+          setData: function(dataTransfer) {
+            dataTransfer.setData('Text', '')
+            // to avoid Firefox bug
+            // Detail see : https://github.com/RubaXa/Sortable/issues/1012
+          },
+          onEnd: evt => {
+            console.log(evt)
+            console.log(evt.oldIndex, evt.newIndex)
+            console.log(this.tasklist[evt.oldIndex].id)
+            const targetRow = this.tasklist.splice(evt.oldIndex, 1)[0]
+            this.tasklist.splice(evt.newIndex, 0, targetRow)
+
+            // for show the changes, you can delete in you code
+            // const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
+            // this.newList.splice(evt.newIndex, 0, tempIndex)
+          }
+        })
       },
       getApiList(){
         this.$axios.post('/api/all_list',{
