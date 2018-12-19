@@ -29,14 +29,14 @@
                   <el-table
                     ref="multipleTable2"
                     :data="tasklist"
-                    height="700"
+                    height="685"
                     size="medium"
                     tooltip-effect="dark"
                     empty-text="暂无数据"
                     style="width: 100%"
-                    @selection-change="handleSelectionChange">
-                    <el-table-column type="selection" min-width="3%"></el-table-column>
-                    <el-table-column type="index" min-width="7%" label="序号"></el-table-column>
+                    @selection-change="handleTaskChange"
+                  >
+                    <el-table-column type="selection" min-width="8%" label="序号"></el-table-column>
                     <el-table-column label="接口名称" min-width="48%">
                       <template slot-scope="scope">
                         <router-link :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
@@ -44,7 +44,7 @@
                         </router-link>
                       </template>
                     </el-table-column>
-                    <el-table-column label="状态" min-width="12%">
+                    <el-table-column label="状态" min-width="9%">
                       <template slot-scope="scope">
                         <el-switch
                         @click.native = "handleStatus(scope.row)"
@@ -64,7 +64,9 @@
                       </template>
                     </el-table-column>
                   </el-table>
-
+                  <div style="float: right;margin-top: 5px;margin-right: 20px">
+                    <el-button type="danger" plain size="mini"  :disabled="step_status" @click="deleteTask">批量删除</el-button>
+                  </div>
                 </el-tab-pane>
                 <!--<el-tab-pane label="文档" name="api">文档</el-tab-pane>-->
               </el-tabs>
@@ -219,7 +221,6 @@
     },
     methods: {
       handleStatus(row) {
-        debugger
         this.deal_list = [row.id]
         this.$axios.post('/task/extend/status', {
           'status': row.status,
@@ -256,6 +257,19 @@
       },
       handleSelectionChange(val) {
         this.api.list = val;
+      },
+      handleTaskChange(val){
+        if(val.length > 0){
+          let lists = val
+          lists.map(cc => {
+            this.task.list.push(cc.id)
+          })
+        }
+        if (this.task.list.length > 0){
+          this.step_status = false
+        }else{
+          this.step_status = true
+        }
       },
       rowClick(row,event,column){
         if(event.target.nodeName!="INPUT"){
@@ -304,7 +318,7 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$axios.post('/task/extend/del',id)
+            this.$axios.post('/task/extend/del', [id])
               .then(response => {
                 if(response.data.status === 'success'){
                   this.$message.success('记录已删除')
@@ -321,7 +335,6 @@
           }).catch((error) => {
             console.log(error)
           });
-
         }
       },
       SendTask(){
@@ -334,6 +347,28 @@
           .catch(error => {
               console.log(error)
           })
+      },
+      deleteTask(){
+        if(this.task.list){
+          this.$confirm('是否确定批量删除记录？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$axios.post('/task/extend/del',this.task.list)
+              .then(response => {
+                if(response.data.status === 'success'){
+                  this.getTaskList()
+                }
+              })
+              .catch(error => {
+                this.$message.error('删除异常')
+              })
+          }).catch((error) => {
+            console.log(error)
+          });
+
+        }
       },
       getTaskList(){
         this.$axios.post('/task/extend/info','81598efb-ffa9-11e8-a19c-0242ac110002')
@@ -380,13 +415,6 @@
       },
       handleChange(val) {
         console.log(val);
-      },
-      handleCheckboxChange(){
-        if (this.task.list.length > 0){
-          this.step_status = false
-        }else{
-          this.step_status = true
-        }
       },
       handleOptionsChange(val){
         if(val.length>0){
