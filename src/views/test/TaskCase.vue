@@ -156,8 +156,8 @@
                           <el-tag v-show="scope.row.method === 'GET'">{{ scope.row.method }}</el-tag>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="paramstype" label="参数类型" width="85" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="url" label="请求地址" width="300" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="paramstype" label="类型" width="50" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="url" label="请求地址" width="250" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="update_author" label="最后修改者" width="90" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="modify_time" label="最后修改时间" width="150" show-overflow-tooltip></el-table-column>
 
@@ -388,6 +388,8 @@
             this.$axios.post('/task/extend/del',this.task.list)
               .then(response => {
                 if(response.data.status === 'success'){
+                  this.task.list = []
+                  this.step_status =true
                   this.getTaskList()
                 }
               })
