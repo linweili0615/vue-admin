@@ -10,7 +10,7 @@
               <span>用例信息</span>
               <el-button style="float: right; padding: 5px;margin-left: 3px"
                          type="success" @click="changeStatus">
-                切换结果1
+                切换结果
                 <i class="el-icon-sort"></i>
               </el-button>
               <router-link :to="{name: '项目列表'}">
@@ -37,16 +37,16 @@
                     style="width: 100%"
                     @selection-change="handleTaskChange"
                   >
-                    <el-table-column type="selection" min-width="6%"></el-table-column>
-                    <el-table-column type="index" min-width="8%" label="序号"></el-table-column>
-                    <el-table-column label="接口名称" min-width="41%">
+                    <el-table-column type="selection" width="30"></el-table-column>
+                    <el-table-column type="index" width="50" label="序号"></el-table-column>
+                    <el-table-column label="接口名称" width="320">
                       <template slot-scope="scope">
                         <router-link :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
                           <span style="color:#409EFF">{{scope.row.api_name}}</span>
                         </router-link>
                       </template>
                     </el-table-column>
-                    <el-table-column label="状态" min-width="15%">
+                    <el-table-column label="状态" width="65">
                       <template slot-scope="scope">
                         <el-switch
                         @click.native = "handleStatus(scope.row)"
@@ -58,27 +58,8 @@
                         </el-switch>
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" min-width="30%">
+                    <el-table-column label="操作" width="185">
                       <template slot-scope="scope">
-
-                        <el-dialog title="提取参数" :visible.sync="dialogFormVisible">
-                          <el-form :model="draw">
-                            <el-form-item label="活动名称" label-width="120px">
-                              <el-input v-model="draw.name"></el-input>
-                            </el-form-item>
-                            <el-form-item label="活动区域" label-width="120px">
-                              <el-select v-model="draw.region" placeholder="请选择活动区域">
-                                <el-option label="区域一" value="shanghai"></el-option>
-                                <el-option label="区域二" value="beijing"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </el-form>
-                          <div slot="footer" class="dialog-footer">
-                            <el-button @click="dialogFormVisible = false">取 消</el-button>
-                            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-                          </div>
-                        </el-dialog>
-
                         <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline" @click="drawFunction">提取</el-button>
                         <el-button type="warning" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
                         <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;" @click="delTask(scope.row.id)"></el-button>
@@ -208,8 +189,26 @@
       </el-col>
 
     </el-row>
+    <el-dialog title="提取参数" :visible.sync="dialogFormVisible">
+      <el-form :model="draw">
+        <el-form-item label="活动名称" label-width="120px">
+          <el-input v-model="draw.name"></el-input>
+        </el-form-item>
+        <el-form-item label="活动区域" label-width="120px">
+          <el-select v-model="draw.region" placeholder="请选择活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
 
   </div>
+
 </template>
 
 <script>
