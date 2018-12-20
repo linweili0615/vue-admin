@@ -10,7 +10,7 @@
               <span>用例信息</span>
               <el-button style="float: right; padding: 5px;margin-left: 3px"
                          type="success" @click="changeStatus">
-                切换结果
+                切换结果1
                 <i class="el-icon-sort"></i>
               </el-button>
               <router-link :to="{name: '项目列表'}">
