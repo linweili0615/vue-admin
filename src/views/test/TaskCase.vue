@@ -30,7 +30,7 @@
                     ref="multipleTable2"
                     :data="tasklist"
                     row-key="id"
-                    height="68vh"
+                    height="73vh"
                     size="medium"
                     tooltip-effect="dark"
                     empty-text="暂无数据"
@@ -325,7 +325,6 @@
               if(response.data.status === 'success'){
                 this.getTaskList()
                 this.toggleSelection()
-                this.changeStatus()
               }else{
                 this.$message.error("添加步骤失败")
               }
@@ -369,7 +368,7 @@
           .then(response => {
             if(response.data.status === 'success'){
               this.result_list = response.data.data
-              this.activeStatus = !this.activeStatus
+              this.changeStatus()
             }
           })
           .catch(error => {
