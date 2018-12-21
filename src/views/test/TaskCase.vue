@@ -161,7 +161,7 @@
               <span>执行结果</span>
             </div>
 
-                  <el-collapse :data="result_list" v-for="(item,index) in result_list">
+                 <!-- <el-collapse :data="result_list" v-for="(item,index) in result_list">
                     <el-collapse-item :name="index" :title="item.api_name" :key="item.api_id">
                       <pre>method:  {{item.req_method}}</pre>
                       <pre>url:<br/>{{item.req_url}}</pre>
@@ -173,7 +173,7 @@
                       <pre>response_headers:<br/>{{item.res_headers}}</pre>
                       <pre>response_body:<br/>{{item.res_body}}</pre>
                     </el-collapse-item>
-                  </el-collapse>
+                  </el-collapse>-->
 
           </el-card>
         </div>
