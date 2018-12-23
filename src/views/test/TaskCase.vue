@@ -21,7 +21,7 @@
 
             <template>
               <div style="z-index: 9;float: right;position: relative;">
-                <el-button  type="primary" size="medium" @click="SendTask">执行测试</el-button>
+                <el-button  type="primary" size="medium" :loading="status" @click="SendTask">执行测试</el-button>
               </div>
               <el-tabs v-model="activeName1" type="card" @tab-click="handleClick">
                 <el-tab-pane label="步骤" name="step">
@@ -208,6 +208,7 @@
     name: 'Dashboard',
     data() {
       return {
+        status:false,
         options: [],
         step_status: true,
         activeName1: 'step',
@@ -363,16 +364,32 @@
           });
         }
       },
+      getTaskLog(){
+        this.$axios.post('/task/getLog')
+          .then(response => {
+            console.log(response.data)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
       SendTask(){
+        this.status = true
+        this.changeStatus()
+        var intervaljob = setInterval(this.getTaskLog,200)
         this.$axios.post('/task/test', '81598efb-ffa9-11e8-a19c-0242ac110002')
           .then(response => {
+            this.status = false
             if(response.data.status === 'success'){
               this.result_list = response.data.data
-              this.changeStatus()
+              clearInterval(intervaljob)
             }
           })
           .catch(error => {
-              console.log(error)
+            clearInterval(intervaljob)
+            console.log(2)
+            this.status = false
+            console.log(error)
             this.$message.error('执行异常')
           })
       },
