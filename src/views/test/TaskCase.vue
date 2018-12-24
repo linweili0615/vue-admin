@@ -160,7 +160,7 @@
             <div slot="header" class="clearfix">
               <span>执行结果</span>
             </div>
-            <div id="logdata" v-html="logs">
+            <div id="logdata" v-text="logs">
                 <!-- {{logs}} -->
                  <!-- <el-collapse :data="result_list" v-for="(item,index) in result_list">
                     <el-collapse-item :name="index" :title="item.api_name" :key="item.api_id">
