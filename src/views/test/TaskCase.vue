@@ -160,7 +160,8 @@
             <div slot="header" class="clearfix">
               <span>执行结果</span>
             </div>
-
+            <div id="logdata" v-html="logs">
+                <!-- {{logs}} -->
                  <!-- <el-collapse :data="result_list" v-for="(item,index) in result_list">
                     <el-collapse-item :name="index" :title="item.api_name" :key="item.api_id">
                       <pre>method:  {{item.req_method}}</pre>
@@ -174,7 +175,7 @@
                       <pre>response_body:<br/>{{item.res_body}}</pre>
                     </el-collapse-item>
                   </el-collapse>-->
-
+            </div>
           </el-card>
         </div>
       </el-col>
@@ -209,6 +210,7 @@
     data() {
       return {
         status:false,
+        logs: '',
         options: [],
         step_status: true,
         activeName1: 'step',
@@ -365,17 +367,28 @@
         }
       },
       getTaskLog(){
-        this.$axios.post('/task/getLog')
-          .then(response => {
-            console.log(response.data)
-          })
-          .catch(error => {
+        this.$axios({
+          url: '/task/getLog',
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8'
+          }
+        }).then(response => {
+          this.logs = response.data
+        }).catch(error => {
             console.log(error)
           })
+        // this.$axios.post('/task/getLog')
+        //   .then(response => {
+        //     this.logs = response.data
+        //   })
+        //   .catch(error => {
+        //     console.log(error)
+        //   })
       },
       SendTask(){
         this.status = true
-        this.changeStatus()
+        this.activeStatus = false
         var intervaljob = setInterval(this.getTaskLog,200)
         this.$axios.post('/task/test', '81598efb-ffa9-11e8-a19c-0242ac110002')
           .then(response => {
@@ -387,7 +400,6 @@
           })
           .catch(error => {
             clearInterval(intervaljob)
-            console.log(2)
             this.status = false
             console.log(error)
             this.$message.error('执行异常')
@@ -514,6 +526,12 @@
     },
     mounted(){
 
+    },
+    updated(){
+      this.$nextTick(function(){
+        var div = document.getElementById("logdata")
+        div.scrollTop = div.scrollHeight
+      })
     }
   }
 </script>
