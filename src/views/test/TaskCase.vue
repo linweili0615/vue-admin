@@ -160,21 +160,12 @@
             <div slot="header" class="clearfix">
               <span>执行结果</span>
             </div>
-            <div id="logdata" v-text="logs">
-                <!-- {{logs}} -->
-                 <!-- <el-collapse :data="result_list" v-for="(item,index) in result_list">
-                    <el-collapse-item :name="index" :title="item.api_name" :key="item.api_id">
-                      <pre>method:  {{item.req_method}}</pre>
-                      <pre>url:<br/>{{item.req_url}}</pre>
-                      <pre>params:<br/>{{item.req_body}}</pre>
-                      <pre>request_cookies:<br/>{{item.req_cookies}}</pre>
-                      <pre>request_headers:<br/>{{item.req_headers}}</pre>
-                      <pre>response_code: {{item.res_code}}</pre>
-                      <pre>response_cookies:<br/>{{item.res_cookies}}</pre>
-                      <pre>response_headers:<br/>{{item.res_headers}}</pre>
-                      <pre>response_body:<br/>{{item.res_body}}</pre>
-                    </el-collapse-item>
-                  </el-collapse>-->
+            <div style="height:100%;overflow:auto;" class="logdata" id="logdata">
+              <ul>
+                <li v-for="log in logs">
+                  <pre>{{ log }}</pre>
+                </li>
+              </ul>
             </div>
           </el-card>
         </div>
@@ -367,24 +358,16 @@
         }
       },
       getTaskLog(){
-        this.$axios({
-          url: '/task/getLog',
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json;charset=UTF-8'
+        this.$axios.post('/task/getLog').then(response => {
+          if (response.data.status === 'success'){
+            this.logs = response.data.data
+          } else {
+            this.$message.error('获取日志记录错误')
           }
-        }).then(response => {
-          this.logs = response.data
         }).catch(error => {
             console.log(error)
+          this.$message.error('获取日志记录异常')
           })
-        // this.$axios.post('/task/getLog')
-        //   .then(response => {
-        //     this.logs = response.data
-        //   })
-        //   .catch(error => {
-        //     console.log(error)
-        //   })
       },
       SendTask(){
         this.status = true
@@ -580,6 +563,16 @@
   height: 850px;
   /deep/ .el-card__body {
     padding: 10px;
+    height: 795px;
+  }
+
+  .logdata {
+    ul {
+      margin: 0;
+      li {
+        padding: 0;
+      }
+    }
   }
 }
 ul li{
@@ -615,8 +608,6 @@ ul li{
   margin-left: 0px;
 
 }
-
-
 .el-table--medium  {
   /deep/ td,th{
     padding: 5px 0;
@@ -629,6 +620,7 @@ pre {
   overflow-x: auto;
   white-space: pre-wrap;
   word-wrap: break-word;
+  margin: 0;
 }
 
 </style>
