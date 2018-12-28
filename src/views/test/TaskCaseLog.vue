@@ -23,24 +23,32 @@
     },
     methods:{
       getTaskLog(){
-        this.$axios.post('/task/getLog','81598efb-ffa9-11e8-a19c-0242ac110002')
-          .then(response => {
-            if (response.data.status === 'success'){
-              this.logs = response.data.data
-              if(this.count < response.data.data.length){
-                this.count = response.data.data.length
+        let interval = setInterval(getlog, 700);
+        function getlog() {
+          this.$axios.post('/task/getLog','81598efb-ffa9-11e8-a19c-0242ac110002')
+            .then(response => {
+              if (response.data.status === 'success'){
+                this.logs = response.data.data
+                if(this.count < response.data.data.length){
+                  this.count = response.data.data.length
+                }else{
+                  clearInterval(interval);
+                }
+              } else {
+                clearInterval(interval);
+                this.$message.error('获取日志记录错误')
               }
-            } else {
-              this.$message.error('获取日志记录错误')
-            }
-        }).catch(error => {
-          console.log(error)
-          this.$message.error('获取日志记录异常')
-        })
+            }).catch(error => {
+            console.log(error)
+            clearInterval(interval);
+            this.$message.error('获取日志记录异常')
+          })
+        }
+
       }
     },
     created(){
-      this.task_id = this.$route.query.params.task_id
+      this.task_id = this.$route.query.task_id
     },
     mounted(){
       this.getTaskLog()
