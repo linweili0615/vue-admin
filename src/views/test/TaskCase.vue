@@ -84,6 +84,10 @@
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>案例列表</span>
+              <el-button style="float: right; padding: 5px;margin-left: 3px"
+                         type="info" @click="ToLog">
+                查看日志
+              </el-button>
             </div>
             <template>
               <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
@@ -154,22 +158,16 @@
         </div>
       </el-col>
 
-      <el-col :span="14" v-show="!activeStatus">
-        <div class="grid-content bg-purple">
-          <el-card class="box-card">
-            <div slot="header" class="clearfix">
-              <span>执行结果</span>
-            </div>
-            <div style="height:100%;overflow:auto;" class="logdata" id="logdata">
-              <ul>
-                <li v-for="log in logs">
-                  <pre>{{ log }}</pre>
-                </li>
-              </ul>
-            </div>
-          </el-card>
-        </div>
-      </el-col>
+      <!--<el-col :span="14" v-show="!activeStatus">-->
+        <!--<div class="grid-content bg-purple">-->
+          <!--<el-card class="box-card">-->
+            <!--<div slot="header" class="clearfix">-->
+              <!--<span>执行结果</span>-->
+            <!--</div>-->
+
+          <!--</el-card>-->
+        <!--</div>-->
+      <!--</el-col>-->
 
     </el-row>
     <el-dialog title="提取参数" :visible.sync="dialogFormVisible">
@@ -357,32 +355,28 @@
           });
         }
       },
-      getTaskLog(){
-        this.$axios.post('/task/getLog').then(response => {
-          if (response.data.status === 'success'){
-            this.logs = response.data.data
-          } else {
-            this.$message.error('获取日志记录错误')
+      ToLog(){
+        let routeData = this.$router.resolve({
+          path: '/api',
+          name: '日志列表',
+          query : {
+            task_id: '81598efb-ffa9-11e8-a19c-0242ac110002',
           }
-        }).catch(error => {
-            console.log(error)
-          this.$message.error('获取日志记录异常')
-          })
+        })
+        window.open(routeData.href, '_blank');
+
       },
       SendTask(){
         this.status = true
-        this.activeStatus = false
-        var intervaljob = setInterval(this.getTaskLog,200)
+        // this.activeStatus = false
         this.$axios.post('/task/test', '81598efb-ffa9-11e8-a19c-0242ac110002')
           .then(response => {
             this.status = false
             if(response.data.status === 'success'){
               this.result_list = response.data.data
-              clearInterval(intervaljob)
             }
           })
           .catch(error => {
-            clearInterval(intervaljob)
             this.status = false
             console.log(error)
             this.$message.error('执行异常')
@@ -507,15 +501,6 @@
       this.getApiTree()
       this.getApiList()
     },
-    mounted(){
-
-    },
-    updated(){
-      this.$nextTick(function(){
-        var div = document.getElementById("logdata")
-        div.scrollTop = div.scrollHeight
-      })
-    }
   }
 </script>
 
@@ -565,18 +550,6 @@
     padding: 10px;
     height: 795px;
   }
-
-  .logdata {
-    ul {
-      margin: 0;
-      li {
-        padding: 0;
-      }
-    }
-  }
-}
-ul li{
-  list-style-type:none;
 }
 .checkbox-item {
   padding-right: 5px;
@@ -616,12 +589,7 @@ ul li{
 .el-form-item {
   margin-bottom: 10px;
 }
-pre {
-  overflow-x: auto;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  margin: 0;
-}
+
 
 </style>
 
