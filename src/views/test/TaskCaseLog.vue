@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-text">日志</div>
-    <div style="height:100%;overflow:auto;" class="logdata" id="logdata">
+    <div class="logdata" id="logdata">
       <ul>
         <li v-for="log in logs">
           <pre>{{ log }}</pre>
@@ -18,33 +18,35 @@
       return {
         logs:[],
         task_id:'',
-        count:0
+        count:0,
+        interval: null
       }
     },
     methods:{
       getTaskLog(){
-        let interval = setInterval(getlog, 700);
-        function getlog() {
-          this.$axios.post('/task/getLog','81598efb-ffa9-11e8-a19c-0242ac110002')
-            .then(response => {
-              if (response.data.status === 'success'){
-                this.logs = response.data.data
-                if(this.count < response.data.data.length){
-                  this.count = response.data.data.length
-                }else{
-                  clearInterval(interval);
-                }
-              } else {
-                clearInterval(interval);
-                this.$message.error('获取日志记录错误')
+         this.interval = setInterval(() => {
+            this.getlog()
+          }, 700);
+        },
+      getlog() {
+        this.$axios.post('/task/getLog','81598efb-ffa9-11e8-a19c-0242ac110002')
+          .then(response => {
+            if (response.data.status === 'success'){
+              this.logs = response.data.data
+              if(this.count < response.data.data.length){
+                this.count = response.data.data.length
+              }else{
+                clearInterval(this.interval);
               }
-            }).catch(error => {
-            console.log(error)
-            clearInterval(interval);
-            this.$message.error('获取日志记录异常')
-          })
-        }
-
+            } else {
+              clearInterval(this.interval);
+              this.$message.error('获取日志记录错误')
+            }
+          }).catch(error => {
+          console.log(error)
+          clearInterval(this.interval);
+          this.$message.error('获取日志记录异常')
+        })
       }
     },
     created(){
@@ -65,7 +67,7 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
 .dashboard {
   &-container {
-    margin: 30px;
+    padding: 30px;
   }
   &-text {
     font-size: 30px;
@@ -89,6 +91,8 @@ ul li{
   list-style-type:none;
 }
 .logdata {
+  height: 80vh;
+  overflow: auto;
   ul {
     margin: 0;
     li {
