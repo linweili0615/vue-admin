@@ -44,7 +44,7 @@
             <el-table-column label="状态" min-width="6%" >
               <template slot-scope="scope">{{scope.row.status===1?'启用':'禁用'}}</template>
             </el-table-column>
-            <el-table-column label="操作" min-width="16%">
+            <el-table-column label="操作" min-width="20%">
                 <template slot-scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
