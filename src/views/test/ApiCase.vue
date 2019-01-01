@@ -89,7 +89,7 @@
               <el-table :data="apilist.filter(data => !filters.name || data.name.toLowerCase().includes(filters.name.toLowerCase()))"
                         highlight-current-row
                         v-loading="listLoading"
-                        max-height="690"
+                        height="75vh"
                         @selection-change="selsChange"
                         style="width: 100%;">
                 <el-table-column type="selection" min-width="5%">
@@ -489,7 +489,7 @@
 }
 
 .el-scrollbar-wrap {
-  height: 70vh;
+  height: 67vh;
   /deep/ .el-scrollbar__thumb {
     /*margin-left: 20px;*/
     margin-top: 20px;

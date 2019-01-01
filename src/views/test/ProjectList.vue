@@ -25,7 +25,7 @@
         <el-table :data="project.slice(0, pagesize)"
                   highlight-current-row v-loading="listLoading"
                   border
-                  height="700"
+                  height="75vh"
                   @selection-change="selsChange"
                   style="width: 100%;">
             <el-table-column type="index" min-width="8%" label="序号"></el-table-column>
