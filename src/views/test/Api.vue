@@ -116,14 +116,14 @@
               </div>
               <el-card class="box-card">
                 <div v-show="resultShow">
-                  <div style="min-height: 655px">
+                  <div style="height: 75vh">
                     请求头部：<pre>{{ reqheaders }}</pre>
                     请求地址：<pre>{{ reqaddr }}</pre>
                     请求参数：<pre>{{ reqbody }}</pre>
                   </div>
                 </div>
                 <div  v-show="!resultShow">
-                  <div style="min-height: 655px;">
+                  <div style="height: 75vh;">
                     响应状态码：<pre>{{form.statusCode}}</pre>
                     响应头部：<pre>{{form.resultHead}}</pre>
                     响应cookies：<pre>{{form.resultCookies}}</pre>

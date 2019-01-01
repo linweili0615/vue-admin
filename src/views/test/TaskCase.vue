@@ -9,9 +9,8 @@
             <div slot="header" class="clearfix">
               <span>用例信息</span>
               <el-button style="float: right; padding: 5px;margin-left: 3px"
-                         type="success" @click="changeStatus">
-                切换结果
-                <i class="el-icon-sort"></i>
+                         type="info" @click="ToLog">
+                查看日志
               </el-button>
               <router-link :to="{name: '项目列表'}">
                 <el-button style="float: right; padding: 5px 3px" type="primary" icon="el-icon-d-arrow-left">返回列表
@@ -84,9 +83,14 @@
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>案例列表</span>
+              <!--<el-button style="float: right; padding: 5px;margin-left: 3px"-->
+                         <!--type="info" @click="ToLog">-->
+                <!--查看日志-->
+              <!--</el-button>-->
               <el-button style="float: right; padding: 5px;margin-left: 3px"
-                         type="info" @click="ToLog">
-                查看日志
+                         type="success" @click="changeStatus">
+                切换结果
+                <i class="el-icon-sort"></i>
               </el-button>
             </div>
             <template>
