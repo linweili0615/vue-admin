@@ -162,17 +162,18 @@
         </div>
       </el-col>
 
-      <!--<el-col :span="14" v-show="!activeStatus">-->
-        <!--<div class="grid-content bg-purple">-->
-          <!--<el-card class="box-card">-->
-            <!--<div slot="header" class="clearfix">-->
-              <!--<span>执行结果</span>-->
-            <!--</div>-->
-
-          <!--</el-card>-->
-        <!--</div>-->
-      <!--</el-col>-->
-
+      <el-col :span="14" v-show="!activeStatus">
+        <div class="grid-content bg-purple">
+          <el-card class="box-card">
+            <div slot="header" class="clearfix">
+              <span>执行日志</span>
+            </div>
+            <div id="logdata" v-text="logs">
+                  {{logs}}
+            </div>
+          </el-card>
+        </div>
+      </el-col>
     </el-row>
     <el-dialog title="提取参数" :visible.sync="dialogFormVisible">
       <el-form :model="draw">
@@ -359,6 +360,19 @@
           });
         }
       },
+      getTaskLog(){
+        this.$axios({
+          url: '/task/getLog',
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8'
+          }
+        }).then(response => {
+          this.logs = response.data
+        }).catch(error => {
+          console.log(error)
+        })
+      },
       ToLog(){
         let routeData = this.$router.resolve({
           path: '/api',
@@ -372,15 +386,18 @@
       },
       SendTask(){
         this.status = true
-        // this.activeStatus = false
+        this.activeStatus = false
+        var intervaljob = setInterval(this.getTaskLog,200)
         this.$axios.post('/task/test', '81598efb-ffa9-11e8-a19c-0242ac110002')
           .then(response => {
             this.status = false
             if(response.data.status === 'success'){
               this.result_list = response.data.data
+              clearInterval(intervaljob)
             }
           })
           .catch(error => {
+            clearInterval(intervaljob)
             this.status = false
             console.log(error)
             this.$message.error('执行异常')
@@ -505,6 +522,15 @@
       this.getApiTree()
       this.getApiList()
     },
+    mounted(){
+      this.getTaskLog()
+    },
+    updated(){
+      this.$nextTick(function(){
+        var div = document.getElementById("logdata")
+        div.scrollTop = div.scrollHeight
+      })
+    }
   }
 </script>
 
