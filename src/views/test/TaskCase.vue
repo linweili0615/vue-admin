@@ -166,14 +166,20 @@
         <div class="grid-content bg-purple">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
-              <span>执行日志</span>
+              <span>执行结果</span>
             </div>
-            <div id="logdata" v-text="logs">
-                  {{logs}}
+            <div style="height:100%;overflow:auto;" class="logdata" id="logdata">
+              <ul>
+                <li v-for="log in logs">
+                  <pre>{{ log }}</pre>
+                </li>
+              </ul>
             </div>
           </el-card>
         </div>
       </el-col>
+
+
     </el-row>
     <el-dialog title="提取参数" :visible.sync="dialogFormVisible">
       <el-form :model="draw">
@@ -361,13 +367,10 @@
         }
       },
       getTaskLog(){
-        this.$axios({
-          url: '/task/getLog',
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json;charset=UTF-8'
-          }
-        }).then(response => {
+        this.$axios.post(
+          '/task/getLog',
+          '81598efb-ffa9-11e8-a19c-0242ac110002'
+        ).then(response => {
           this.logs = response.data
         }).catch(error => {
           console.log(error)
@@ -522,9 +525,6 @@
       this.getApiTree()
       this.getApiList()
     },
-    mounted(){
-      this.getTaskLog()
-    },
     updated(){
       this.$nextTick(function(){
         var div = document.getElementById("logdata")
@@ -619,7 +619,16 @@
 .el-form-item {
   margin-bottom: 10px;
 }
-
+.logdata {
+  height: 80vh;
+  overflow: auto;
+  ul {
+    margin: 0;
+    li {
+      padding: 0;
+    }
+  }
+}
 
 </style>
 
