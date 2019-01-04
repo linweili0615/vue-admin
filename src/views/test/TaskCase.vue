@@ -402,7 +402,7 @@
               'task_id' : '81598efb-ffa9-11e8-a19c-0242ac110002'
             })
             .then(response => {
-              if(response.data.status === 'success'){
+              if(response.data.status === 'SUCCESS'){
                 this.getTaskList()
                 this.toggleSelection()
               }else{

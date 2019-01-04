@@ -386,7 +386,7 @@ export default {
         if(_parameter){
           _parameter = JSON.stringify(_parameter)
         }
-        this.form.paramstype = "from"
+        this.form.paramstype = "form"
       }
       if (this.form.parameterRaw && _type === "raw") {
         _parameter = this.form.parameterRaw
