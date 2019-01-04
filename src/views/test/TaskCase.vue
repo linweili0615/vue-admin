@@ -8,10 +8,16 @@
 
             <div slot="header" class="clearfix">
               <span>用例信息</span>
+              <el-button style="float: right; padding: 5px;margin-left: 3px"
+                         type="info" @click="showLog">
+                查看日志
+              </el-button>
               <router-link :to="{name: '项目列表'}">
                 <el-button style="float: right; padding: 5px 3px" type="primary" icon="el-icon-d-arrow-left">返回列表
                 </el-button>
+
               </router-link>
+
             </div>
 
             <template>
@@ -193,52 +199,53 @@
     </el-dialog>
     <!--结果日志弹窗-->
     <el-dialog title="执行记录" :visible.sync="dialogTaskResultVisible" width="40%">
-      <ul>
-        <li>step  执行者    执行时间</li>
-        <li v-for="item in TaskResult">
-          #{{ item.id }}    {{ item.executor }}  {{ item.modify_time }}
-        </li>
-      </ul>
+      <el-tabs type="border-card">
+        <el-tab-pane label="个人记录">
+          <template>
+          <el-table
+            :data="TaskResult.filter(data => data.executor.toLowerCase() ===(username.toLowerCase()))"
+            style="width: 100%"
+            height="40vh"
+          >
+            <el-table-column
+              label="id"
+              prop="id">
+            </el-table-column>
+            <el-table-column
+              label="executor"
+              prop="executor">
+            </el-table-column>
+            <el-table-column
+              label="execute_time"
+              prop="execute_time">
+            </el-table-column>
+          </el-table>
+        </template>
+        </el-tab-pane>
+        <el-tab-pane label="所有记录">
+          <template>
+          <el-table
+            :data="TaskResult"
+            style="width: 100%"
+            height="40vh"
+          >
+            <el-table-column
+              label="id"
+              prop="id">
+            </el-table-column>
+            <el-table-column
+              label="executor"
+              prop="executor">
+            </el-table-column>
+            <el-table-column
+              label="execute_time"
+              prop="execute_time">
+            </el-table-column>
+          </el-table>
+        </template>
+        </el-tab-pane>
+      </el-tabs>
 
-
-      <!--:data="tableData7.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"-->
-
-      <template>
-        <el-table
-          :data="TaskResult"
-          style="width: 100%">
-          <el-table-column
-            label="id"
-            prop="id">
-          </el-table-column>
-          <el-table-column
-            label="executor"
-            prop="executor">
-          </el-table-column>
-          <el-table-column
-            label="modify_time"
-            prop="modify_time">
-          </el-table-column>
-          <!--<el-table-column-->
-            <!--align="right">-->
-            <!--<template slot="header" slot-scope="scope">-->
-            <!--<el-input-->
-              <!--v-model="search"-->
-              <!--size="mini"-->
-              <!--placeholder="输入关键字搜索"/>-->
-          <!--</template>-->
-            <!--<template slot-scope="scope">-->
-              <!--<el-button-->
-                <!--size="mini"-->
-                <!--@click="handleEdit(scope.$index, scope.row)">Edit</el-button>-->
-              <!--<el-button-->
-                <!--size="mini"-->
-                <!--type="danger"-->
-                <!--@click="handleDelete(scope.$index, scope.row)">Delete</el-button>-->
-            <!--</template>-->
-          <!--</el-table-column>-->
-        </el-table>
-      </template>
     </el-dialog>
   </div>
 </template>
@@ -249,6 +256,7 @@
     name: 'Dashboard',
     data() {
       return {
+        username: 'linweili',
         status:false,
         logs: '',
         options: [],
@@ -272,8 +280,33 @@
         tasklist: [],
         deal_list:[],
         TaskResult:[
-          { id: 123, executor: 'test_user', modify_time: '2019-01-04 13:07'}
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'linweili', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'linweili_11', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'linweili', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
+
         ],
+        TaskResultForm:{
+          type: [1,2]
+        },
         result_list: [
           {
             code: 502,
@@ -287,7 +320,7 @@
         draw:{
           name: '',
           region: ''
-        }
+        },
       };
     },
     methods: {
@@ -415,21 +448,16 @@
           '/task/getLog',
           '81598efb-ffa9-11e8-a19c-0242ac110002'
         ).then(response => {
-          this.logs = response.data
+          this.logs = response.data.data
         }).catch(error => {
           console.log(error)
         })
       },
-      ToLog(){
-        let routeData = this.$router.resolve({
-          path: '/api',
-          name: '日志列表',
-          query : {
-            task_id: '81598efb-ffa9-11e8-a19c-0242ac110002',
-          }
-        })
-        window.open(routeData.href, '_blank');
-
+      showLog(){
+        this.activeStatus = !this.activeStatus
+        if(!this.activeStatus){
+          this.getTaskLog()
+        }
       },
       SendTask(){
         this.status = true
@@ -441,6 +469,15 @@
             if(response.data.status === 'SUCCESS'){
               this.result_list = response.data.data
               clearInterval(intervaljob)
+              this.$confirm('跳转查看任务执行结果？', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+              }).then(() => {
+                this.getTaskResult()
+              }).catch((error) => {
+                console.log(error)
+              });
             }
           })
           .catch(error => {
@@ -449,6 +486,12 @@
             console.log(error)
             this.$message.error('执行异常')
           })
+      },
+      getTaskResult(){
+        debugger
+        this.$route.push({
+          path:'/api/task/result'
+        })
       },
       deleteTask(){
         if(this.task.list){
