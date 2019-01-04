@@ -259,7 +259,7 @@ export default {
     getApi(){
       this.$axios.post('/api/detail', this.api_id)
         .then(response => {
-          if (response.data.status === 'success') {
+          if (response.data.status === 'SUCCESS') {
             this.form.name = response.data.data.name
             this.form.methods = response.data.data.method
             this.form.addr = response.data.data.url
@@ -314,7 +314,7 @@ export default {
     getApiTree(){
       this.$axios.post('/case/list')
         .then(response => {
-          if (response.data.status === 'success') {
+          if (response.data.status === 'SUCCESS') {
             this.options = response.data.data
             // console.log(this.options)
           }else{

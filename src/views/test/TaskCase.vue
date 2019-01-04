@@ -394,7 +394,7 @@
         this.$axios.post('/task/test', '81598efb-ffa9-11e8-a19c-0242ac110002')
           .then(response => {
             this.status = false
-            if(response.data.status === 'success'){
+            if(response.data.status === 'SUCCESS'){
               this.result_list = response.data.data
               clearInterval(intervaljob)
             }
@@ -415,7 +415,7 @@
           }).then(() => {
             this.$axios.post('/task/extend/del',this.task.list)
               .then(response => {
-                if(response.data.status === 'success'){
+                if(response.data.status === 'SUCCESS'){
                   this.task.list = []
                   this.step_status =true
                   this.getTaskList()
@@ -433,7 +433,7 @@
       getTaskList(){
         this.$axios.post('/task/extend/info','81598efb-ffa9-11e8-a19c-0242ac110002')
           .then(response => {
-            if(response.data.status === 'success'){
+            if(response.data.status === 'SUCCESS'){
               this.tasklist = response.data.data;
               this.$nextTick(() => {
                 this.setSort()
@@ -459,7 +459,7 @@
               'new_rank': this.tasklist[evt.newIndex].rank
             })
               .then(response => {
-                if(response.data.status === 'success'){
+                if(response.data.status === 'SUCCESS'){
                   this.task.list = []
                   this.step_status = true
                   const targetRow = this.tasklist.splice(evt.oldIndex, 1)[0]
@@ -484,7 +484,7 @@
           'name': this.search.name
         })
           .then(response => {
-            if(response.data.status === 'success'){
+            if(response.data.status === 'SUCCESS'){
               this.apilist = response.data.apiDTOList;
             }
           })
@@ -495,7 +495,7 @@
       getApiTree(){
         this.$axios.post('/case/list')
           .then(response => {
-            if (response.data.status === 'success') {
+            if (response.data.status === 'SUCCESS') {
               this.options = response.data.data
             }else{
               this.options = [];

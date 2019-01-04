@@ -255,7 +255,7 @@
               'pageNo' : pageNo
             })
               .then(response => {
-                if(response.data.status === "success"){
+                if(response.data.status === "SUCCESS"){
                   this.apilist = response.data.apiDTOList
                   this.total = response.data.total
                   this.pageSize = response.data.pageSize
@@ -273,7 +273,7 @@
             //获取project分组列表
             this.$axios.post('/case/list', this.project_id)
               .then(response => {
-                  if (response.data.status === 'success') {
+                  if (response.data.status === 'SUCCESS') {
                     this.data2 = response.data.data
                   }else{
                     this.data2 = [];
@@ -302,7 +302,7 @@
               'case_id' : this.case_id
             })
               .then(response => {
-                if(response.data.status === "success"){
+                if(response.data.status === "SUCCESS"){
                   this.apilist = response.data.apiDTOList
                 }
               })
@@ -341,7 +341,7 @@
                     'name': this.addGroupForm.groupname
                   })
                     .then(response => {
-                      if(response.data.status === 'success'){
+                      if(response.data.status === 'SUCCESS'){
                         this.addGroupFormVisible = false;
                         this.$message.success('分组已添加')
                         this.getProjectList();
@@ -366,7 +366,7 @@
                   'name': this.addGroupForm.groupname
                 })
                   .then(response => {
-                    if(response.data.status === 'success'){
+                    if(response.data.status === 'SUCCESS'){
                       this.editGroupFormVisible = false;
                       this.$message.success(response.data.msg)
                       this.getProjectList();
@@ -402,7 +402,7 @@
             }).then(() => {
               this.$axios.post('/api/del',  id
               ).then(response => {
-                if(response.data.status === 'success'){
+                if(response.data.status === 'SUCCESS'){
                   this.$message({
                     type: 'success',
                     message: '删除成功!'

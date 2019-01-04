@@ -187,7 +187,7 @@
                     'pageNo': pageNo
                 }).then(response =>{
 
-                    if(response.data.status === 'success'){
+                    if(response.data.status === 'SUCCESS'){
                       this.total = response.data.total;
                       this.pagesize = response.data.pageSize;
                       this.currentpage = response.data.pageNo;
@@ -221,7 +221,7 @@
               }).then(() => {
                 this.$axios.post('/project/del', row.id).then(response => {
                   // console.log(response.data);
-                  if(response.data.status === 'success'){
+                  if(response.data.status === 'SUCCESS'){
                     this.$message({
                       type: 'success',
                       message: '删除成功!'
@@ -258,7 +258,7 @@
                 'id':row.id,
                 'status': row.status
               }).then(response => {
-                if(response.data.status === 'success'){
+                if(response.data.status === 'SUCCESS'){
                   row.status = -row.status;
                   this.$message.success({
                     message:'操作成功',
@@ -309,7 +309,7 @@
                     'project_name': this.editForm.project_name,
                     'status': this.editForm.status
                   }).then(response => {
-                      if(response.data.status === 'success'){
+                      if(response.data.status === 'SUCCESS'){
                         this.$message.success({
                           message:'更新项目成功',
                           center:true
@@ -343,7 +343,7 @@
                     this.addForm.project_name
                   ).then(response => {
                     // console.log(response);
-                  if(response.data.status === 'success'){
+                  if(response.data.status === 'SUCCESS'){
                     this.addLoading = false;
                     this.addFormVisible = false;
                     this.addForm.project_name = ''
