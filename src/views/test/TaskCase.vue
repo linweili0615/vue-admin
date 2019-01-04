@@ -334,7 +334,7 @@
           'list': this.deal_list
         })
           .then(response => {
-              if(response.data.status !== 'success'){
+              if(response.data.status !== 'SUCCESS'){
                 this.$message.error('更改状态失败！')
                 row.status = -row.status
               }
@@ -462,13 +462,15 @@
       SendTask(){
         this.status = true
         this.activeStatus = false
-        var intervaljob = setInterval(this.getTaskLog,200)
+        let intervaljob = setInterval(this.getTaskLog,200)
         this.$axios.post('/task/test', '81598efb-ffa9-11e8-a19c-0242ac110002')
           .then(response => {
             this.status = false
             if(response.data.status === 'SUCCESS'){
               this.result_list = response.data.data
+              debugger
               clearInterval(intervaljob)
+              debugger
               this.$confirm('跳转查看任务执行结果？', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -478,6 +480,10 @@
               }).catch((error) => {
                 console.log(error)
               });
+            }else{
+              clearInterval(intervaljob)
+              this.status = false
+              this.$message.error(response.data.msg)
             }
           })
           .catch(error => {
@@ -713,6 +719,7 @@
     margin: 0;
     li {
       padding: 0;
+      list-style: none;
     }
   }
 }
