@@ -8,10 +8,6 @@
 
             <div slot="header" class="clearfix">
               <span>用例信息</span>
-              <el-button style="float: right; padding: 5px;margin-left: 3px"
-                         type="info" @click="ToLog">
-                查看日志
-              </el-button>
               <router-link :to="{name: '项目列表'}">
                 <el-button style="float: right; padding: 5px 3px" type="primary" icon="el-icon-d-arrow-left">返回列表
                 </el-button>
@@ -83,14 +79,10 @@
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>案例列表</span>
-              <!--<el-button style="float: right; padding: 5px;margin-left: 3px"-->
-                         <!--type="info" @click="ToLog">-->
-                <!--查看日志-->
-              <!--</el-button>-->
               <el-button style="float: right; padding: 5px;margin-left: 3px"
-                         type="success" @click="changeStatus">
-                切换结果
-                <i class="el-icon-sort"></i>
+                         type="success" @click="getResult">
+                查看结果
+                <i class="el-icon-document"></i>
               </el-button>
             </div>
             <template>
@@ -166,7 +158,7 @@
         <div class="grid-content bg-purple">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
-              <span>执行结果</span>
+              <span>任务执行日志</span>
             </div>
             <div style="height:100%;overflow:auto;" class="logdata" id="logdata">
               <ul>
@@ -181,6 +173,7 @@
 
 
     </el-row>
+    <!--提取参数弹窗-->
     <el-dialog title="提取参数" :visible.sync="dialogFormVisible">
       <el-form :model="draw">
         <el-form-item label="活动名称" label-width="120px">
@@ -198,9 +191,56 @@
         <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
       </div>
     </el-dialog>
+    <!--结果日志弹窗-->
+    <el-dialog title="执行记录" :visible.sync="dialogTaskResultVisible" width="40%">
+      <ul>
+        <li>step  执行者    执行时间</li>
+        <li v-for="item in TaskResult">
+          #{{ item.id }}    {{ item.executor }}  {{ item.modify_time }}
+        </li>
+      </ul>
 
+
+      <!--:data="tableData7.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"-->
+
+      <template>
+        <el-table
+          :data="TaskResult"
+          style="width: 100%">
+          <el-table-column
+            label="id"
+            prop="id">
+          </el-table-column>
+          <el-table-column
+            label="executor"
+            prop="executor">
+          </el-table-column>
+          <el-table-column
+            label="modify_time"
+            prop="modify_time">
+          </el-table-column>
+          <!--<el-table-column-->
+            <!--align="right">-->
+            <!--<template slot="header" slot-scope="scope">-->
+            <!--<el-input-->
+              <!--v-model="search"-->
+              <!--size="mini"-->
+              <!--placeholder="输入关键字搜索"/>-->
+          <!--</template>-->
+            <!--<template slot-scope="scope">-->
+              <!--<el-button-->
+                <!--size="mini"-->
+                <!--@click="handleEdit(scope.$index, scope.row)">Edit</el-button>-->
+              <!--<el-button-->
+                <!--size="mini"-->
+                <!--type="danger"-->
+                <!--@click="handleDelete(scope.$index, scope.row)">Delete</el-button>-->
+            <!--</template>-->
+          <!--</el-table-column>-->
+        </el-table>
+      </template>
+    </el-dialog>
   </div>
-
 </template>
 
 <script>
@@ -231,6 +271,9 @@
         apilist: [],
         tasklist: [],
         deal_list:[],
+        TaskResult:[
+          { id: 123, executor: 'test_user', modify_time: '2019-01-04 13:07'}
+        ],
         result_list: [
           {
             code: 502,
@@ -240,6 +283,7 @@
           }
         ],
         dialogFormVisible: false,
+        dialogTaskResultVisible:false,
         draw:{
           name: '',
           region: ''
@@ -273,8 +317,8 @@
       onSubmit() {
         this.getApiList()
       },
-      changeStatus(){
-        this.activeStatus = !this.activeStatus
+      getResult(){
+        this.dialogTaskResultVisible = true
       },
       toggleSelection(rows) {
         if (rows) {
