@@ -40,20 +40,20 @@
                   >
                     <el-table-column type="selection" width="30"></el-table-column>
                     <el-table-column type="index" width="50" label="序号"></el-table-column>
-                    <el-table-column label="接口名称" width="320">
+                    <el-table-column label="接口名称" width="310">
                       <template slot-scope="scope">
                         <router-link :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
                           <span style="color:#409EFF">{{scope.row.api_name}}</span>
                         </router-link>
                       </template>
                     </el-table-column>
-                    <el-table-column label="状态" width="65">
+                    <el-table-column label="状态" width="75">
                       <template slot-scope="scope">
                         <el-switch
                         @click.native = "handleStatus(scope.row)"
                         v-model="scope.row.status"
                         active-color="#13ce66"
-                        inactive-color="#E6A23C"
+                        inactive-color="#7f8186"
                         active-value="1"
                         inactive-value="-1">
                         </el-switch>
@@ -86,7 +86,7 @@
             <div slot="header" class="clearfix">
               <span>案例列表</span>
               <el-button style="float: right; padding: 5px;margin-left: 3px"
-                         type="success" @click="getResult">
+                         type="success" @click="getTaskResultList">
                 查看结果
                 <i class="el-icon-document"></i>
               </el-button>
@@ -165,6 +165,11 @@
           <el-card class="box-card">
             <div slot="header" class="clearfix">
               <span>任务执行日志</span>
+              <el-button style="float: right; padding: 5px;margin-left: 3px"
+                         type="success" @click="getTaskResultList">
+                查看结果
+                <i class="el-icon-document"></i>
+              </el-button>
             </div>
             <div style="height:100%;overflow:auto;" class="logdata" id="logdata">
               <ul>
@@ -197,16 +202,17 @@
         <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
       </div>
     </el-dialog>
+
     <!--结果日志弹窗-->
-    <el-dialog title="执行记录" :visible.sync="dialogTaskResultVisible" width="40%">
+    <el-dialog title="执行记录" :visible.sync="dialogTaskResultListVisible" width="40%">
       <el-tabs type="border-card">
         <el-tab-pane label="个人记录">
           <template>
           <el-table
             :data="TaskResult.filter(data => data.executor.toLowerCase() ===(username.toLowerCase()))"
             style="width: 100%"
-            height="40vh"
-          >
+            @row-click="toTaskResult"
+            height="40vh">
             <el-table-column
               label="id"
               prop="id">
@@ -245,8 +251,8 @@
         </template>
         </el-tab-pane>
       </el-tabs>
-
     </el-dialog>
+
   </div>
 </template>
 
@@ -316,7 +322,7 @@
           }
         ],
         dialogFormVisible: false,
-        dialogTaskResultVisible:false,
+        dialogTaskResultListVisible:false,
         draw:{
           name: '',
           region: ''
@@ -459,6 +465,16 @@
           this.getTaskLog()
         }
       },
+      toTaskResult(row, event, column){
+        console.log(row, event, column)
+        let routeData = this.$router.resolve({
+          path: '/api/task/result', query: {
+            task_id : '81598efb-ffa9-11e8-a19c-0242ac110002',
+            u_id : '81598efb-ffa9-11e8-a19c-0242ac110002'
+          }
+        });
+        window.open(routeData.href, '_blank');
+      },
       SendTask(){
         this.status = true
         this.activeStatus = false
@@ -468,18 +484,19 @@
             this.status = false
             if(response.data.status === 'SUCCESS'){
               this.result_list = response.data.data
-              debugger
               clearInterval(intervaljob)
-              debugger
-              this.$confirm('跳转查看任务执行结果？', '提示', {
+              this.$confirm('是否跳转结果页？', '任务执行成功', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
               }).then(() => {
-                this.getTaskResult()
-              }).catch((error) => {
+                let routeData = this.$router.resolve({
+                  path: '/api/task/result', query: { task_id : '81598efb-ffa9-11e8-a19c-0242ac110002' }
+                });
+                window.open(routeData.href, '_blank');
+              }).catch(error => {
                 console.log(error)
-              });
+              })
             }else{
               clearInterval(intervaljob)
               this.status = false
@@ -493,11 +510,8 @@
             this.$message.error('执行异常')
           })
       },
-      getTaskResult(){
-        debugger
-        this.$route.push({
-          path:'/api/task/result'
-        })
+      getTaskResultList(){
+        this.dialogTaskResultListVisible = true
       },
       deleteTask(){
         if(this.task.list){

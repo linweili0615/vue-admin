@@ -185,8 +185,8 @@ export default {
     return {
       options: [],
       methods: [
-        {value: 'get', label: 'GET'},
-        {value: 'post', label: 'POST'},
+        {value: 'GET', label: 'GET'},
+        {value: 'POST', label: 'POST'},
         // {value: 'put', label: 'PUT'},
         // {value: 'delete', label: 'DELETE'}
         ],
