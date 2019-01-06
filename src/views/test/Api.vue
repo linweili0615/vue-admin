@@ -124,10 +124,13 @@
                 </div>
                 <div  v-show="!resultShow">
                   <div style="height: 75vh;">
-                    响应状态码：<pre>{{form.statusCode}}</pre>
-                    响应头部：<pre>{{form.resultHead}}</pre>
+                    状态码：<pre>{{form.res_code}}</pre>
+                    请求URL: <pre>{{form.req_url}}</pre>
+                    请求头部：<pre>{{ form.req_headers }}</pre>
+                    请求cookies：<pre>{{ form.req_cookies }}</pre>
+                    请求参数：<pre>{{ form.req_body }}</pre>
                     响应cookies：<pre>{{form.resultCookies}}</pre>
-                    响应内容：<pre>{{form.resultData}}</pre>
+                    响应内容：<pre>{{form.res_body}}</pre>
                   </div>
                 </div>
               </el-card>
@@ -428,8 +431,6 @@ export default {
           }).then(response => {
             this.loadingSend = false
             this.loadingSave = false
-
-
             if(response.data.id){
               this.$confirm(response.data.msg + '，是否跳转分组页面？', '提示', {
                 confirmButtonText: '确定',
@@ -451,10 +452,14 @@ export default {
               });
 
             }else {
-              this.form.statusCode = response.data.data.code
-              this.form.resultHead = this.toJSON(response.data.data.headers)
-              this.form.resultData = this.toJSON(response.data.data.content)
-              this.form.resultCookies = this.toJSON(response.data.data.cookies)
+              this.form.res_code = response.data.data.res_code
+              this.form.req_url = response.data.data.req_url
+              this.form.req_headers = response.data.data.req_headers
+              this.form.req_cookies = response.data.data.req_cookies
+              this.form.req_body = response.data.data.req_body
+              this.form.res_headers = this.toJSON(response.data.data.res_headers)
+              this.form.res_body = this.toJSON(response.data.data.res_body)
+              this.form.res_cookies = this.toJSON(response.data.data.res_cookies)
               this.showResponse()
             }
 
