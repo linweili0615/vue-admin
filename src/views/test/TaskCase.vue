@@ -409,10 +409,15 @@
             })
             .then(response => {
               if(response.data.status === 'SUCCESS'){
+                this.$message({
+                  type:'success',
+                  duration:1000,
+                  message: "已添加至步骤"
+                })
                 this.getTaskList()
                 this.toggleSelection()
               }else{
-                this.$message.error("添加步骤失败")
+                this.$message.error("添加至步骤失败")
               }
             })
             .catch(error => {
