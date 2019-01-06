@@ -5,59 +5,59 @@
         <div class="grid-content bg-purple-dark">
           <span style="font-size: x-large;">自动化测试报告</span>
           <p style="margin-top: 20px;">
-            <span class="report">开始时间: 2018-01-17 14:28:356</span>
+            <span class="report">开始时间: {{this.start_time}}</span>
             <span class="report">执行时长: 16秒</span>
-            <span class="report">结束时间: 2018-01-17 14:30:245</span>
-            <span class="report">任务ID: 561FDS-154FSDF-FDS545SDF-1541FDS</span>
-            <span class="report">执行者: linweili</span>
+            <span class="report">结束时间: {{this.end_time}}</span>
+            <span class="report">任务ID: {{this.task_id}}</span>
+            <span class="report">执行者: {{this.executor}}</span>
           </p>
         </div>
       </el-col>
     </el-row>
     <el-row class="bg-purple-light">
       <el-col :span="6" ><div class="grid-content"><span class="failue">失败</span></div></el-col>
-      <el-col :span="3"><div class="grid-content "><span class="normal">总数：</span><span class="digical">128</span></div></el-col>
-      <el-col :span="3"><div class="grid-content"><span class="normal">通过：</span><span class="digical-success">120</span></div></el-col>
-      <el-col :span="3"><div class="grid-content"><span class="normal">失败：</span><span class="digical-failue">8</span></div></el-col>
-      <el-col :span="5"><div class="grid-content"><span class="normal">通过率：</span><span class="digical">98 %</span></div></el-col>
+      <el-col :span="3"><div class="grid-content "><span class="normal">总数：</span><span class="digical">{{this.total}}</span></div></el-col>
+      <el-col :span="3"><div class="grid-content"><span class="normal">通过：</span><span class="digical-success">{{this.success}}</span></div></el-col>
+      <el-col :span="3"><div class="grid-content"><span class="normal">失败：</span><span class="digical-failue">{{this.fail}}</span></div></el-col>
+      <el-col :span="5"><div class="grid-content"><span class="normal">通过率：</span><span class="digical">{{this.percent}} %</span></div></el-col>
     </el-row>
 
     <div style="margin-top: 20px">
       <template>
         <el-table
           :data="tableData5"
+          height="68vh"
+          empty-text="暂无结果信息"
           style="width: 100%">
-          <el-table-column type="index" width="30"></el-table-column>
+          <el-table-column type="index" width="45"></el-table-column>
           <el-table-column type="expand">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="请求参数: ">
-                  <pre>{{ props.row.category }}</pre>
+                  headers: <pre>{{props.row.req_headers}}</pre>
+                  cookies: <pre>{{props.row.req_cookies}}</pre>
+                  params: <pre>{{props.row.req_body}}</pre>
                 </el-form-item>
                 <el-form-item label="返回参数: ">
-                  <pre>{{ props.row.address }}</pre>
+                  code: {{props.row.res_code}}<br/><br/>
+                  cookies: <pre>{{props.row.req_cookies}}</pre>
+                  data: <pre>{{props.row.req_body}}</pre>
                 </el-form-item>
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column label="API" prop="id" width="280"></el-table-column>
-          <el-table-column label="接口名称" prop="name" width="280"></el-table-column>
-          <el-table-column prop="url" label="请求地址" width="300" show-overflow-tooltip></el-table-column>
+          <el-table-column label="API" prop="api_id" width="280"></el-table-column>
+          <el-table-column label="接口名称" prop="api_name" width="230"></el-table-column>
+          <el-table-column label="请求地址" prop="req_url" width="330" show-overflow-tooltip></el-table-column>
           <el-table-column  label="请求方式" width="85" show-overflow-tooltip>
             <template slot-scope="scope">
-              <el-tag type="success" v-show="scope.row.method === 'POST'">{{ scope.row.method }}</el-tag>
-              <el-tag v-show="scope.row.method === 'GET'">{{ scope.row.method }}</el-tag>
+              <el-tag type="success" v-show="scope.row.req_method === 'POST'">{{ scope.row.req_method }}</el-tag>
+              <el-tag v-show="scope.row.req_method === 'GET'">{{ scope.row.req_method }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="测试结果" prop="desc" width="80"></el-table-column>
-          <el-table-column
-            label="开始时间"
-            prop="start_time">
-          </el-table-column>
-          <el-table-column
-            label="结束时间"
-            prop="end_time">
-          </el-table-column>
+          <el-table-column label="测试结果" prop="result" width="80"></el-table-column>
+          <el-table-column label="开始时间" prop="start_time"></el-table-column>
+          <el-table-column label="结束时间" prop="end_time"></el-table-column>
         </el-table>
       </template>
     </div>
@@ -69,138 +69,65 @@
   export default {
     data() {
       return {
+        total: 0,
+        success: 0,
+        fail: 0,
+        percent: 0,
+        task_id: '',
+        start_time: '',
+        end_time: '',
+        executor: '',
         tableData5: [{
-          id: '1da3d5ee-4cca-4f14-8fe3-8e27d8c46ef5',
-          name: '好滋好味鸡蛋仔',
-          method: 'GET',
-          url: 'https://passport.tuandai.com/2login',
+          api_id: '1da3d5ee-4cca-4f14-8fe3-8e27d8c46ef5',
+          api_name: '好滋好味鸡蛋仔',
+          req_method: 'GET',
+          req_headers: '',
+          req_url: 'https://passport.tuandai.com/2login',
           start_time: '2019-01-06 14:43:46:234',
           end_time: '2019-01-06 14:43:50:448',
-          category: {
-            url: 'fds',
-            method: 'get',
-            params: {
-              tdfrom: 'fds',
-              type: '1'
-            }
-          },
-          desc: '通过',
-          address: {
-            url: 'fds',
-            method: 'get',
-            params: {
-              tdfrom: 'fds',
-              type: '1'
-            }
-          },
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        }, {
-          id: '1da3d5ee-4cca-4f14-8fe3-8e27d8c46ef5',
-          name: '好滋好味鸡蛋仔',
-          method: 'POST',
-          url: 'https://passport.tuandai.com/2login',
-          start_time: '2019-01-06 14:43:46:234',
-          end_time: '2019-01-06 14:43:50:448',
-          category: {
-            url: 'fds',
-            method: 'get',
-            params: {
-              tdfrom: 'fds',
-              type: '1'
-            }
-          },
-          desc: '通过',
-          address: {
-            url: 'fds',
-            method: 'get',
-            params: {
-              tdfrom: 'fds',
-              type: '1'
-            }
-          },
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        },{
-          id: '1da3d5ee-4cca-4f14-8fe3-8e27d8c46ef5',
-          name: '好滋好味鸡蛋仔',
-          url: 'https://passport.tuandai.com/2login',
-          method: 'POST',
-          start_time: '2019-01-06 14:43:46:234',
-          end_time: '2019-01-06 14:43:50:448',
-          category: {
-            url: 'fds',
-            method: 'get',
-            params: {
-              tdfrom: 'fds',
-              type: '1'
-            }
-          },
-          desc: '失败',
-          address: {
-            url: 'fds',
-            method: 'get',
-            params: {
-              tdfrom: 'fds',
-              type: '1'
-            }
-          },
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        },{
-          id: '1da3d5ee-4cca-4f14-8fe3-8e27d8c46ef5',
-          name: '好滋好味鸡蛋仔',
-          url: 'https://passport.tuandai.com/2login',
-          method: 'GET',
-          start_time: '2019-01-06 14:43:46:234',
-          end_time: '2019-01-06 14:43:50:448',
-          category: {
-            url: 'fds',
-            method: 'get',
-            params: {
-              tdfrom: 'fds',
-              type: '1'
-            }
-          },
-          desc: '通过',
-          address: {
-            url: 'fds',
-            method: 'get',
-            params: {
-              tdfrom: 'fds',
-              type: '1'
-            }
-          },
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        },{
-          id: '1da3d5ee-4cca-4f14-8fe3-8e27d8c46ef5',
-          name: '好滋好味鸡蛋仔',
-          method: 'POST',
-          url: 'https://passport.tuandai.com/2login',
-          start_time: '2019-01-06 14:43:46:234',
-          end_time: '2019-01-06 14:43:50:448',
-          category: {
-            url: 'fds',
-            method: 'get',
-            params: {
-              tdfrom: 'fds',
-              type: '1'
-            }
-          },
-          desc: '失败',
-          address: {
-            url: 'fds',
-            method: 'get',
-            params: {
-              tdfrom: 'fds',
-              type: '1'
-            }
-          },
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        },]
+          req_cookies: '',
+          req_body: '',
+          res_code: '',
+          res_headers:'',
+          res_body:'',
+          res_cookies: '',
+          result: '通过'
+        }
+        ]
       }
+    },
+    methods: {
+      getTaskResult(){
+        this.$axios.post('/task/getResult',this.task_id)
+          .then(response => {
+            const res = response.data
+            if(res.status === 'SUCCESS'){
+              const result = JSON.parse(res.data)
+              this.total = result.total
+              this.success = result.success
+              this.fail = result.fail
+              this.percent = result.percent
+              this.start_time = result.start_time
+              this.end_time = result.end_time
+              this.executor = result.executor
+              this.tableData5 = result.resultList
+            }else {
+              this.$message.error(result.msg)
+            }
+          })
+          .catch(error => {
+              console.log(error)
+          })
+      }
+    },
+    created(){
+      this.task_id = this.$route.query.task_id
+      if(!this.task_id){
+        next({ path: '/404' })
+      }
+    },
+    mounted(){
+      this.getTaskResult()
     }
   }
 </script>
@@ -269,6 +196,7 @@
   width: 50%;
 }
 pre {
+  width: 60vh;
   overflow-x: auto;
   white-space: pre-wrap;
   word-wrap: break-word;

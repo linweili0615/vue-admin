@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getToken } from '@/utils/auth'
+import router from '../router'
 
 // 创建axios实例
 const service = axios.create({
@@ -13,11 +14,11 @@ service.defaults.withCredentials = true
 // response 拦截器
 service.interceptors.response.use(function (response) {
   if(response.data.status === 'NOT_FOUND'){
-    this.$router.push({
-      path: '/404'
-    })
+    router.push('/404')
+  }else {
+    return response
   }
-  return response
+
 }
 )
 
