@@ -8,11 +8,16 @@ const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
   NProgress.start()
   if (getToken()) {
+    console.log('getToken')
     if (to.path === '/login') {
+      console.log('/login')
       next({ path: '/' })
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
     } else {
-        store.dispatch('GetInfo').then(response => { // 拉取用户信息
+
+        store.dispatch('GetInfo').then(response => {
+          console.log('/GetInfo')
+          // 拉取用户信息
           const data = response.data
           if(data != ''){
             next()
@@ -23,6 +28,7 @@ router.beforeEach((to, from, next) => {
           }
 
         }).catch((err) => {
+          console.log('/FedLogOut')
           store.dispatch('FedLogOut').then(() => {
             next({ path: '/' })
           })
@@ -30,8 +36,10 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
+      console.log('whiteList')
       next()
     } else {
+      console.log('redirect')
       next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
       NProgress.done()
     }
