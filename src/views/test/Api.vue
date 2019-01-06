@@ -523,11 +523,29 @@ export default {
     //     this.form.response.splice(index, 1)
     //   }
     // },
+    parseParams(data) {
+      try {
+        var tempArr = [];
+        for (var i in data) {
+          var key = encodeURIComponent(i);
+          var value = encodeURIComponent(data[i]);
+          tempArr.push(key + '=' + value);
+        }
+        var urlParamsStr = tempArr.join('&');
+        return urlParamsStr;
+      } catch (err) {
+        return '';
+      }
+    },
     showRequest() {
       this.resultShow = true
-      this.reqaddr = this.form.addr
+      this.reqaddr = this.form.addr;
       this.reqheaders = this.toJSON(this.getheaders())
       this.reqbody = this.toJSON(this.getparams())
+      if(this.form.methods === 'GET'){
+        this.parseParams(this.reqbody)
+        this.reqaddr = this.reqaddr + "?" + this.parseParams(this.reqbody);
+      }
     },
     showResponse() {
       this.resultShow = false
