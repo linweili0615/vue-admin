@@ -25,9 +25,9 @@ const user = {
       return new Promise((resolve, reject) => {
         login(telno, userInfo.pwd).then(response => {
           const data = response.data
-          if(data.code === '200'){
-            setToken(data.token)
+          if(data.code === 'LOGIN'){
             setName(data.user_name)
+            commit('SET_NAME',data.user_name)
           }
           resolve(response)
         }).catch(error => {
@@ -45,8 +45,9 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
           const data = response.data
-          if(data.user_name !== ''){
+          if(data.code !== 'NOT_LOGIN'){
             setName(data.user_name)
+            commit('SET_NAME',data.user_name)
           }
           resolve(response)
         }).catch(error => {

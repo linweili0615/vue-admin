@@ -34,6 +34,7 @@
 
 <script>
 import { validateMobile } from '@/utils/validate'
+import { setName} from '@/utils/auth'
 
 export default {
   name: 'Login',
@@ -99,11 +100,15 @@ export default {
           this.loading = true
           this.$store.dispatch('Login', this.loginForm).then((response) => {
             const data = response.data
-            if(data.code != '200'){
+            if(data.code != 'LOGIN'){
               this.loading = false
-              this.$message.error('用户名或密码错误')
+              this.$message.error(data.msg)
             }else {
-              this.$message.success('登录成功')
+              this.$message({
+                type: 'success',
+                duration:1000,
+                message:'登录成功'
+              })
               this.loading = false
               this.$router.push({ path: this.redirect || '/' })
             }

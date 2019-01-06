@@ -7,10 +7,7 @@ export function login(telno, pwd) {
     },
     url: '/user/2login',
     method: 'post',
-    data: {
-      telno,
-      pwd
-    }
+    data: {telno, pwd}
   })
 }
 
