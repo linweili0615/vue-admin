@@ -161,10 +161,11 @@ $light_gray:#eee;
 </style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-$bg:#2d3a4b;
+$bg:#323b46;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 .login-container {
+  /*background: url("qiong.jpg");*/
   position: fixed;
   height: 100%;
   width: 100%;
