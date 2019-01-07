@@ -28,6 +28,11 @@ const user = {
           if(data.code === 'LOGIN'){
             setName(data.user_name)
             commit('SET_NAME',data.user_name)
+          }else{
+            removeToken()
+            removerName()
+            commit('SET_TOKEN','')
+            commit('SET_NAME','')
           }
           resolve(response)
         }).catch(error => {
@@ -48,6 +53,11 @@ const user = {
           if(data.code !== 'NOT_LOGIN'){
             setName(data.user_name)
             commit('SET_NAME',data.user_name)
+          }else{
+            removeToken()
+            removerName()
+            commit('SET_TOKEN','')
+            commit('SET_NAME','')
           }
           resolve(response)
         }).catch(error => {
