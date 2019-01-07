@@ -546,14 +546,17 @@
         this.$axios.post('/task/extend/info','81598efb-ffa9-11e8-a19c-0242ac110002')
           .then(response => {
             if(response.data.status === 'SUCCESS'){
-              this.tasklist = response.data.data;
-              this.$nextTick(() => {
-                this.setSort()
-              })
+              if(response.data.data[0] !== null){
+                this.tasklist = response.data.data;
+                this.$nextTick(() => {
+                  this.setSort()
+                })
+              }
+
             }
           })
           .catch(error => {
-
+              console.log(error)
           })
       },
       setSort() {

@@ -405,7 +405,6 @@
         })
       },
       selsChange: function (sels) {
-        console.log(1111111111)
         if (sels.length>0) {
           this.sels = sels;
         }
@@ -456,13 +455,27 @@
       //批量删除
       batchRemove: function () {
         let ids = this.sels.map(item => item.id);
+        console.log(ids)
         let self = this;
         this.$confirm('确认删除选中记录吗？', '提示', {
           type: 'warning'
         }).then(() => {
           self.listLoading = true;
-        }).catch(() => {
-        });
+          this.$axios.post('/api/del/ids',ids)
+            .then(response => {
+              self.listLoading = false;
+              if(response.data.status === 'SUCCESS'){
+                this.getApiList(30,1)
+                this.$message.success("记录已删除")
+              }else {
+                this.$message.error(response.data.msg)
+              }
+            })
+            .catch(error => {
+              self.listLoading = false;
+              this.$message.error('删除异常')
+            })
+        })
       }
     },
     created(){
