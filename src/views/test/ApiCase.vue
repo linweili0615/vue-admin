@@ -50,7 +50,7 @@
         <div class="grid-content bg-purple">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
-              <el-form :inline="true" :model="filters" @submit.native.prevent>
+              <el-form :inline="true" @submit.native.prevent>
 
                 <el-form-item>
                   <router-link :to="{ name: 'API接口', query: {project_id: project_id, case_id: case_id}}" style='text-decoration: none;color: aliceblue;'>
@@ -69,12 +69,12 @@
                   </el-dialog>
                 </el-form-item>
                 <el-form-item>
-                  <el-input v-model.trim="filters.name" placeholder="输入接口名称进行过滤"></el-input>
+                  <el-input v-model.trim="apiName" placeholder="输入接口名称进行过滤"></el-input>
                 </el-form-item>
               </el-form>
             </div>
             <!--列表-->
-            <el-table :data="apilist.filter(data => !filters.name || data.name.toLowerCase().includes(filters.name.toLowerCase()))"
+            <el-table :data="filterApilist"
                       highlight-current-row
                       v-loading="listLoading"
                       height="75vh"
@@ -212,9 +212,7 @@
             { min: 2, max: 20, message: '请输入长度在 2 到 20 个字符的分组名称', trigger: 'blur' }
           ]
         },
-        filters: {
-          name: ''
-        },
+        apiName: '',
         apilist: [],
         checkedkeys : ['b87908ad-b2e3-4751-be18-ce9f2d4dc09f'],
         total: 0,
@@ -246,6 +244,11 @@
           children: 'children',
           label: 'label'
         }
+      }
+    },
+    computed: {
+      filterApilist() {
+        return this.apilist.filter(item => !this.apiName || item.name.toLowerCase().includes(this.apiName.toLowerCase()))
       }
     },
     watch: {
@@ -402,6 +405,7 @@
         })
       },
       selsChange: function (sels) {
+        console.log(1111111111)
         if (sels.length>0) {
           this.sels = sels;
         }
