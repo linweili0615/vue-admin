@@ -139,8 +139,8 @@
                       </el-table-column>
                       <el-table-column  label="请求方式" width="85" show-overflow-tooltip>
                         <template slot-scope="scope">
-                          <el-tag type="success" v-show="scope.row.method === 'POST'">{{ scope.row.method }}</el-tag>
-                          <el-tag v-show="scope.row.method === 'GET'">{{ scope.row.method }}</el-tag>
+                          <el-tag type="success" v-if="scope.row.method === 'POST'">{{ scope.row.method }}</el-tag>
+                          <el-tag v-else="scope.row.method === 'GET'">{{ scope.row.method }}</el-tag>
                         </template>
                       </el-table-column>
                       <el-table-column prop="paramstype" label="类型" width="50" show-overflow-tooltip></el-table-column>

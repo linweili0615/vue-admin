@@ -40,8 +40,8 @@
                 </el-form-item>
                 <el-form-item label="返回参数: ">
                   code: {{props.row.res_code}}<br/><br/>
-                  cookies: <pre>{{props.row.req_cookies}}</pre>
-                  data: <pre>{{props.row.req_body}}</pre>
+                  cookies: <pre>{{props.row.res_cookies}}</pre>
+                  data: <pre>{{props.row.res_body}}</pre>
                 </el-form-item>
               </el-form>
             </template>
@@ -51,8 +51,8 @@
           <el-table-column label="请求地址" prop="req_url" width="330" show-overflow-tooltip></el-table-column>
           <el-table-column  label="请求方式" width="85" show-overflow-tooltip>
             <template slot-scope="scope">
-              <el-tag type="success" v-show="scope.row.req_method === 'POST'">{{ scope.row.req_method }}</el-tag>
-              <el-tag v-show="scope.row.req_method === 'GET'">{{ scope.row.req_method }}</el-tag>
+              <el-tag type="success" v-if="scope.row.req_method == 'POST'">{{ scope.row.req_method }}</el-tag>
+              <el-tag v-else>{{ scope.row.req_method }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="测试结果" prop="result" width="80"></el-table-column>
@@ -103,6 +103,7 @@
             const res = response.data
             if(res.status === 'SUCCESS'){
               const result = JSON.parse(res.data)
+              console.log(result)
               this.total = result.total
               this.success = result.success
               this.fail = result.fail
@@ -111,6 +112,8 @@
               this.end_time = result.end_time
               this.executor = result.executor
               this.tableData5 = result.resultList
+
+              console.log(this.tableData5)
             }else {
               this.$message.error(result.msg)
             }
