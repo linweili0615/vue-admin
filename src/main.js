@@ -7,13 +7,14 @@ import App from './App'
 import router from './router'
 import store from './store'
 import service from '@/utils/request'
+import VueClipboard from 'vue-clipboard2'
 
 import '@/icons' // icon
 import '@/permission' // permission control
 
 
 Vue.use(ElementUI)
-
+Vue.use(VueClipboard)
 
 import { Message } from 'element-ui'
 import { Notification } from 'element-ui';

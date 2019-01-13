@@ -39,7 +39,7 @@
                     @selection-change="handleTaskChange"
                   >
                     <el-table-column type="selection" width="30"></el-table-column>
-                    <el-table-column type="index" width="50" label="序号"></el-table-column>
+                    <el-table-column type="index" width="52" label="序号"></el-table-column>
                     <el-table-column label="接口名称" width="280">
                       <template slot-scope="scope">
                         <router-link :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
@@ -127,7 +127,7 @@
                       style="width: 100%"
                       @selection-change="handleSelectionChange">
                       <el-table-column type="selection" width="30"></el-table-column>
-                      <el-table-column type="index" width="48" label="序号"></el-table-column>
+                      <el-table-column type="index" width="52" label="序号"></el-table-column>
                       <el-table-column prop="name" label="接口名称" width="220">
 
                         <template slot-scope="scope">
@@ -683,7 +683,7 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
 .dashboard {
   &-container {
-    margin: 20px 25px 20px 25px;
+    margin: 15px 20px 15px 20px;
   }
 }
 .el-row {
@@ -721,10 +721,10 @@
 
 .box-card {
   width: 100%;
-  height: 850px;
+  height: 91vh;
   /deep/ .el-card__body {
     padding: 10px;
-    height: 795px;
+    height: 85vh;
   }
 }
 .checkbox-item {

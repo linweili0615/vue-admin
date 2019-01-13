@@ -11,8 +11,11 @@
                           :loading="loadingSave" @click="SaveTest"
                           icon="el-icon-tickets">保存接口</el-button>
               <el-button  plain size="medium" @click="fastTest" :loading="loadingSend">模拟请求</el-button>
-              <el-button @click="test" v-show="!rightstatus">查看结果</el-button>
-
+              <el-button @click="leftchage" v-show="!rightstatus" >查看结果
+                <i class="el-icon-d-arrow-right"></i><i class="el-icon-d-arrow-right"></i>
+              </el-button>
+              <el-button type="info" icon="el-icon-info"
+                         style="float: right" size="medium" @click="getinfo">函数</el-button>
             </div>
             <div style="height:100%;overflow:auto;height: 80vh;">
               <el-form :model="form" ref="form" :rules="formRules" label-width="100px">
@@ -67,7 +70,7 @@
 
                   <el-form-item label="请求参数：">
                     <el-row :span="24">
-                      <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
+                      <el-tabs v-model="activeName2" type="card">
                         <el-tab-pane label="Parameters" name="form">
                           <el-table ref="multipleParameterTable" :data="form.parameter"
                                     highlight-current-row
@@ -120,8 +123,27 @@
                 <el-button  plain size="medium" @click="rightclick">关闭</el-button>
               </div>
               <el-tabs v-model="activeName1" type="card" >
-                <el-tab-pane label="响应内容" name="res">暂无响应内容</el-tab-pane>
-                <el-tab-pane label="请求内容" name="req">暂无请求内容</el-tab-pane>
+                <el-tab-pane label="响应内容" name="res">
+                  <div v-if="!resultShow">
+                    暂无响应内容
+                  </div>
+                  <div v-else="resultShow" style="height: 75vh;">
+                    状态码：<pre>{{form.res_code}}</pre>
+                    响应cookies：<pre>{{form.resultCookies}}</pre>
+                    响应内容：<pre>{{form.res_body}}</pre>
+                  </div>
+                </el-tab-pane>
+                <el-tab-pane label="请求内容" name="req">
+                  <div v-if="!resultShow">
+                    暂无请求内容
+                  </div>
+                  <div v-else="resultShow" style="height: 75vh;">
+                    请求URL: <pre>{{form.req_url}}</pre>
+                    请求头部：<pre>{{ form.req_headers }}</pre>
+                    请求cookies：<pre>{{ form.req_cookies }}</pre>
+                    请求参数：<pre>{{ form.req_body }}</pre>
+                  </div>
+                </el-tab-pane>
               </el-tabs>
 
             </el-card>
@@ -129,6 +151,35 @@
       </el-col>
 
     </el-row>
+
+    <el-dialog title="函数列表" :visible.sync="dialogVisible" width="40%">
+          <template>
+            <el-table
+              :data="Functions"
+              style="width: 100%"
+              height="40vh">
+              <el-table-column
+                label="Name"
+                prop="variableName">
+              </el-table-column>
+              <el-table-column
+                label="Value"
+                prop="variableValue">
+              </el-table-column>
+              <el-table-column
+              label="操作">
+                <template slot-scope="scope">
+                  <el-button type="text" size="medium"
+                             v-clipboard:copy="scope.row.variableValue"
+                             v-clipboard:success="onCopy"
+                             v-clipboard:error="onError">点击复制
+                  </el-button>
+                </template>
+
+              </el-table-column>
+            </el-table>
+          </template>
+    </el-dialog>
 
   </div>
 </template>
@@ -174,6 +225,7 @@
       }
 
       return {
+        dialogVisible: false,
         activeName1: 'res',
         activeName2: 'form',
         leftwidth: 24,
@@ -186,11 +238,9 @@
           // {value: 'delete', label: 'DELETE'}
         ],
         ParameterType: true,
-        radio: "form-data",
         load:true,
         loadingSend: false,
         loadingSave: false,
-        radioType: "",
         result: true,
         activeNames: ['1', '2', '3', '4'],
         formchange: true,
@@ -235,12 +285,35 @@
         format: true,
         reqheaders: "",
         reqbody: "",
-        reqaddr: ""
-
+        reqaddr: "",
+        Functions:[],
       }
     },
     methods: {
-      test(){
+      // 复制成功
+      onCopy(e){
+        // console.log(e);
+      },
+      // 复制失败
+      onError(e){
+        // alert("失败");
+      },
+      getinfo(){
+        this.$axios.get('/api/variable_list')
+          .then(res => {
+              if(res.data.status === 'SUCCESS'){
+                this.Functions = res.data.data
+              }else {
+                this.$message.info(res.data.msg)
+              }
+
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        this.dialogVisible = true
+      },
+      leftchage(){
         this.leftwidth = 12
         this.rightstatus = true
 
@@ -287,10 +360,10 @@
 
               if(response.data.data.body !== '{}' && response.data.data.body !== ''){
                 if(response.data.data.paramstype === 'raw'){
-                  this.radio = 'raw'
+                  this.activeName2 = 'raw'
                   this.form.parameterRaw = response.data.data.body
                 }else{
-                  this.radio = 'form-data'
+                  this.activeName2 = 'form'
                   var bd_obj = JSON.parse(response.data.data.body)
                   let bd = []
                   for(var i=0;i<Object.keys(bd_obj).length;i++) {
@@ -303,15 +376,13 @@
                   }
                   this.form.parameter = bd
                 }
-
               }else{
-                this.radio = 'form-data'
+                this.activeName2 = 'form'
               }
-
             }
           })
           .catch(error => {
-            this.radio = 'form-data'
+            this.activeName2 = 'form'
             this.$message.error("获取API详情失败")
           })
       },
@@ -379,8 +450,8 @@
       },
       getparams(){
         let _parameter = new Object();
-        let _type = this.radio;
-        if (_type === 'form-data') {
+        let _type = this.activeName2;
+        if (_type === 'form') {
           for (let i = 0; i < this.form.parameter.length; i++) {
             var a = this.form.parameter[i]["name"];
             if (a) {
@@ -428,7 +499,7 @@
               'url':  this.form.addr,
               'headers': _headers,
               'body': _parameter,
-              'paramstype': this.form.paramstype
+              'paramstype': this.activeName2
             }).then(response => {
               this.loadingSend = false
               this.loadingSave = false
@@ -461,7 +532,9 @@
                 this.form.res_headers = this.toJSON(response.data.data.res_headers)
                 this.form.res_body = this.toJSON(response.data.data.res_body)
                 this.form.res_cookies = this.toJSON(response.data.data.res_cookies)
-                this.showResponse()
+                this.activeName1 = 'res'
+                this.resultShow = true
+                this.leftchage()
               }
 
             }).catch(error => {
@@ -538,26 +611,6 @@
           return '';
         }
       },
-      showRequest() {
-        this.resultShow = true
-        this.reqaddr = this.form.addr;
-        this.reqheaders = this.toJSON(this.getheaders())
-        this.reqbody = this.toJSON(this.getparams())
-        if(this.form.methods === 'GET'){
-          this.parseParams(this.reqbody)
-          this.reqaddr = this.reqaddr + "?" + this.parseParams(this.reqbody);
-        }
-      },
-      showResponse() {
-        this.resultShow = false
-      },
-      changeParameterType() {
-        if (this.radio === 'form-data') {
-          this.ParameterType = !this.ParameterType
-        } else {
-          this.ParameterType = !this.ParameterType
-        }
-      },
       handleChange(val) {
       },
       onSubmit() {
@@ -567,11 +620,6 @@
     computed:{
       leftchangge(){
         return this.leftwidth
-      }
-    },
-    watch: {
-      radio() {
-        this.changeParameterType()
       }
     },
     created () {

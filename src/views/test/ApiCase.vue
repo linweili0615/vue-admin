@@ -480,11 +480,11 @@
       }
     },
     created(){
-      if(this.$route.query.project_id === undefined || this.$route.query.project_id ==='' || !this.$route.query.project_id){
-        this.$router.push({
-          path: '/404'
-        })
-      }
+      // if(this.$route.query.project_id === undefined || this.$route.query.project_id ==='' || !this.$route.query.project_id){
+      //   this.$router.push({
+      //     path: '/404'
+      //   })
+      // }
       this.project_id = this.$route.query.project_id
       if(this.$route.query.case_id){
         this.case_id = this.$route.query.case_id
@@ -507,7 +507,7 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
 .dashboard {
   &-container {
-    margin: 20px 25px 20px 25px;
+    margin: 15px 20px 15px 20px;
   }
 }
 .el-row {
@@ -522,7 +522,7 @@
 
 .grid-content {
   border-radius: 4px;
-  min-height: 850px;
+  height: 86vh;
 }
 .row-bg {
   padding: 5px 0;
@@ -545,10 +545,10 @@
 
 .box-card {
   width: 100%;
-  height: 850px;
+  height: 91vh;
   /deep/ .el-card__body {
     padding: 10px;
-    height: 795px;
+    height: 86vh;
   }
 }
 .checkbox-item {
@@ -589,17 +589,7 @@
 .el-form-item {
   margin-bottom: 10px;
 }
-.logdata {
-  height: 80vh;
-  overflow: auto;
-  ul {
-    margin: 0;
-    li {
-      padding: 0;
-      list-style: none;
-    }
-  }
-}
+
 
 </style>
 

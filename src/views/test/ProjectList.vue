@@ -25,7 +25,7 @@
         <el-table :data="project.slice(0, pagesize)"
                   highlight-current-row v-loading="listLoading"
                   border
-                  height="75vh"
+                  height="78vh"
                   @selection-change="selsChange"
                   style="width: 100%;">
             <el-table-column type="index" width="50" label="序号"></el-table-column>
@@ -389,11 +389,7 @@
 <style rel="stylesheet/scss" lang="scss" scoped>
   .dashboard {
     &-container {
-      margin: 30px;
-    }
-    &-text {
-      font-size: 35px;
-      line-height: 50px;
+      margin: 15px 20px 15px 20px;
     }
   }
 </style>

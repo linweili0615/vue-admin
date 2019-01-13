@@ -47,7 +47,7 @@ export const constantRouterMap = [
         path: '/api/edit',
         name: '修改API接口',
         hidden: true,
-        component: () => import('@/views/test/Api'),
+        component: () => import('@/views/test/ApiNew'),
         meta: { title: '修改API接口', icon: 'form' }
       },{
         path: '/api/project',
