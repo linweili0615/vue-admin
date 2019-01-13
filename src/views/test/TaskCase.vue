@@ -40,7 +40,7 @@
                   >
                     <el-table-column type="selection" width="30"></el-table-column>
                     <el-table-column type="index" width="50" label="序号"></el-table-column>
-                    <el-table-column label="接口名称" width="310">
+                    <el-table-column label="接口名称" width="280">
                       <template slot-scope="scope">
                         <router-link :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
                           <span style="color:#409EFF">{{scope.row.api_name}}</span>
@@ -87,7 +87,7 @@
               <span>案例列表</span>
               <el-button style="float: right; padding: 5px;margin-left: 3px"
                          type="success" @click="getTaskResultList">
-                查看结果
+                查看历史结果
                 <i class="el-icon-document"></i>
               </el-button>
             </div>
@@ -112,7 +112,7 @@
 
                   </el-form>
 
-                  <el-button type="primary" plain size="mini" style="font-size: 12px"
+                  <el-button type="primary" plain size="medium" style="font-size: 12px"
                              icon="el-icon-circle-plus-outline"
                               @click="addStep">添加至步骤</el-button>
                   <template>
@@ -120,14 +120,14 @@
                       ref="multipleTable"
                       @row-click="rowClick"
                       :data="apilist"
-                      height="63vh"
+                      height="61vh"
                       size="medium"
                       tooltip-effect="dark"
                       empty-text="暂无数据"
                       style="width: 100%"
                       @selection-change="handleSelectionChange">
                       <el-table-column type="selection" width="30"></el-table-column>
-                      <el-table-column type="index" min-width="8%" label="序号"></el-table-column>
+                      <el-table-column type="index" width="48" label="序号"></el-table-column>
                       <el-table-column prop="name" label="接口名称" width="220">
 
                         <template slot-scope="scope">
@@ -143,13 +143,26 @@
                           <el-tag v-else="scope.row.method === 'GET'">{{ scope.row.method }}</el-tag>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="paramstype" label="类型" width="50" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="paramstype" label="类型" width="48" show-overflow-tooltip></el-table-column>
                       <el-table-column prop="url" label="请求地址" width="250" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="update_author" label="最后修改者" width="90" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="modify_time" label="最后修改时间" width="150" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="update_author" label="修改者" width="90" show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="modify_time" label="修改时间" width="160" show-overflow-tooltip></el-table-column>
 
                     </el-table>
                   </template>
+
+                  <div class="block">
+                    <el-pagination
+                      @size-change="handleSizeChange"
+                      @current-change="handleCurrentChange"
+                      :current-page="currentpage"
+                      :page-sizes="sizes"
+                      :page-size="pageSize"
+                      :pager-count="7"
+                      layout="total, sizes, prev, pager, next, jumper"
+                      :total="total">
+                    </el-pagination>
+                  </div>
 
                 </el-tab-pane>
                 <!--<el-tab-pane label="测试结果" name="result">文档</el-tab-pane>-->
@@ -167,7 +180,7 @@
               <span>任务执行日志</span>
               <el-button style="float: right; padding: 5px;margin-left: 3px"
                          type="success" @click="getTaskResultList">
-                查看结果
+                查看历史结果
                 <i class="el-icon-document"></i>
               </el-button>
             </div>
@@ -285,6 +298,11 @@
         apilist: [],
         tasklist: [],
         deal_list:[],
+        sizes: [50, 80],
+        pageSize:50,
+        pageCount:1,
+        page: 1,
+        currentpage: 1,
         TaskResult:[
           { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
           { id: 123, executor: 'linweili', execute_time: '2019-01-04 13:07'},
@@ -354,7 +372,7 @@
         console.log(tab, event);
       },
       onSubmit() {
-        this.getApiList()
+        this.getApiList(50,1)
       },
       getResult(){
         this.dialogTaskResultVisible = true
@@ -590,10 +608,19 @@
           }
         })
       },
-      getApiList(){
+      handleSizeChange(val) {
+        this.pageSize = val;
+        this.getApiList(this.pageSize, 1);
+      },
+      handleCurrentChange(val) {
+        this.currentpage = val;
+        this.getApiList(this.pageSize,this.currentpage)
+
+      },
+      getApiList(pageSize,pageNo){
         this.$axios.post('/api/all_list',{
-          'pageSize' : 70,
-          'pageNo': 1,
+          'pageSize' : pageSize,
+          'pageNo': pageNo,
           'project_id': this.project_id,
           'case_id': this.case_id,
           'name': this.search.name
@@ -601,6 +628,10 @@
           .then(response => {
             if(response.data.status === 'SUCCESS'){
               this.apilist = response.data.apiDTOList;
+              this.total = response.data.total
+              this.pageSize = response.data.pageSize
+              this.pageNo = response.data.pageNo
+              this.pageCount = response.data.pageCount
             }
           })
           .catch(error => {
@@ -638,7 +669,7 @@
       // this.task_id = this.$route.query.params.task_id
       this.getTaskList()
       this.getApiTree()
-      this.getApiList()
+      this.getApiList(50,1)
     },
     updated(){
       this.$nextTick(function(){

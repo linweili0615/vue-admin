@@ -1,15 +1,15 @@
 <template>
   <div class="dashboard-container">
 
-    <el-row :gutter="22">
-      <el-col :span="6">
+    <el-row :gutter="24">
+      <el-col :span="8">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
 
             <div slot="header" class="clearfix">
-              <el-button class="addGroup" type="primary"   @click="handleAddGroup">新增分组</el-button>
-              <el-button type="primary" :disabled="update" @click="handleEditGroup">修改分组</el-button>
-              <el-button class="addGroup" @click="toApi">快速测试</el-button>
+              <el-button class="addGroup" type="primary" size="medium"   @click="handleAddGroup">新增分组</el-button>
+              <el-button type="primary" size="medium" :disabled="update" @click="handleEditGroup">修改分组</el-button>
+              <el-button class="addGroup" size="medium" @click="toApi">快速测试</el-button>
             </div>
 
             <template>
@@ -46,7 +46,7 @@
         </div>
       </el-col>
 
-      <el-col :span="18">
+      <el-col :span="16">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
@@ -54,22 +54,18 @@
 
                 <el-form-item>
                   <router-link :to="{ name: 'API接口', query: {project_id: project_id, case_id: case_id}}" style='text-decoration: none;color: aliceblue;'>
-                    <el-button type="primary">新增</el-button>
+                    <el-button type="primary" size="medium">新增</el-button>
                   </router-link>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click.native="DownloadApi">下载接口文档</el-button>
+                  <el-button type="primary" size="medium" @click.native="DownloadApi">下载接口文档</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click.native="loadSwaggerApi = true">导入接口</el-button>
-                  <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-                  <el-dialog title="导入swagger接口" :visible.sync="loadSwaggerApi" :close-on-click-modal="false">
-                    <el-input v-model.trim="swaggerUrl" placeholder="请输入swagger接口地址" style="width:90%"></el-input>
-                    <el-button type="primary" @click="addSubmit" :loading="addLoading" style="padding-top: 10px">导入</el-button>
-                  </el-dialog>
+                  <el-button type="primary" size="medium" @click.native="loadSwaggerApi = true">导入接口</el-button>
+                  <el-button type="danger" size="medium" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-input v-model.trim="apiName" placeholder="输入接口名称进行过滤"></el-input>
+                  <el-input v-model.trim="apiName" size="medium" placeholder="输入接口名称进行过滤"></el-input>
                 </el-form-item>
               </el-form>
             </div>
@@ -77,34 +73,34 @@
             <el-table :data="filterApilist"
                       highlight-current-row
                       v-loading="listLoading"
-                      height="75vh"
+                      height="73vh"
                       @selection-change="selsChange"
                       style="width: 100%;">
-              <el-table-column type="selection" min-width="5%">
+              <el-table-column type="selection" width="30">
               </el-table-column>
-              <el-table-column type="index" min-width="2%" label="序号"></el-table-column>
-              <el-table-column label="接口名称" min-width="15%"  show-overflow-tooltip>
+              <el-table-column type="index" width="50" label="序号"></el-table-column>
+              <el-table-column label="接口名称" width="220"  show-overflow-tooltip>
                 <template slot-scope="scope">
                   <router-link :to="{ name: '修改API接口', query: { id: scope.row.id, project_id: project_id, case_id: case_id}}">
                     <span style="color:#409EFF">{{scope.row.name}}</span>
                   </router-link>
                 </template>
               </el-table-column>
-              <el-table-column  label="请求方式" min-width="8%" show-overflow-tooltip>
+              <el-table-column  label="请求方式" width="85" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-tag type="success" v-if="scope.row.method === 'POST'">{{ scope.row.method }}</el-tag>
                   <el-tag v-else="scope.row.method === 'GET'">{{ scope.row.method }}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="paramstype" label="提交方式" min-width="6%"  show-overflow-tooltip>
+              <el-table-column prop="paramstype" label="类型" width="50"  show-overflow-tooltip>
               </el-table-column>
-              <el-table-column prop="url" label="URL地址" min-width="18%"  show-overflow-tooltip>
+              <el-table-column prop="url" label="URL地址" width="220"  show-overflow-tooltip>
               </el-table-column>
-              <el-table-column prop="update_author" label="最近更新人" min-width="7%"  show-overflow-tooltip>
+              <el-table-column prop="update_author" label="更新者" width="90"  show-overflow-tooltip>
               </el-table-column>
-              <el-table-column prop="modify_time" label="更新日期" min-width="13%" sortable show-overflow-tooltip>
+              <el-table-column prop="modify_time" label="更新日期" width="160" sortable show-overflow-tooltip>
               </el-table-column>
-              <el-table-column label="操作" min-width="10%">
+              <el-table-column label="操作" width="150">
                 <template slot-scope="scope">
                   <el-button type="danger" size="small" @click="handleDel(scope.row.id)">删除</el-button>
                   <router-link :to="{ name: '修改API接口', query: { id: scope.row.id, project_id: project_id, case_id: case_id }}">
@@ -174,7 +170,10 @@
         <el-button type="primary" @click.native="editGroupSubmit(0)" :loading="addGroupLoading">提交</el-button>
       </div>
     </el-dialog>
-
+    <el-dialog title="导入swagger接口" :visible.sync="loadSwaggerApi" :close-on-click-modal="false">
+      <el-input v-model.trim="swaggerUrl" placeholder="请输入swagger接口地址" style="width:100%"></el-input>
+      <el-button type="primary" size="medium" @click="addSubmit" :loading="addLoading" style="margin-top: 10px">导入</el-button>
+    </el-dialog>
   </div>
 
 </template>
@@ -407,6 +406,8 @@
       selsChange: function (sels) {
         if (sels.length>0) {
           this.sels = sels;
+        }else{
+          this.sels = []
         }
       },
       handleSizeChange(val) {

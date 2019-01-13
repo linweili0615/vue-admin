@@ -28,23 +28,23 @@
                   height="75vh"
                   @selection-change="selsChange"
                   style="width: 100%;">
-            <el-table-column type="index" min-width="8%" label="序号"></el-table-column>
-            <el-table-column min-width="23%" label="项目ID">
+            <el-table-column type="index" width="50" label="序号"></el-table-column>
+            <el-table-column width="295" label="项目ID">
               <template slot-scope="scope">
                 <router-link :to="{ name: '测试分组', query: { project_id: scope.row.id}}">
                   <span style="color:#409EFF">{{scope.row.id}}</span>
                 </router-link>
               </template>
             </el-table-column>
-            <el-table-column prop="project_name" label="项目名称" min-width="16%"  show-overflow-tooltip></el-table-column>
-            <el-table-column prop="author" label="创建人" min-width="8%" ></el-table-column>
-            <el-table-column prop="update_author" label="最后修改人" min-width="8%" ></el-table-column>
-            <el-table-column prop="create_time" label="创建时间" min-width="10%" ></el-table-column>
-            <el-table-column prop="modify_time" label="最后修改时间" min-width="10%" sortable></el-table-column>
-            <el-table-column label="状态" min-width="6%" >
+            <el-table-column prop="project_name" label="项目名称" width="210"  show-overflow-tooltip></el-table-column>
+            <el-table-column prop="author" label="创建者" width="90" ></el-table-column>
+            <el-table-column prop="update_author" label="修改者" width="90" ></el-table-column>
+            <el-table-column prop="create_time" label="创建时间" width="155" ></el-table-column>
+            <el-table-column prop="modify_time" label="修改时间" width="155" sortable></el-table-column>
+            <el-table-column label="状态" width="55" >
               <template slot-scope="scope">{{scope.row.status===1?'启用':'禁用'}}</template>
             </el-table-column>
-            <el-table-column label="操作" min-width="20%">
+            <el-table-column label="操作" width="220">
                 <template slot-scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
