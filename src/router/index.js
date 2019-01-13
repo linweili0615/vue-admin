@@ -41,7 +41,7 @@ export const constantRouterMap = [
       {
         path: '/api/add',
         name: 'API接口',
-        component: () => import('@/views/test/Api'),
+        component: () => import('@/views/test/ApiNew'),
         meta: { title: 'API接口', icon: 'form' }
       },{
         path: '/api/edit',
