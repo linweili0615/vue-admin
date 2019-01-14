@@ -19,6 +19,7 @@
                     <el-button type="primary" @click="handleAdd">新增</el-button>
                 </el-form-item>
             </el-form>
+
         </el-col>
 
         <!--列表-->
@@ -29,22 +30,21 @@
                   @selection-change="selsChange"
                   style="width: 100%;">
             <el-table-column type="index" width="50" label="序号"></el-table-column>
-            <el-table-column width="295" label="项目ID">
+            <el-table-column width="330" label="项目ID">
               <template slot-scope="scope">
                 <router-link :to="{ name: '测试分组', query: { project_id: scope.row.id}}">
                   <span style="color:#409EFF">{{scope.row.id}}</span>
                 </router-link>
               </template>
             </el-table-column>
-            <el-table-column prop="project_name" label="项目名称" width="210"  show-overflow-tooltip></el-table-column>
-            <el-table-column prop="author" label="创建者" width="90" ></el-table-column>
-            <el-table-column prop="update_author" label="修改者" width="90" ></el-table-column>
-            <el-table-column prop="create_time" label="创建时间" width="155" ></el-table-column>
-            <el-table-column prop="modify_time" label="修改时间" width="155" sortable></el-table-column>
-            <el-table-column label="状态" width="55" >
+            <el-table-column prop="project_name" label="项目名称" width="420"  show-overflow-tooltip></el-table-column>
+            <el-table-column prop="author" label="创建人" width="140" ></el-table-column>
+            <el-table-column prop="update_author" label="处理人" width="140" ></el-table-column>
+            <el-table-column prop="modify_time" label="处理时间" width="200" sortable></el-table-column>
+            <el-table-column label="状态" width="70" >
               <template slot-scope="scope">{{scope.row.status===1?'启用':'禁用'}}</template>
             </el-table-column>
-            <el-table-column label="操作" width="220">
+            <el-table-column label="操作" style="min-width: 220px;" fixed="right">
                 <template slot-scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
@@ -391,5 +391,21 @@
     &-container {
       margin: 15px 20px 15px 20px;
     }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
   }
 </style>

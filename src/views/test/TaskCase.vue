@@ -39,15 +39,15 @@
                     @selection-change="handleTaskChange"
                   >
                     <el-table-column type="selection" width="30"></el-table-column>
-                    <el-table-column type="index" width="52" label="序号"></el-table-column>
-                    <el-table-column label="接口名称" width="280">
+                    <!--<el-table-column type="index" width="52" label="序号"></el-table-column>-->
+                    <el-table-column label="接口名称" width="350">
                       <template slot-scope="scope">
                         <router-link :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
                           <span style="color:#409EFF">{{scope.row.api_name}}</span>
                         </router-link>
                       </template>
                     </el-table-column>
-                    <el-table-column label="状态" width="75">
+                    <el-table-column label="状态" width="50">
                       <template slot-scope="scope">
                         <el-switch
                         @click.native = "handleStatus(scope.row)"
@@ -59,7 +59,7 @@
                         </el-switch>
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="185">
+                    <el-table-column label="操作" width="200" fixed="right">
                       <template slot-scope="scope">
                         <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline" @click="drawFunction">提取</el-button>
                         <el-button type="warning" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
@@ -127,8 +127,8 @@
                       style="width: 100%"
                       @selection-change="handleSelectionChange">
                       <el-table-column type="selection" width="30"></el-table-column>
-                      <el-table-column type="index" width="52" label="序号"></el-table-column>
-                      <el-table-column prop="name" label="接口名称" width="220">
+                      <!--<el-table-column type="index" width="52" label="序号"></el-table-column>-->
+                      <el-table-column prop="name" label="接口名称" width="350">
 
                         <template slot-scope="scope">
                           <router-link :to="{ name: 'API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">

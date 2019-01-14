@@ -2,7 +2,7 @@
   <div class="dashboard-container">
 
     <el-row :gutter="24">
-      <el-col :span="8">
+      <el-col :span="7">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
 
@@ -46,7 +46,7 @@
         </div>
       </el-col>
 
-      <el-col :span="16">
+      <el-col :span="17">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
             <div slot="header" class="clearfix">
@@ -79,7 +79,7 @@
               <el-table-column type="selection" width="30">
               </el-table-column>
               <el-table-column type="index" width="50" label="序号"></el-table-column>
-              <el-table-column label="接口名称" width="220"  show-overflow-tooltip>
+              <el-table-column label="接口名称" width="300"  show-overflow-tooltip>
                 <template slot-scope="scope">
                   <router-link :to="{ name: '修改API接口', query: { id: scope.row.id, project_id: project_id, case_id: case_id}}">
                     <span style="color:#409EFF">{{scope.row.name}}</span>
@@ -100,7 +100,7 @@
               </el-table-column>
               <el-table-column prop="modify_time" label="更新日期" width="160" sortable show-overflow-tooltip>
               </el-table-column>
-              <el-table-column label="操作" width="150">
+              <el-table-column label="操作" width="150" fixed="right">
                 <template slot-scope="scope">
                   <el-button type="danger" size="small" @click="handleDel(scope.row.id)">删除</el-button>
                   <router-link :to="{ name: '修改API接口', query: { id: scope.row.id, project_id: project_id, case_id: case_id }}">

@@ -127,7 +127,7 @@
                   <div v-if="!resultShow">
                     暂无响应内容
                   </div>
-                  <div v-else="resultShow" style="height: 75vh;">
+                  <div v-else="resultShow" style="height: 75vh;overflow: auto">
                     状态码：<pre>{{form.res_code}}</pre>
                     响应cookies：<pre>{{form.resultCookies}}</pre>
                     响应内容：<pre>{{form.res_body}}</pre>
@@ -137,7 +137,7 @@
                   <div v-if="!resultShow">
                     暂无请求内容
                   </div>
-                  <div v-else="resultShow" style="height: 75vh;">
+                  <div v-else="resultShow" style="height: 75vh;overflow: auto">
                     请求URL: <pre>{{form.req_url}}</pre>
                     请求头部：<pre>{{ form.req_headers }}</pre>
                     请求cookies：<pre>{{ form.req_cookies }}</pre>
