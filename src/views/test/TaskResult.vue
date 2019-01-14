@@ -5,21 +5,21 @@
         <div class="grid-content bg-purple-dark">
           <span style="font-size: x-large;">自动化测试报告</span>
           <p style="margin-top: 20px;">
-            <span class="report">开始时间: {{this.start_time}}</span>
-            <span class="report">执行时长: 16秒</span>
-            <span class="report">结束时间: {{this.end_time}}</span>
-            <span class="report">任务ID: {{this.task_id}}</span>
-            <span class="report">执行者: {{this.executor}}</span>
+            <span class="report">开始时间: {{start_time}}</span>
+            <span class="report">执行时长: {{consuming_time}}秒</span>
+            <span class="report">结束时间: {{end_time}}</span>
+            <span class="report">任务ID: {{task_id}}</span>
+            <span class="report">执行者: {{executor}}</span>
           </p>
         </div>
       </el-col>
     </el-row>
     <el-row class="bg-purple-light">
-      <el-col :span="6" ><div class="grid-content"><span class="failue">失败</span></div></el-col>
-      <el-col :span="3"><div class="grid-content "><span class="normal">总数：</span><span class="digical">{{this.total}}</span></div></el-col>
-      <el-col :span="3"><div class="grid-content"><span class="normal">通过：</span><span class="digical-success">{{this.success}}</span></div></el-col>
-      <el-col :span="3"><div class="grid-content"><span class="normal">失败：</span><span class="digical-failue">{{this.fail}}</span></div></el-col>
-      <el-col :span="5"><div class="grid-content"><span class="normal">通过率：</span><span class="digical">{{this.percent}} %</span></div></el-col>
+      <el-col :span="6" ><div class="grid-content"><span class="failue">{{allresult}}</span></div></el-col>
+      <el-col :span="3"><div class="grid-content "><span class="normal">总数：</span><span class="digical">{{total}}</span></div></el-col>
+      <el-col :span="3"><div class="grid-content"><span class="normal">通过：</span><span class="digical-success">{{success}}</span></div></el-col>
+      <el-col :span="3"><div class="grid-content"><span class="normal">失败：</span><span class="digical-failue">{{fail}}</span></div></el-col>
+      <el-col :span="5"><div class="grid-content"><span class="normal">通过率：</span><span class="digical">{{percent}} %</span></div></el-col>
     </el-row>
 
     <div style="margin-top: 20px">
@@ -69,6 +69,7 @@
   export default {
     data() {
       return {
+        allresult: '成功',
         total: 0,
         success: 0,
         fail: 0,
@@ -76,6 +77,7 @@
         task_id: '',
         start_time: '',
         end_time: '',
+        consuming_time: '',
         executor: '',
         tableData5: [{
           api_id: '1da3d5ee-4cca-4f14-8fe3-8e27d8c46ef5',
@@ -107,9 +109,13 @@
               this.total = result.total
               this.success = result.success
               this.fail = result.fail
+              if(this.fail > 0){
+                this.allresult = '失败'
+              }
               this.percent = result.percent
               this.start_time = result.start_time
               this.end_time = result.end_time
+              this.consuming_time = result.consuming_time
               this.executor = result.executor
               this.tableData5 = result.resultList
 
