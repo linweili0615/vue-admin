@@ -340,8 +340,8 @@
               this.form.name = response.data.data.name
               this.form.methods = response.data.data.method
               this.form.addr = response.data.data.url
-
-              if(response.data.data.headers !== '{}'){
+              if(!!response.data.data.headers){
+                console.log(response.data.data.headers)
                 var head_obj = JSON.parse(response.data.data.headers)
                 let head = []
                 for(var i=0;i<Object.keys(head_obj).length;i++) {
@@ -357,8 +357,7 @@
                 this.form.head = [{name: "", value: ""}]
               }
 
-
-              if(response.data.data.body !== '{}' && response.data.data.body !== ''){
+              if(!!response.data.data.body){
                 if(response.data.data.paramstype === 'raw'){
                   this.activeName2 = 'raw'
                   this.form.parameterRaw = response.data.data.body
@@ -382,6 +381,7 @@
             }
           })
           .catch(error => {
+            console.log(error)
             this.activeName2 = 'form'
             this.$message.error("获取API详情失败")
           })

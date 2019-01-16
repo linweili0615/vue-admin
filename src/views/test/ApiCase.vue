@@ -57,9 +57,9 @@
                     <el-button type="primary" size="medium">新增</el-button>
                   </router-link>
                 </el-form-item>
-                <el-form-item>
+     <!--           <el-form-item>
                   <el-button type="primary" size="medium" @click.native="DownloadApi">下载接口文档</el-button>
-                </el-form-item>
+                </el-form-item>-->
                 <el-form-item>
                   <el-button type="primary" size="medium" @click.native="loadSwaggerApi = true">导入接口</el-button>
                   <el-button type="danger" size="medium" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
@@ -172,7 +172,7 @@
     </el-dialog>
     <el-dialog title="导入swagger接口" :visible.sync="loadSwaggerApi" :close-on-click-modal="false">
       <el-input v-model.trim="swaggerUrl" placeholder="请输入swagger接口地址" style="width:100%"></el-input>
-      <el-button type="primary" size="medium" @click="addSubmit" :loading="addLoading" style="margin-top: 10px">导入</el-button>
+      <el-button type="primary" size="medium" @click="leadSwagger" :loading="addLoading" style="margin-top: 10px">导入</el-button>
     </el-dialog>
   </div>
 
@@ -338,13 +338,28 @@
         if (!value) return true;
         return data.label.indexOf(value) !== -1;
       },
-      addSubmit(){
-        let self = this;
+      leadSwagger(){
         this.addLoading = true;
         if (this.swaggerUrl){
-
+          this.$axios.post({
+            url: '/api/swagger',
+            params: {
+              project_id: this.project_id,
+              url: this.swaggerUrl
+            }
+          })
+            .then(res => {
+              this.addLoading = false
+              if(res.data.status === 'SUCCESS'){
+                this.$message.success(res.data.msg)
+                window.location.reload()
+              }else {
+                this.$message.error(res.data.msg)
+              }
+            })
         } else {
           this.addLoading = false
+          this.$message.info('swagger接口地址不能为空')
         }
       },
       // 添加分组弹窗显示
