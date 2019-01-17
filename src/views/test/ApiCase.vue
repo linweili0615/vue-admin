@@ -170,9 +170,10 @@
         <el-button type="primary" @click.native="editGroupSubmit(0)" :loading="addGroupLoading">提交</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="导入swagger接口" :visible.sync="loadSwaggerApi" :close-on-click-modal="false">
+
+    <el-dialog class="importDialog" title="导入swagger接口" :visible.sync="loadSwaggerApi" :close-on-click-modal="false">
       <el-input v-model.trim="swaggerUrl" placeholder="请输入swagger接口地址" style="width:100%"></el-input>
-      <el-button type="primary" size="medium" @click="leadSwagger" :loading="addLoading" style="margin-top: 10px">导入</el-button>
+      <el-button type="primary" size="medium" @click="leadSwagger" :loading="addLoading" style="margin-top: 10px; float: right;">导入</el-button>
     </el-dialog>
   </div>
 
@@ -339,16 +340,14 @@
         return data.label.indexOf(value) !== -1;
       },
       leadSwagger(){
+        debugger
         this.addLoading = true;
         if (this.swaggerUrl){
-          this.$axios.post({
-            url: '/api/swagger',
-            params: {
-              project_id: this.project_id,
-              url: this.swaggerUrl
-            }
-          })
-            .then(res => {
+          this.$axios('/api/api/swagger', {
+            project_id: this.project_id,
+            url: this.swaggerUrl
+          }).then(res => {
+              debugger
               this.addLoading = false
               if(res.data.status === 'SUCCESS'){
                 this.$message.success(res.data.msg)
@@ -356,7 +355,11 @@
               }else {
                 this.$message.error(res.data.msg)
               }
-            })
+            }).catch(err => {
+              debugger
+            this.addLoading = false;
+            console.log(err)
+          })
         } else {
           this.addLoading = false
           this.$message.info('swagger接口地址不能为空')
@@ -605,6 +608,11 @@
   margin-bottom: 10px;
 }
 
+.importDialog {
+  /deep/ .el-dialog__body  {
+    overflow: hidden;
+  }
+}
 
 </style>
 
