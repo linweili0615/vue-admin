@@ -6,26 +6,46 @@
         <div class="grid-content bg-purple">
           <el-card class="box-card">
 
-            <div slot="header" class="clearfix">
+            <div
+              slot="header"
+              class="clearfix"
+            >
               <span>用例信息</span>
-              <el-button style="float: right; padding: 5px;margin-left: 3px"
-                         type="info" @click="showLog">
+              <el-button
+                style="float: right; padding: 5px;margin-left: 3px"
+                type="info"
+                @click="showLog"
+              >
                 查看日志
               </el-button>
               <router-link :to="{name: '项目列表'}">
-                <el-button style="float: right; padding: 5px 3px" type="primary" icon="el-icon-d-arrow-left">返回列表
+                <el-button
+                  style="float: right; padding: 5px 3px"
+                  type="primary"
+                  icon="el-icon-d-arrow-left"
+                >返回列表
                 </el-button>
 
               </router-link>
-
             </div>
 
             <template>
-              <div style="z-index: 9;float: right;position: relative;">
-                <el-button  type="primary" size="medium" :loading="status" @click="SendTask">执行测试</el-button>
-              </div>
-              <el-tabs v-model="activeName1" type="card" @tab-click="handleClick">
-                <el-tab-pane label="步骤" name="step">
+              <el-button
+                type="primary"
+                size="medium"
+                style="position: absolute; right: 18px;"
+                :loading="status"
+                @click="SendTask"
+              >执行测试</el-button>
+              <el-tabs
+                v-model="activeName1"
+                type="card"
+                @tab-click="handleClick"
+              >
+                <el-tab-pane
+                  label="步骤"
+                  name="step"
+                >
 
                   <el-table
                     ref="multipleTable2"
@@ -38,37 +58,74 @@
                     style="width: 100%"
                     @selection-change="handleTaskChange"
                   >
-                    <el-table-column type="selection" width="30"></el-table-column>
+                    <el-table-column
+                      type="selection"
+                      width="30"
+                    ></el-table-column>
                     <!--<el-table-column type="index" width="52" label="序号"></el-table-column>-->
-                    <el-table-column label="接口名称" width="350">
+                    <el-table-column
+                      label="接口名称"
+                      width="350"
+                    >
                       <template slot-scope="scope">
                         <router-link :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
                           <span style="color:#409EFF">{{scope.row.api_name}}</span>
                         </router-link>
                       </template>
                     </el-table-column>
-                    <el-table-column label="状态" width="50">
+                    <el-table-column
+                      label="状态"
+                      width="50"
+                    >
                       <template slot-scope="scope">
                         <el-switch
-                        @click.native = "handleStatus(scope.row)"
-                        v-model="scope.row.status"
-                        active-color="#13ce66"
-                        inactive-color="#7f8186"
-                        active-value="1"
-                        inactive-value="-1">
+                          @click.native="handleStatus(scope.row)"
+                          v-model="scope.row.status"
+                          active-color="#13ce66"
+                          inactive-color="#7f8186"
+                          active-value="1"
+                          inactive-value="-1"
+                        >
                         </el-switch>
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="200" fixed="right">
+                    <el-table-column
+                      label="操作"
+                      width="200"
+                      fixed="right"
+                    >
                       <template slot-scope="scope">
-                        <el-button type="primary" plain size="mini"  icon="el-icon-circle-plus-outline" @click="drawFunction">提取</el-button>
-                        <el-button type="warning" plain size="mini"  icon="el-icon-circle-plus-outline">检查</el-button>
-                        <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;" @click="delTask(scope.row.id)"></el-button>
+                        <el-button
+                          type="primary"
+                          plain
+                          size="mini"
+                          icon="el-icon-circle-plus-outline"
+                          @click="drawFunction"
+                        >提取</el-button>
+                        <el-button
+                          type="warning"
+                          plain
+                          size="mini"
+                          icon="el-icon-circle-plus-outline"
+                        >检查</el-button>
+                        <el-button
+                          type="danger"
+                          size="mini"
+                          icon="el-icon-delete"
+                          style="margin-right: 18px;"
+                          @click="delTask(scope.row.id)"
+                        ></el-button>
                       </template>
                     </el-table-column>
                   </el-table>
                   <div style="float: right;margin-top: 5px;margin-right: 20px">
-                    <el-button type="danger" plain size="mini"  :disabled="step_status" @click="deleteTask">批量删除</el-button>
+                    <el-button
+                      type="danger"
+                      plain
+                      size="mini"
+                      :disabled="step_status"
+                      @click="deleteTask"
+                    >批量删除</el-button>
                   </div>
                 </el-tab-pane>
                 <!--<el-tab-pane label="文档" name="api">文档</el-tab-pane>-->
@@ -80,23 +137,46 @@
         </div>
       </el-col>
 
-      <el-col :span="14" v-show="activeStatus">
+      <el-col
+        :span="14"
+        v-show="activeStatus"
+      >
         <div class="grid-content bg-purple">
           <el-card class="box-card">
-            <div slot="header" class="clearfix">
+            <div
+              slot="header"
+              class="clearfix"
+            >
               <span>案例列表</span>
-              <el-button style="float: right; padding: 5px;margin-left: 3px"
-                         type="success" @click="getTaskResultList">
+              <el-button
+                style="float: right; padding: 5px;margin-left: 3px"
+                type="success"
+                @click="getTaskResultList"
+              >
                 查看历史结果
                 <i class="el-icon-document"></i>
               </el-button>
             </div>
             <template>
-              <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-                <el-tab-pane label="接口列表" name="interface">
-                  <el-form :inline="true" class="demo-form-inline" size="mini">
+              <el-tabs
+                v-model="activeName2"
+                type="card"
+                @tab-click="handleClick"
+              >
+                <el-tab-pane
+                  label="接口列表"
+                  name="interface"
+                >
+                  <el-form
+                    :inline="true"
+                    class="demo-form-inline"
+                    size="mini"
+                  >
                     <el-form-item label="接口名称：">
-                      <el-input v-model="search.name" placeholder="请输入接口名称"></el-input>
+                      <el-input
+                        v-model="search.name"
+                        placeholder="请输入接口名称"
+                      ></el-input>
                     </el-form-item>
                     <el-form-item label="所属项目：">
                       <el-cascader
@@ -104,17 +184,26 @@
                         :options="options"
                         @change="handleOptionsChange"
                         filterable
-                        change-on-select></el-cascader>
+                        change-on-select
+                      ></el-cascader>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" @click="onSubmit">查询</el-button>
+                      <el-button
+                        type="primary"
+                        @click="onSubmit"
+                      >查询</el-button>
                     </el-form-item>
 
                   </el-form>
 
-                  <el-button type="primary" plain size="medium" style="font-size: 12px"
-                             icon="el-icon-circle-plus-outline"
-                              @click="addStep">添加至步骤</el-button>
+                  <el-button
+                    type="primary"
+                    plain
+                    size="medium"
+                    style="font-size: 12px"
+                    icon="el-icon-circle-plus-outline"
+                    @click="addStep"
+                  >添加至步骤</el-button>
                   <template>
                     <el-table
                       ref="multipleTable"
@@ -125,10 +214,18 @@
                       tooltip-effect="dark"
                       empty-text="暂无数据"
                       style="width: 100%"
-                      @selection-change="handleSelectionChange">
-                      <el-table-column type="selection" width="30"></el-table-column>
+                      @selection-change="handleSelectionChange"
+                    >
+                      <el-table-column
+                        type="selection"
+                        width="30"
+                      ></el-table-column>
                       <!--<el-table-column type="index" width="52" label="序号"></el-table-column>-->
-                      <el-table-column prop="name" label="接口名称" width="350">
+                      <el-table-column
+                        prop="name"
+                        label="接口名称"
+                        width="350"
+                      >
 
                         <template slot-scope="scope">
                           <router-link :to="{ name: 'API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
@@ -137,16 +234,43 @@
                         </template>
 
                       </el-table-column>
-                      <el-table-column  label="请求方式" width="85" show-overflow-tooltip>
+                      <el-table-column
+                        label="请求方式"
+                        width="85"
+                        show-overflow-tooltip
+                      >
                         <template slot-scope="scope">
-                          <el-tag type="success" v-if="scope.row.method === 'POST'">{{ scope.row.method }}</el-tag>
-                          <el-tag v-else="scope.row.method === 'GET'">{{ scope.row.method }}</el-tag>
+                          <el-tag
+                            type="success"
+                            v-if="scope.row.method === 'POST'"
+                          >{{ scope.row.method }}</el-tag>
+                          <el-tag v-else>{{ scope.row.method }}</el-tag>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="paramstype" label="类型" width="48" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="url" label="请求地址" width="250" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="update_author" label="修改者" width="90" show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="modify_time" label="修改时间" width="160" show-overflow-tooltip></el-table-column>
+                      <el-table-column
+                        prop="paramstype"
+                        label="类型"
+                        width="48"
+                        show-overflow-tooltip
+                      ></el-table-column>
+                      <el-table-column
+                        prop="url"
+                        label="请求地址"
+                        width="250"
+                        show-overflow-tooltip
+                      ></el-table-column>
+                      <el-table-column
+                        prop="update_author"
+                        label="修改者"
+                        width="90"
+                        show-overflow-tooltip
+                      ></el-table-column>
+                      <el-table-column
+                        prop="modify_time"
+                        label="修改时间"
+                        width="160"
+                        show-overflow-tooltip
+                      ></el-table-column>
 
                     </el-table>
                   </template>
@@ -160,7 +284,8 @@
                       :page-size="pageSize"
                       :pager-count="7"
                       layout="total, sizes, prev, pager, next, jumper"
-                      :total="total">
+                      :total="total"
+                    >
                     </el-pagination>
                   </div>
 
@@ -173,18 +298,31 @@
         </div>
       </el-col>
 
-      <el-col :span="14" v-show="!activeStatus">
+      <el-col
+        :span="14"
+        v-show="!activeStatus"
+      >
         <div class="grid-content bg-purple">
           <el-card class="box-card">
-            <div slot="header" class="clearfix">
+            <div
+              slot="header"
+              class="clearfix"
+            >
               <span>任务执行日志</span>
-              <el-button style="float: right; padding: 5px;margin-left: 3px"
-                         type="success" @click="getTaskResultList">
+              <el-button
+                style="float: right; padding: 5px;margin-left: 3px"
+                type="success"
+                @click="getTaskResultList"
+              >
                 查看历史结果
                 <i class="el-icon-document"></i>
               </el-button>
             </div>
-            <div style="height:100%;overflow:auto;" class="logdata" id="logdata">
+            <div
+              style="height:100%;overflow:auto;"
+              class="logdata"
+              id="logdata"
+            >
               <ul>
                 <li v-for="log in logs">
                   <pre>{{ log }}</pre>
@@ -195,73 +333,107 @@
         </div>
       </el-col>
 
-
     </el-row>
     <!--提取参数弹窗-->
-    <el-dialog title="提取参数" :visible.sync="dialogFormVisible">
+    <el-dialog
+      title="提取参数"
+      :visible.sync="dialogFormVisible"
+    >
       <el-form :model="draw">
-        <el-form-item label="活动名称" label-width="120px">
+        <el-form-item
+          label="活动名称"
+          label-width="120px"
+        >
           <el-input v-model="draw.name"></el-input>
         </el-form-item>
-        <el-form-item label="活动区域" label-width="120px">
-          <el-select v-model="draw.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item
+          label="活动区域"
+          label-width="120px"
+        >
+          <el-select
+            v-model="draw.region"
+            placeholder="请选择活动区域"
+          >
+            <el-option
+              label="区域一"
+              value="shanghai"
+            ></el-option>
+            <el-option
+              label="区域二"
+              value="beijing"
+            ></el-option>
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button
+          type="primary"
+          @click="dialogFormVisible = false"
+        >确 定</el-button>
       </div>
     </el-dialog>
 
     <!--结果日志弹窗-->
-    <el-dialog title="执行记录" :visible.sync="dialogTaskResultListVisible" width="40%">
+    <el-dialog
+      title="执行记录"
+      :visible.sync="dialogTaskResultListVisible"
+      width="40%"
+    >
       <el-tabs type="border-card">
         <el-tab-pane label="个人记录">
           <template>
-          <el-table
-            :data="TaskResult.filter(data => data.executor.toLowerCase() ===(username.toLowerCase()))"
-            style="width: 100%"
-            @row-click="toTaskResult"
-            height="40vh">
-            <el-table-column
-              label="id"
-              prop="id">
-            </el-table-column>
-            <el-table-column
-              label="executor"
-              prop="executor">
-            </el-table-column>
-            <el-table-column
-              label="execute_time"
-              prop="execute_time">
-            </el-table-column>
-          </el-table>
-        </template>
+            <el-table
+              :data="TaskResult.filter(data => data.executor.toLowerCase() ===(username.toLowerCase()))"
+              style="width: 100%"
+              @row-click="toTaskResult"
+              height="40vh"
+            >
+              <el-table-column
+                label="id"
+                prop="id"
+              >
+              </el-table-column>
+              <el-table-column
+                label="executor"
+                prop="executor"
+              >
+              </el-table-column>
+              <el-table-column
+                label="execute_time"
+                prop="execute_time"
+              >
+              </el-table-column>
+            </el-table>
+          </template>
         </el-tab-pane>
         <el-tab-pane label="所有记录">
           <template>
-          <el-table
-            :data="TaskResult"
-            style="width: 100%"
-            height="40vh"
-          >
-            <el-table-column
-              label="id"
-              prop="id">
-            </el-table-column>
-            <el-table-column
-              label="executor"
-              prop="executor">
-            </el-table-column>
-            <el-table-column
-              label="execute_time"
-              prop="execute_time">
-            </el-table-column>
-          </el-table>
-        </template>
+            <el-table
+              :data="TaskResult"
+              style="width: 100%"
+              height="40vh"
+            >
+              <el-table-column
+                label="id"
+                prop="id"
+              >
+              </el-table-column>
+              <el-table-column
+                label="executor"
+                prop="executor"
+              >
+              </el-table-column>
+              <el-table-column
+                label="execute_time"
+                prop="execute_time"
+              >
+              </el-table-column>
+            </el-table>
+          </template>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -270,413 +442,425 @@
 </template>
 
 <script>
-  import Sortable from 'sortablejs'
-  export default {
-    name: 'Dashboard',
-    data() {
-      return {
-        username: 'linweili',
-        status:false,
-        logs: '',
-        options: [],
-        step_status: true,
-        activeName1: 'step',
-        activeName2: 'interface',
-        activeResult: ['1'],
-        activeStatus: true,
-        api: {
-          list: []
-        },
-        task: {
-          list:[]
-        },
-        search: {
-          name: ''
-        },
-        project_id:'',
-        case_id:'',
-        apilist: [],
-        tasklist: [],
-        deal_list:[],
-        sizes: [50, 80],
-        pageSize:50,
-        pageCount:1,
-        page: 1,
-        currentpage: 1,
-        TaskResult:[
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'linweili', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'linweili_11', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'linweili', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-          { id: 123, executor: 'test_user', execute_time: '2019-01-04 13:07'},
-
-        ],
-        TaskResultForm:{
-          type: [1,2]
-        },
-        result_list: [
-          {
-            code: 502,
-            content: '返回内容',
-            cookies: '返回cookies',
-            headers: '返回headers'
-          }
-        ],
-        dialogFormVisible: false,
-        dialogTaskResultListVisible:false,
-        draw:{
-          name: '',
-          region: ''
-        },
-      };
-    },
-    methods: {
-      drawFunction(){
-        this.dialogFormVisible = true
+import Sortable from "sortablejs";
+export default {
+  name: "Dashboard",
+  data() {
+    return {
+      username: "linweili",
+      status: false,
+      logs: "",
+      options: [],
+      step_status: true,
+      activeName1: "step",
+      activeName2: "interface",
+      activeResult: ["1"],
+      activeStatus: true,
+      api: {
+        list: []
       },
-      handleStatus(row) {
-        this.deal_list = [row.id]
-        this.$axios.post('/task/extend/status', {
-          'status': row.status,
-          'list': this.deal_list
+      task: {
+        list: []
+      },
+      search: {
+        name: ""
+      },
+      project_id: "",
+      case_id: "",
+      apilist: [],
+      tasklist: [],
+      deal_list: [],
+      sizes: [50, 80],
+      pageSize: 50,
+      pageCount: 1,
+      page: 1,
+      currentpage: 1,
+      TaskResult: [
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "linweili", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "linweili_11", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "linweili", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
+        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" }
+      ],
+      TaskResultForm: {
+        type: [1, 2]
+      },
+      result_list: [
+        {
+          code: 502,
+          content: "返回内容",
+          cookies: "返回cookies",
+          headers: "返回headers"
+        }
+      ],
+      dialogFormVisible: false,
+      dialogTaskResultListVisible: false,
+      draw: {
+        name: "",
+        region: ""
+      }
+    };
+  },
+  methods: {
+    drawFunction() {
+      this.dialogFormVisible = true;
+    },
+    handleStatus(row) {
+      this.deal_list = [row.id];
+      this.$axios
+        .post("/task/extend/status", {
+          status: row.status,
+          list: this.deal_list
         })
+        .then(response => {
+          if (response.data.status !== "SUCCESS") {
+            this.$message.error("更改状态失败！");
+            row.status = -row.status;
+          }
+        })
+        .catch(error => {
+          this.$message.error("更改状态异常！");
+          row.status = -row.status;
+        });
+    },
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
+    onSubmit() {
+      this.getApiList(50, 1);
+    },
+    getResult() {
+      this.dialogTaskResultVisible = true;
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      this.api.list = val;
+    },
+    handleTaskChange(val) {
+      if (val.length > 0) {
+        let lists = val;
+        lists.map(cc => {
+          this.task.list.push(cc.id);
+        });
+      }
+      if (this.task.list.length > 0) {
+        this.step_status = false;
+      } else {
+        this.step_status = true;
+      }
+    },
+    rowClick(row, event, column) {
+      if (event.target.nodeName != "INPUT") {
+        this.$refs.multipleTable.toggleRowSelection(row);
+      }
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+      this.api.list = [];
+    },
+    addStep() {
+      if (this.api.list.length > 0) {
+        console.log(this.api.list);
+        this.$axios
+          .post("/task/extend/add", {
+            list: this.api.list,
+            task_id: "81598efb-ffa9-11e8-a19c-0242ac110002"
+          })
           .then(response => {
-              if(response.data.status !== 'SUCCESS'){
-                this.$message.error('更改状态失败！')
-                row.status = -row.status
-              }
+            if (response.data.status === "SUCCESS") {
+              this.$message({
+                type: "success",
+                duration: 1000,
+                message: "已添加至步骤"
+              });
+              this.getTaskList();
+              this.toggleSelection();
+            } else {
+              this.$message.error("添加至步骤失败");
+            }
           })
           .catch(error => {
-            this.$message.error('更改状态异常！')
-            row.status = -row.status
-          })
-      },
-      handleClick(tab, event) {
-        console.log(tab, event);
-      },
-      onSubmit() {
-        this.getApiList(50,1)
-      },
-      getResult(){
-        this.dialogTaskResultVisible = true
-      },
-      toggleSelection(rows) {
-        if (rows) {
-          rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
+            console.log(error);
           });
-        } else {
-          this.$refs.multipleTable.clearSelection();
-        }
-      },
-      handleSelectionChange(val) {
-        this.api.list = val;
-      },
-      handleTaskChange(val){
-        if(val.length > 0){
-          let lists = val
-          lists.map(cc => {
-            this.task.list.push(cc.id)
+      } else {
+        this.$message.info("请选择任意接口再进行添加");
+      }
+    },
+    delTask(id) {
+      if (id) {
+        this.$confirm("是否确定删除该记录？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            this.$axios
+              .post("/task/extend/del", [id])
+              .then(response => {
+                if (response.data.status === "success") {
+                  this.$message.success("记录已删除");
+                  this.tasklist.map((value, index) => {
+                    if (value.id === id) {
+                      this.tasklist.splice(index, 1);
+                    }
+                  });
+                }
+              })
+              .catch(error => {
+                this.$message.error("删除异常");
+              });
           })
-        }
-        if (this.task.list.length > 0){
-          this.step_status = false
-        }else{
-          this.step_status = true
-        }
-      },
-      rowClick(row,event,column){
-        if(event.target.nodeName!="INPUT"){
-          this.$refs.multipleTable.toggleRowSelection(row);
-        }
-      },
-      toggleSelection(rows) {
-        if (rows) {
-          rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
+          .catch(error => {
+            console.log(error);
           });
-        } else {
-          this.$refs.multipleTable.clearSelection();
+      }
+    },
+    getTaskLog() {
+      this.$axios
+        .post("/task/getLog", "81598efb-ffa9-11e8-a19c-0242ac110002")
+        .then(response => {
+          this.logs = response.data.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    showLog() {
+      this.activeStatus = !this.activeStatus;
+      if (!this.activeStatus) {
+        this.getTaskLog();
+      }
+    },
+    toTaskResult(row, event, column) {
+      console.log(row, event, column);
+      let routeData = this.$router.resolve({
+        path: "/api/task/result",
+        query: {
+          task_id: "81598efb-ffa9-11e8-a19c-0242ac110002",
+          u_id: "81598efb-ffa9-11e8-a19c-0242ac110002"
         }
-        this.api.list = []
-      },
-      addStep(){
-        if(this.api.list.length > 0){
-          console.log(this.api.list)
-          this.$axios.post('/task/extend/add',
-            {
-              'list' : this.api.list,
-              'task_id' : '81598efb-ffa9-11e8-a19c-0242ac110002'
+      });
+      window.open(routeData.href, "_blank");
+    },
+    SendTask() {
+      this.status = true;
+      this.activeStatus = false;
+      let intervaljob = setInterval(this.getTaskLog, 200);
+      this.$axios
+        .post("/task/test", "81598efb-ffa9-11e8-a19c-0242ac110002")
+        .then(response => {
+          this.status = false;
+          if (response.data.status === "SUCCESS") {
+            this.result_list = response.data.data;
+            clearInterval(intervaljob);
+            this.$confirm("是否跳转结果页？", "任务执行成功", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning"
+            })
+              .then(() => {
+                let routeData = this.$router.resolve({
+                  path: "/api/task/result",
+                  query: { task_id: "81598efb-ffa9-11e8-a19c-0242ac110002" }
+                });
+                window.open(routeData.href, "_blank");
+              })
+              .catch(error => {
+                console.log(error);
+              });
+          } else {
+            clearInterval(intervaljob);
+            this.status = false;
+            this.$message.error(response.data.msg);
+          }
+        })
+        .catch(error => {
+          clearInterval(intervaljob);
+          this.status = false;
+          console.log(error);
+          this.$message.error("执行异常");
+        });
+    },
+    getTaskResultList() {
+      this.dialogTaskResultListVisible = true;
+    },
+    deleteTask() {
+      if (this.task.list) {
+        this.$confirm("是否确定批量删除记录？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            this.$axios
+              .post("/task/extend/del", this.task.list)
+              .then(response => {
+                if (response.data.status === "SUCCESS") {
+                  this.task.list = [];
+                  this.step_status = true;
+                  this.getTaskList();
+                }
+              })
+              .catch(error => {
+                this.$message.error("删除异常");
+              });
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    },
+    getTaskList() {
+      this.$axios
+        .post("/task/extend/info", "81598efb-ffa9-11e8-a19c-0242ac110002")
+        .then(response => {
+          if (response.data.status === "SUCCESS") {
+            if (!!response.data.data[0]) {
+              this.tasklist = response.data.data;
+              this.$nextTick(() => {
+                this.setSort();
+              });
+            }
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    setSort() {
+      const el = document.querySelectorAll(
+        ".el-table__body-wrapper > table > tbody"
+      )[0];
+      this.sortable = Sortable.create(el, {
+        ghostClass: "sortable-ghost",
+        setData: function(dataTransfer) {
+          dataTransfer.setData("Text", "");
+        },
+        onEnd: evt => {
+          this.$axios
+            .post("/task/extend/deal", {
+              old_id: this.tasklist[evt.oldIndex].id,
+              old_rank: this.tasklist[evt.oldIndex].rank,
+              new_id: this.tasklist[evt.newIndex].id,
+              new_rank: this.tasklist[evt.newIndex].rank
             })
             .then(response => {
-              if(response.data.status === 'SUCCESS'){
-                this.$message({
-                  type:'success',
-                  duration:1000,
-                  message: "已添加至步骤"
-                })
-                this.getTaskList()
-                this.toggleSelection()
-              }else{
-                this.$message.error("添加至步骤失败")
+              if (response.data.status === "SUCCESS") {
+                this.task.list = [];
+                this.step_status = true;
+                const targetRow = this.tasklist.splice(evt.oldIndex, 1)[0];
+                this.tasklist.splice(evt.newIndex, 0, targetRow);
+              } else {
+                this.$message.info("更改任务详情顺序失败");
               }
             })
             .catch(error => {
-              console.log(error)
-            })
-        }else{
-          this.$message.info("请选择任意接口再进行添加")
+              console.log(error);
+              this.$message.error("更改任务详情顺序异常");
+            });
         }
-
-      },
-      delTask(id){
-        if(id){
-          this.$confirm('是否确定删除该记录？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.$axios.post('/task/extend/del', [id])
-              .then(response => {
-                if(response.data.status === 'success'){
-                  this.$message.success('记录已删除')
-                  this.tasklist.map((value,index) => {
-                    if(value.id === id){
-                      this.tasklist.splice(index,1)
-                    }
-                  })
-                }
-              })
-              .catch(error => {
-                this.$message.error('删除异常')
-              })
-          }).catch((error) => {
-            console.log(error)
-          });
-        }
-      },
-      getTaskLog(){
-        this.$axios.post(
-          '/task/getLog',
-          '81598efb-ffa9-11e8-a19c-0242ac110002'
-        ).then(response => {
-          this.logs = response.data.data
-        }).catch(error => {
-          console.log(error)
+      });
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.getApiList(this.pageSize, 1);
+    },
+    handleCurrentChange(val) {
+      this.currentpage = val;
+      this.getApiList(this.pageSize, this.currentpage);
+    },
+    getApiList(pageSize, pageNo) {
+      this.$axios
+        .post("/api/all_list", {
+          pageSize: pageSize,
+          pageNo: pageNo,
+          project_id: this.project_id,
+          case_id: this.case_id,
+          name: this.search.name
         })
-      },
-      showLog(){
-        this.activeStatus = !this.activeStatus
-        if(!this.activeStatus){
-          this.getTaskLog()
-        }
-      },
-      toTaskResult(row, event, column){
-        console.log(row, event, column)
-        let routeData = this.$router.resolve({
-          path: '/api/task/result', query: {
-            task_id : '81598efb-ffa9-11e8-a19c-0242ac110002',
-            u_id : '81598efb-ffa9-11e8-a19c-0242ac110002'
-          }
-        });
-        window.open(routeData.href, '_blank');
-      },
-      SendTask(){
-        this.status = true
-        this.activeStatus = false
-        let intervaljob = setInterval(this.getTaskLog,200)
-        this.$axios.post('/task/test', '81598efb-ffa9-11e8-a19c-0242ac110002')
-          .then(response => {
-            this.status = false
-            if(response.data.status === 'SUCCESS'){
-              this.result_list = response.data.data
-              clearInterval(intervaljob)
-              this.$confirm('是否跳转结果页？', '任务执行成功', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-              }).then(() => {
-                let routeData = this.$router.resolve({
-                  path: '/api/task/result', query: { task_id : '81598efb-ffa9-11e8-a19c-0242ac110002' }
-                });
-                window.open(routeData.href, '_blank');
-              }).catch(error => {
-                console.log(error)
-              })
-            }else{
-              clearInterval(intervaljob)
-              this.status = false
-              this.$message.error(response.data.msg)
-            }
-          })
-          .catch(error => {
-            clearInterval(intervaljob)
-            this.status = false
-            console.log(error)
-            this.$message.error('执行异常')
-          })
-      },
-      getTaskResultList(){
-        this.dialogTaskResultListVisible = true
-      },
-      deleteTask(){
-        if(this.task.list){
-          this.$confirm('是否确定批量删除记录？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.$axios.post('/task/extend/del',this.task.list)
-              .then(response => {
-                if(response.data.status === 'SUCCESS'){
-                  this.task.list = []
-                  this.step_status =true
-                  this.getTaskList()
-                }
-              })
-              .catch(error => {
-                this.$message.error('删除异常')
-              })
-          }).catch((error) => {
-            console.log(error)
-          });
-
-        }
-      },
-      getTaskList(){
-        this.$axios.post('/task/extend/info','81598efb-ffa9-11e8-a19c-0242ac110002')
-          .then(response => {
-            if(response.data.status === 'SUCCESS'){
-              if(!!response.data.data[0]){
-                this.tasklist = response.data.data;
-                this.$nextTick(() => {
-                  this.setSort()
-                })
-              }
-            }
-          })
-          .catch(error => {
-              console.log(error)
-          })
-      },
-      setSort() {
-        const el = document.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
-        this.sortable = Sortable.create(el, {
-          ghostClass: 'sortable-ghost',
-          setData: function(dataTransfer) {
-            dataTransfer.setData('Text', '')
-          },
-          onEnd: evt => {
-            this.$axios.post('/task/extend/deal',{
-              'old_id': this.tasklist[evt.oldIndex].id,
-              'old_rank': this.tasklist[evt.oldIndex].rank,
-              'new_id': this.tasklist[evt.newIndex].id,
-              'new_rank': this.tasklist[evt.newIndex].rank
-            })
-              .then(response => {
-                if(response.data.status === 'SUCCESS'){
-                  this.task.list = []
-                  this.step_status = true
-                  const targetRow = this.tasklist.splice(evt.oldIndex, 1)[0]
-                  this.tasklist.splice(evt.newIndex, 0, targetRow)
-                }else{
-                  this.$message.info("更改任务详情顺序失败")
-                }
-              })
-              .catch(error => {
-                console.log(error)
-                  this.$message.error("更改任务详情顺序异常")
-              })
+        .then(response => {
+          if (response.data.status === "SUCCESS") {
+            this.apilist = response.data.apiDTOList;
+            this.total = response.data.total;
+            this.pageSize = response.data.pageSize;
+            this.pageNo = response.data.pageNo;
+            this.pageCount = response.data.pageCount;
           }
         })
-      },
-      handleSizeChange(val) {
-        this.pageSize = val;
-        this.getApiList(this.pageSize, 1);
-      },
-      handleCurrentChange(val) {
-        this.currentpage = val;
-        this.getApiList(this.pageSize,this.currentpage)
-
-      },
-      getApiList(pageSize,pageNo){
-        this.$axios.post('/api/all_list',{
-          'pageSize' : pageSize,
-          'pageNo': pageNo,
-          'project_id': this.project_id,
-          'case_id': this.case_id,
-          'name': this.search.name
-        })
-          .then(response => {
-            if(response.data.status === 'SUCCESS'){
-              this.apilist = response.data.apiDTOList;
-              this.total = response.data.total
-              this.pageSize = response.data.pageSize
-              this.pageNo = response.data.pageNo
-              this.pageCount = response.data.pageCount
-            }
-          })
-          .catch(error => {
-
-          })
-      },
-      getApiTree(){
-        this.$axios.post('/case/list')
-          .then(response => {
-            if (response.data.status === 'SUCCESS') {
-              this.options = response.data.data
-            }else{
-              this.options = [];
-              this.$message.error("获取测试集失败")
-            }
-          })
-          .catch(error => {
+        .catch(error => {});
+    },
+    getApiTree() {
+      this.$axios
+        .post("/case/list")
+        .then(response => {
+          if (response.data.status === "SUCCESS") {
+            this.options = response.data.data;
+          } else {
             this.options = [];
-            this.$message.error("获取测试集失败")
-          })
-      },
-      handleChange(val) {
-        console.log(val);
-      },
-      handleOptionsChange(val){
-        if(val.length>0){
-          this.project_id = val[0]
-          if(val.length === 2){
-              this.case_id = val[1]
-            }
+            this.$message.error("获取测试集失败");
+          }
+        })
+        .catch(error => {
+          this.options = [];
+          this.$message.error("获取测试集失败");
+        });
+    },
+    handleChange(val) {
+      console.log(val);
+    },
+    handleOptionsChange(val) {
+      if (val.length > 0) {
+        this.project_id = val[0];
+        if (val.length === 2) {
+          this.case_id = val[1];
         }
-      },
-    },
-    created(){
-      // this.task_id = this.$route.query.params.task_id
-      this.getTaskList()
-      this.getApiTree()
-      this.getApiList(50,1)
-    },
-    updated(){
-      this.$nextTick(function(){
-        var div = document.getElementById("logdata")
-        div.scrollTop = div.scrollHeight
-      })
+      }
     }
+  },
+  created() {
+    // this.task_id = this.$route.query.params.task_id
+    this.getTaskList();
+    this.getApiTree();
+    this.getApiList(50, 1);
+  },
+  updated() {
+    this.$nextTick(function() {
+      var div = document.getElementById("logdata");
+      div.scrollTop = div.scrollHeight;
+    });
   }
+};
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
@@ -715,7 +899,7 @@
   content: "";
 }
 .clearfix:after {
-  clear: both
+  clear: both;
 }
 
 .box-card {
@@ -724,6 +908,7 @@
   /deep/ .el-card__body {
     padding: 10px;
     height: 85vh;
+    position: relative;
   }
 }
 .checkbox-item {
@@ -732,11 +917,10 @@
     display: block;
     margin-left: 0;
   }
-  /deep/ .el-checkbox__label{
+  /deep/ .el-checkbox__label {
     font-size: 15px;
     width: 100%;
   }
-
 }
 .el-scrollbar-wrap {
   height: 73vh;
@@ -750,14 +934,15 @@
     margin-top: 20px;
   }
 }
-.el-button--mini, .el-button--mini.is-round {
+.el-button--mini,
+.el-button--mini.is-round {
   padding: 4px 4px;
   font-size: 14px;
   margin-left: 0px;
-
 }
-.el-table--medium  {
-  /deep/ td,th{
+.el-table--medium {
+  /deep/ td,
+  th {
     padding: 5px 0;
   }
 }
@@ -775,6 +960,5 @@
     }
   }
 }
-
 </style>
 
