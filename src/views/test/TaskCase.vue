@@ -151,9 +151,9 @@
               <el-button
                 style="float: right; padding: 5px;margin-left: 3px"
                 type="success"
-                @click="getTaskResultList"
+                @click="toTaskResult"
               >
-                查看历史结果
+                查看结果
                 <i class="el-icon-document"></i>
               </el-button>
             </div>
@@ -312,9 +312,9 @@
               <el-button
                 style="float: right; padding: 5px;margin-left: 3px"
                 type="success"
-                @click="getTaskResultList"
+                @click="toTaskResult"
               >
-                查看历史结果
+                查看结果
                 <i class="el-icon-document"></i>
               </el-button>
             </div>
@@ -377,67 +377,6 @@
       </div>
     </el-dialog>
 
-    <!--结果日志弹窗-->
-    <el-dialog
-      title="执行记录"
-      :visible.sync="dialogTaskResultListVisible"
-      width="40%"
-    >
-      <el-tabs type="border-card">
-        <el-tab-pane label="个人记录">
-          <template>
-            <el-table
-              :data="TaskResult.filter(data => data.executor.toLowerCase() ===(username.toLowerCase()))"
-              style="width: 100%"
-              @row-click="toTaskResult"
-              height="40vh"
-            >
-              <el-table-column
-                label="id"
-                prop="id"
-              >
-              </el-table-column>
-              <el-table-column
-                label="executor"
-                prop="executor"
-              >
-              </el-table-column>
-              <el-table-column
-                label="execute_time"
-                prop="execute_time"
-              >
-              </el-table-column>
-            </el-table>
-          </template>
-        </el-tab-pane>
-        <el-tab-pane label="所有记录">
-          <template>
-            <el-table
-              :data="TaskResult"
-              style="width: 100%"
-              height="40vh"
-            >
-              <el-table-column
-                label="id"
-                prop="id"
-              >
-              </el-table-column>
-              <el-table-column
-                label="executor"
-                prop="executor"
-              >
-              </el-table-column>
-              <el-table-column
-                label="execute_time"
-                prop="execute_time"
-              >
-              </el-table-column>
-            </el-table>
-          </template>
-        </el-tab-pane>
-      </el-tabs>
-    </el-dialog>
-
   </div>
 </template>
 
@@ -470,38 +409,12 @@ export default {
       apilist: [],
       tasklist: [],
       deal_list: [],
+      total: 0,
       sizes: [50, 80],
       pageSize: 50,
       pageCount: 1,
       page: 1,
       currentpage: 1,
-      TaskResult: [
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "linweili", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "linweili_11", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "linweili", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" },
-        { id: 123, executor: "test_user", execute_time: "2019-01-04 13:07" }
-      ],
-      TaskResultForm: {
-        type: [1, 2]
-      },
       result_list: [
         {
           code: 502,
@@ -511,7 +424,6 @@ export default {
         }
       ],
       dialogFormVisible: false,
-      dialogTaskResultListVisible: false,
       draw: {
         name: "",
         region: ""
@@ -663,7 +575,6 @@ export default {
       }
     },
     toTaskResult(row, event, column) {
-      console.log(row, event, column);
       let routeData = this.$router.resolve({
         path: "/api/task/result",
         query: {
@@ -672,6 +583,7 @@ export default {
         }
       });
       window.open(routeData.href, "_blank");
+
     },
     SendTask() {
       this.status = true;
@@ -711,9 +623,6 @@ export default {
           console.log(error);
           this.$message.error("执行异常");
         });
-    },
-    getTaskResultList() {
-      this.dialogTaskResultListVisible = true;
     },
     deleteTask() {
       if (this.task.list) {
