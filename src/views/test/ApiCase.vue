@@ -25,20 +25,22 @@
                 size="medium"
                 @click="toApi"
               >快速测试</el-button>
+
+            </div>
+            <template>
               <el-input
-                style="width: 42%; margin-top:15px;"
+                style="position: absolute; right: 18px; width: 45%; z-index: 99;"
                 size="medium"
                 placeholder="输入分组名称进行过滤"
                 v-model="filterText"
                 clearable
               ></el-input>
-            </div>
-            <template>
               <el-tabs
                 v-model="activeName1"
                 type="card"
                 @tab-click="handleClick"
               >
+
                 <el-tab-pane
                   label="项目"
                   name="proj"
@@ -786,6 +788,7 @@ export default {
   /deep/ .el-card__body {
     padding: 10px;
     height: 86vh;
+    position: relative;
   }
 }
 .checkbox-item {
