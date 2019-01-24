@@ -33,7 +33,7 @@
               <el-button
                 type="primary"
                 size="medium"
-                style="position: absolute; right: 18px;"
+                style="position: absolute; right: 18px;z-index: 99"
                 :loading="status"
                 @click="SendTask"
               >执行测试</el-button>
@@ -92,7 +92,6 @@
                     <el-table-column
                       label="操作"
                       width="200"
-                      fixed="right"
                     >
                       <template slot-scope="scope">
                         <el-button

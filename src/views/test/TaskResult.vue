@@ -46,8 +46,8 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column label="API" prop="api_id" width="280"></el-table-column>
-          <el-table-column label="接口名称" prop="api_name" width="230"></el-table-column>
+          <el-table-column label="API" prop="api_id" width="300"></el-table-column>
+          <el-table-column label="接口名称" prop="api_name" width="350"></el-table-column>
           <el-table-column label="请求地址" prop="req_url" width="330" show-overflow-tooltip></el-table-column>
           <el-table-column  label="请求方式" width="85" show-overflow-tooltip>
             <template slot-scope="scope">
