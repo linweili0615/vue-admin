@@ -24,20 +24,21 @@ const user = {
       const telno = userInfo.telno.trim()
       return new Promise((resolve, reject) => {
         login(telno, userInfo.pwd).then(response => {
+          debugger
           const data = response.data
           if(data.code === 'LOGIN'){
             setName(data.user_name)
             commit('SET_NAME',data.user_name)
           }else{
             removeToken()
-            removerName()
+            removeName()
             commit('SET_TOKEN','')
             commit('SET_NAME','')
           }
           resolve(response)
         }).catch(error => {
           removeToken()
-          removerName()
+          removeName()
           commit('SET_TOKEN','')
           commit('SET_NAME','')
           reject(error)
@@ -55,7 +56,7 @@ const user = {
             commit('SET_NAME',data.user_name)
           }else{
             removeToken()
-            removerName()
+            removeName()
             commit('SET_TOKEN','')
             commit('SET_NAME','')
           }
