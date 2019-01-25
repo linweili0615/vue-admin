@@ -10,7 +10,7 @@
               slot="header"
               class="clearfix"
             >
-              <span>用例信息</span>
+              <span>任务信息</span>
               <el-button
                 style="float: right; padding: 5px;margin-left: 3px"
                 type="info"
@@ -183,7 +183,7 @@
               slot="header"
               class="clearfix"
             >
-              <span>案例列表</span>
+              <span>API列表</span>
               <el-button
                 style="float: right; padding: 5px;margin-left: 3px"
                 type="success"
