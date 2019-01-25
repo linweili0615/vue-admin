@@ -2,7 +2,7 @@
   <div class="dashboard-container">
 
     <el-row :gutter="22">
-      <el-col :span="10">
+      <el-col :span="9">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
 
@@ -25,7 +25,6 @@
                   icon="el-icon-d-arrow-left"
                 >返回列表
                 </el-button>
-
               </router-link>
             </div>
 
@@ -42,11 +41,7 @@
                 type="card"
                 @tab-click="handleClick"
               >
-                <el-tab-pane
-                  label="步骤"
-                  name="step"
-                >
-
+                <el-tab-pane label="步骤" name="step">
                   <el-table
                     ref="multipleTable2"
                     :data="tasklist"
@@ -89,10 +84,7 @@
                         </el-switch>
                       </template>
                     </el-table-column>
-                    <el-table-column
-                      label="操作"
-                      width="200"
-                    >
+                    <el-table-column label="操作" width="200">
                       <template slot-scope="scope">
                         <el-button
                           type="primary"
@@ -127,7 +119,52 @@
                     >批量删除</el-button>
                   </div>
                 </el-tab-pane>
-                <!--<el-tab-pane label="文档" name="api">文档</el-tab-pane>-->
+
+                <el-tab-pane label="配置" name="config">
+                  <el-form :model="ConfigForm" ref="ConfigForm" :rules="rules"  label-width="100px">
+                    <el-form-item label="任务名称:" prop="name">
+                      <el-input v-model="ConfigForm.name" placeholder="请输入任务名称"></el-input>
+                    </el-form-item>
+                    <el-form-item label="开始时间:" prop="start_time">
+                      <el-date-picker
+                        v-model="ConfigForm.start_time"
+                        type="datetime"
+                        placeholder="选择日期时间"
+                        align="left"
+                        style="width: 100%"
+                        :picker-options="pickerOptions1">
+                      </el-date-picker>
+                    </el-form-item>
+
+                    <el-form-item label="结束时间:" required prop="end_time">
+                      <el-date-picker
+                        v-model="ConfigForm.end_time"
+                        type="datetime"
+                        placeholder="选择日期时间"
+                        align="left"
+                        style="width: 100%"
+                        :picker-options="pickerOptions1">
+                      </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="定时策略:" required>
+                      <el-popover v-model="cronPopover">
+                        <cron @change="changeCron" @close="cronPopover=false"></cron>
+                        <el-input slot="reference" @click="cronPopover=true" v-model="ConfigForm.cron" placeholder="请输入定时策略"></el-input>
+                      </el-popover>
+                    </el-form-item>
+                    <el-form-item label="状态:">
+                      <el-switch v-model="ConfigForm.status"
+                                 @click.native="handleConfigStatus(ConfigForm.status)"
+                                 active-color="#13ce66"
+                                 inactive-color="#7f8186"
+                                 active-value="1"
+                                 inactive-value="-1"></el-switch>
+                    </el-form-item>
+
+                      <el-button type="primary" style="width: 60%; margin:0 auto;display: block;" @click="submitForm('ConfigForm')">保存</el-button>
+                  </el-form>
+
+                </el-tab-pane>
               </el-tabs>
             </template>
 
@@ -137,7 +174,7 @@
       </el-col>
 
       <el-col
-        :span="14"
+        :span="15"
         v-show="activeStatus"
       >
         <div class="grid-content bg-purple">
@@ -157,27 +194,19 @@
               </el-button>
             </div>
             <template>
-              <el-tabs
-                v-model="activeName2"
-                type="card"
-                @tab-click="handleClick"
-              >
+              <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
                 <el-tab-pane
                   label="接口列表"
                   name="interface"
                 >
-                  <el-form
-                    :inline="true"
-                    class="demo-form-inline"
-                    size="mini"
-                  >
-                    <el-form-item label="接口名称：">
+                  <el-form :inline="true" class="demo-form-inline" size="medium">
+                    <el-form-item label="接口名称：" style="margin-bottom: 10px">
                       <el-input
                         v-model="search.name"
                         placeholder="请输入接口名称"
                       ></el-input>
                     </el-form-item>
-                    <el-form-item label="所属项目：">
+                    <el-form-item label="所属项目：" style="margin-bottom: 10px">
                       <el-cascader
                         placeholder="搜索：  用户项目"
                         :options="options"
@@ -186,7 +215,7 @@
                         change-on-select
                       ></el-cascader>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item style="margin-bottom: 10px">
                       <el-button
                         type="primary"
                         @click="onSubmit"
@@ -225,7 +254,6 @@
                         label="接口名称"
                         width="350"
                       >
-
                         <template slot-scope="scope">
                           <router-link :to="{ name: 'API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
                             <span style="color:#409EFF">{{scope.row.name}}</span>
@@ -255,7 +283,7 @@
                       <el-table-column
                         prop="url"
                         label="请求地址"
-                        width="250"
+                        width="270"
                         show-overflow-tooltip
                       ></el-table-column>
                       <el-table-column
@@ -297,10 +325,7 @@
         </div>
       </el-col>
 
-      <el-col
-        :span="14"
-        v-show="!activeStatus"
-      >
+      <el-col :span="15" v-show="!activeStatus">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
             <div
@@ -381,10 +406,58 @@
 
 <script>
 import Sortable from "sortablejs";
+import {cron} from 'vue-cron'
 export default {
+  components: { cron },
   name: "Dashboard",
   data() {
     return {
+      cronPopover:false,
+      cron:'',
+      rules: {
+        name: [
+          { required: true, message: '请输入任务名称', trigger: 'blur' },
+          { min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }
+        ],
+        start_time: [
+          { type: 'date', required: true, message: '请选择开始日期', trigger: 'blur' }
+        ],
+        end_time: [
+          { type: 'date', required: true, message: '请选择结束时间', trigger: 'blur' }
+        ],
+        cron: [
+          { required: true, message: '请输入定时策略', trigger: 'blur' },
+        ],
+      },
+      ConfigForm: {
+        name: '',
+        start_time: '',
+        end_time: '',
+        status: 1,
+        cron: ''
+      },
+      pickerOptions1: {
+        shortcuts: [{
+          text: '今天',
+          onClick(picker) {
+            picker.$emit('pick', new Date());
+          }
+        }, {
+          text: '昨天',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() - 3600 * 1000 * 24);
+            picker.$emit('pick', date);
+          }
+        }, {
+          text: '一周前',
+          onClick(picker) {
+            const date = new Date();
+            date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', date);
+          }
+        }]
+      },
       username: "linweili",
       status: false,
       logs: "",
@@ -430,8 +503,14 @@ export default {
     };
   },
   methods: {
+    changeCron(val){
+      this.ConfigForm.cron=val
+    },
     drawFunction() {
       this.dialogFormVisible = true;
+    },
+    handleConfigStatus(status){
+      console.log(status)
     },
     handleStatus(row) {
       this.deal_list = [row.id];
@@ -851,12 +930,12 @@ export default {
 .el-table--medium {
   /deep/ td,
   th {
-    padding: 5px 0;
+    padding: 4px 0;
   }
 }
-.el-form-item {
-  margin-bottom: 10px;
-}
+/*.el-form-item {*/
+  /*margin-bottom: 10px;*/
+/*}*/
 .logdata {
   height: 80vh;
   overflow: auto;

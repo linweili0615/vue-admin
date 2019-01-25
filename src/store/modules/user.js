@@ -24,7 +24,6 @@ const user = {
       const telno = userInfo.telno.trim()
       return new Promise((resolve, reject) => {
         login(telno, userInfo.pwd).then(response => {
-          debugger
           const data = response.data
           if(data.code === 'LOGIN'){
             setName(data.user_name)

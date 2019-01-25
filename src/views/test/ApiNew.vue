@@ -172,7 +172,7 @@
                   <el-button type="text" size="medium"
                              v-clipboard:copy="scope.row.variableValue"
                              v-clipboard:success="onCopy"
-                             v-clipboard:error="onError">点击复制
+                             v-clipboard:error="onError">复制
                   </el-button>
                 </template>
 
