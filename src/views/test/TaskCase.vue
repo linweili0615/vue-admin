@@ -136,7 +136,7 @@
                       </el-date-picker>
                     </el-form-item>
 
-                    <el-form-item label="结束时间:" required prop="end_time">
+                    <el-form-item label="结束时间:" prop="end_time">
                       <el-date-picker
                         v-model="ConfigForm.end_time"
                         type="datetime"
@@ -146,7 +146,7 @@
                         :picker-options="pickerOptions1">
                       </el-date-picker>
                     </el-form-item>
-                    <el-form-item label="定时策略:" required>
+                    <el-form-item label="定时策略:" prop="cron">
                       <el-popover v-model="cronPopover">
                         <cron @change="changeCron" @close="cronPopover=false"></cron>
                         <el-input slot="reference" @click="cronPopover=true" v-model="ConfigForm.cron" placeholder="请输入定时策略"></el-input>
@@ -161,7 +161,7 @@
                                  inactive-value="-1"></el-switch>
                     </el-form-item>
 
-                      <el-button type="primary" style="width: 60%; margin:0 auto;display: block;" @click="submitForm('ConfigForm')">保存</el-button>
+                      <el-button type="primary" style="width: 60%; margin:0 auto;display: block;" @click="SaveConfig">保存</el-button>
                   </el-form>
 
                 </el-tab-pane>
@@ -411,6 +411,14 @@ export default {
   components: { cron },
   name: "Dashboard",
   data() {
+    var validateEndTime = (rule, value, callback) => {
+      debugger
+        if (this.ConfigForm.start_time > value) {
+          callback(new Error('结束时间必须大于开始时间'));
+        } else {
+          callback();
+        }
+      }
     return {
       cronPopover:false,
       cron:'',
@@ -420,10 +428,11 @@ export default {
           { min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }
         ],
         start_time: [
-          { type: 'date', required: true, message: '请选择开始日期', trigger: 'blur' }
+          { type: 'date', required: true, message: '请选择开始时间', trigger: 'blur' }
         ],
         end_time: [
-          { type: 'date', required: true, message: '请选择结束时间', trigger: 'blur' }
+          { type: 'date', required: true, message: '请选择结束时间', trigger: 'blur' },
+          { required: true, validator : validateEndTime, trigger: 'blur'}
         ],
         cron: [
           { required: true, message: '请输入定时策略', trigger: 'blur' },
@@ -458,7 +467,6 @@ export default {
           }
         }]
       },
-      username: "linweili",
       status: false,
       logs: "",
       options: [],
@@ -503,6 +511,34 @@ export default {
     };
   },
   methods: {
+    SaveConfig(){
+      this.$refs.ConfigForm.validate((valid) => {
+        if(valid){
+          this.$axios.post('/job/info/update',{
+            'task_id': this.task_id,
+            'start_time': this.ConfigForm.start_time,
+            'end_time': this.ConfigForm.end_time,
+            'cron_expression': this.ConfigForm.cron
+          })
+            .then(res => {
+              if(res.data.status ==='SUCCESS'){
+                this.$message({
+                  type: 'success',
+                  duration:1000,
+                  message:'任务配置信息已更新'
+                })
+              }
+            })
+            .catch(error => {
+              this.$message({
+                type: 'error',
+                duration:1000,
+                message:'任务配置信息更新异常'
+              })
+            })
+        }
+      })
+    },
     changeCron(val){
       this.ConfigForm.cron=val
     },
@@ -510,7 +546,7 @@ export default {
       this.dialogFormVisible = true;
     },
     handleConfigStatus(status){
-      console.log(status)
+      // console.log(status)
     },
     handleStatus(row) {
       this.deal_list = [row.id];
@@ -531,13 +567,10 @@ export default {
         });
     },
     handleClick(tab, event) {
-      console.log(tab, event);
+      // console.log(tab, event);
     },
     onSubmit() {
       this.getApiList(50, 1);
-    },
-    getResult() {
-      this.dialogTaskResultVisible = true;
     },
     toggleSelection(rows) {
       if (rows) {
@@ -581,7 +614,7 @@ export default {
     },
     addStep() {
       if (this.api.list.length > 0) {
-        console.log(this.api.list);
+        // console.log(this.api.list);
         this.$axios
           .post("/task/extend/add", {
             list: this.api.list,
@@ -824,7 +857,7 @@ export default {
         });
     },
     handleChange(val) {
-      console.log(val);
+      // console.log(val);
     },
     handleOptionsChange(val) {
       if (val.length > 0) {
