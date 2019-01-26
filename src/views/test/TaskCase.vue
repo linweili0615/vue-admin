@@ -18,7 +18,7 @@
               >
                 查看日志
               </el-button>
-              <router-link :to="{name: '项目列表'}">
+              <router-link :to="{name: '任务列表'}">
                 <el-button
                   style="float: right; padding: 5px 3px"
                   type="primary"

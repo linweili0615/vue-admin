@@ -1,110 +1,116 @@
 <template>
   <div class="dashboard-container">
 
-    <template>
-      <section>
-        <!--工具条-->
-        <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-            <el-form :inline="true" :model="filters" @submit.native.prevent>
+    <el-row :gutter="24">
+      <el-col :span="24">
+        <div class="grid-content bg-purple">
+          <el-card class="box-card">
+
+            <div slot="header" class="clearfix">
+              <el-form :inline="true" :model="filters" @submit.native.prevent>
                 <el-form-item>
-                    <el-input v-model="filters.id" placeholder="请输入项目ID"></el-input>
+                  <el-input v-model="filters.id" placeholder="请输入项目ID"></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-input v-model="filters.project_name" placeholder="请输入项目名称"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="getProjectList(15,1)">查询</el-button>
+                  <el-button type="primary" @click="getProjectList(15,1)">查询</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="handleAdd">新增</el-button>
+                  <el-button type="primary" @click="handleAdd">新增</el-button>
                 </el-form-item>
-            </el-form>
+              </el-form>
+            </div>
+              <template>
+                <section>
+                  <!--列表-->
+                  <el-table :data="project.slice(0, pagesize)"
+                            highlight-current-row
+                            v-loading="listLoading"
+                            height="73vh"
+                            @selection-change="selsChange"
+                            style="width: 100%;">
+                      <el-table-column type="index" width="50" label="序号"></el-table-column>
+                      <el-table-column width="330" label="项目ID">
+                        <template slot-scope="scope">
+                          <router-link :to="{ name: '测试分组', query: { project_id: scope.row.id}}">
+                            <span style="color:#409EFF">{{scope.row.id}}</span>
+                          </router-link>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="project_name" label="项目名称" width="350"  show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="author" label="创建人" width="100" ></el-table-column>
+                      <el-table-column prop="update_author" label="处理人" width="100" ></el-table-column>
+                    <el-table-column prop="create_time" label="创建时间" width="200" sortable></el-table-column>
+                    <el-table-column prop="modify_time" label="处理时间" width="200" sortable></el-table-column>
+                      <!--<el-table-column label="状态" width="70" >-->
+                        <!--<template slot-scope="scope">{{scope.row.status===1?'启用':'禁用'}}</template>-->
+                      <!--</el-table-column>-->
+                      <el-table-column label="操作" style="min-width: 220px;" fixed="right">
+                          <template slot-scope="scope">
+                              <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                              <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+                              <el-button type="info" size="small" @click="handleChangeStatus(scope.$index, scope.row)">{{scope.row.status===1?'禁用':'启用'}}</el-button>
+                          </template>
+                      </el-table-column>
+                  </el-table>
 
-        </el-col>
-
-        <!--列表-->
-        <el-table :data="project.slice(0, pagesize)"
-                  highlight-current-row v-loading="listLoading"
-                  border
-                  height="78vh"
-                  @selection-change="selsChange"
-                  style="width: 100%;">
-            <el-table-column type="index" width="50" label="序号"></el-table-column>
-            <el-table-column width="330" label="项目ID">
-              <template slot-scope="scope">
-                <router-link :to="{ name: '测试分组', query: { project_id: scope.row.id}}">
-                  <span style="color:#409EFF">{{scope.row.id}}</span>
-                </router-link>
-              </template>
-            </el-table-column>
-            <el-table-column prop="project_name" label="项目名称" width="420"  show-overflow-tooltip></el-table-column>
-            <el-table-column prop="author" label="创建人" width="140" ></el-table-column>
-            <el-table-column prop="update_author" label="处理人" width="140" ></el-table-column>
-            <el-table-column prop="modify_time" label="处理时间" width="200" sortable></el-table-column>
-            <el-table-column label="状态" width="70" >
-              <template slot-scope="scope">{{scope.row.status===1?'启用':'禁用'}}</template>
-            </el-table-column>
-            <el-table-column label="操作" style="min-width: 220px;" fixed="right">
-                <template slot-scope="scope">
-                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
-                    <el-button type="info" size="small" @click="handleChangeStatus(scope.$index, scope.row)">{{scope.row.status===1?'禁用':'启用'}}</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-
-        <el-col :span="12" :offset="6" class="toolbar" style="margin-top: 10px">
-          <div class="block">
-            <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentpage"
-              :page-sizes="sizes"
-              :page-size="pagesize"
-              :pager-count="7"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total">
-            </el-pagination>
-          </div>
-        </el-col>
-
-        <!--编辑界面-->
-        <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false" style="width: 75%; left: 12.5%">
-            <el-form :model="editForm" label-width="80px"  :rules="editFormRules" ref="editForm">
-                <el-form-item label="项目名称" prop="project_name">
-                    <el-input v-model="editForm.project_name" auto-complete="off"></el-input>
-                </el-form-item>
-                  <el-col :span="12">
-                    <el-form-item label="状态" prop='status'>
-                      <el-select v-model="editForm.status" placeholder="请选择">
-                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                      </el-select>
-                    </el-form-item>
+                  <el-col :span="12" :offset="6" class="toolbar" style="margin-top: 10px">
+                    <div class="block">
+                      <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentpage"
+                        :page-sizes="sizes"
+                        :page-size="pagesize"
+                        :pager-count="7"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="total">
+                      </el-pagination>
+                    </div>
                   </el-col>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click.native="editFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
-            </div>
-        </el-dialog>
 
-        <!--新增界面-->
-        <el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false"
-                   :before-close="handleClose"
-                   style="width: 80%; left: 12.5%">
-            <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-                <el-form-item label="项目名称" prop="project_name">
-                    <el-input v-model.trim="addForm.project_name" auto-complete="off" placeholder="请输入项目名称"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click.native="addFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
-            </div>
-        </el-dialog>
-      </section>
-</template>
+                  <!--编辑界面-->
+                  <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false" style="width: 75%; left: 12.5%">
+                      <el-form :model="editForm" label-width="80px"  :rules="editFormRules" ref="editForm">
+                          <el-form-item label="项目名称" prop="project_name">
+                              <el-input v-model="editForm.project_name" auto-complete="off"></el-input>
+                          </el-form-item>
+                            <el-col :span="12">
+                              <el-form-item label="状态" prop='status'>
+                                <el-select v-model="editForm.status" placeholder="请选择">
+                                  <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                                </el-select>
+                              </el-form-item>
+                            </el-col>
+                      </el-form>
+                      <div slot="footer" class="dialog-footer">
+                          <el-button @click.native="editFormVisible = false">取消</el-button>
+                          <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
+                      </div>
+                  </el-dialog>
 
+                  <!--新增界面-->
+                  <el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false"
+                             :before-close="handleClose"
+                             style="width: 80%; left: 12.5%">
+                      <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
+                          <el-form-item label="项目名称" prop="project_name">
+                              <el-input v-model.trim="addForm.project_name" auto-complete="off" placeholder="请输入项目名称"></el-input>
+                          </el-form-item>
+                      </el-form>
+                      <div slot="footer" class="dialog-footer">
+                          <el-button @click.native="addFormVisible = false">取消</el-button>
+                          <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+                      </div>
+                  </el-dialog>
+                </section>
+          </template>
+          </el-card>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 <script>
@@ -392,20 +398,20 @@
       margin: 15px 20px 15px 20px;
     }
   }
-  .el-col {
-    border-radius: 4px;
+  .box-card {
+    width: 100%;
+    height: 90vh;
+    /deep/ .el-card__body {
+      padding: 10px;
+      height: 80vh;
+    }
   }
-  .bg-purple-dark {
-    background: #99a9bf;
+  .el-table {
+    /deep/ th{
+      padding: 0px 0;
+    }
   }
-  .bg-purple {
-    background: #d3dce6;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
+  .el-form-item {
+    margin-bottom: 0px;
   }
 </style>

@@ -36,10 +36,6 @@ const user = {
           }
           resolve(response)
         }).catch(error => {
-          removeToken()
-          removeName()
-          commit('SET_TOKEN','')
-          commit('SET_NAME','')
           reject(error)
         })
       })
