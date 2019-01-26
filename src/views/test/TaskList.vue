@@ -72,7 +72,7 @@
                   >
                   </el-table-column>
                 <el-table-column
-                  label="状态"
+                  label="启用"
                   width="62"
                 >
                   <template slot-scope="scope">
