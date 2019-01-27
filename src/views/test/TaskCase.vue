@@ -161,7 +161,7 @@
                                  inactive-value="-1"></el-switch>
                     </el-form-item>
 
-                      <el-button type="primary" style="width: 60%; margin:0 auto;display: block;" @click="SaveConfig">保存</el-button>
+                      <el-button type="primary" style="width: 60%; margin:0 auto;display: block;" @click="SaveConfig">更新</el-button>
                   </el-form>
 
                 </el-tab-pane>
@@ -359,10 +359,7 @@
 
     </el-row>
     <!--提取参数弹窗-->
-    <el-dialog
-      title="提取参数"
-      :visible.sync="dialogFormVisible"
-    >
+    <el-dialog title="提取参数" :visible.sync="dialogFormVisible">
       <el-form :model="draw">
         <el-form-item
           label="活动名称"
@@ -397,7 +394,7 @@
         <el-button
           type="primary"
           @click="dialogFormVisible = false"
-        >确 定</el-button>
+        >保存</el-button>
       </div>
     </el-dialog>
 
@@ -412,7 +409,6 @@ export default {
   name: "Dashboard",
   data() {
     var validateEndTime = (rule, value, callback) => {
-      debugger
         if (this.ConfigForm.start_time > value) {
           callback(new Error('结束时间必须大于开始时间'));
         } else {
@@ -484,8 +480,9 @@ export default {
       search: {
         name: ""
       },
-      project_id: "",
-      case_id: "",
+      task_id: '',
+      project_id: '',
+      case_id: '',
       apilist: [],
       tasklist: [],
       deal_list: [],
@@ -550,6 +547,7 @@ export default {
     },
     handleStatus(row) {
       this.deal_list = [row.id];
+      console.log(this.deal_list)
       this.$axios
         .post("/task/extend/status", {
           status: row.status,
@@ -618,7 +616,7 @@ export default {
         this.$axios
           .post("/task/extend/add", {
             list: this.api.list,
-            task_id: "81598efb-ffa9-11e8-a19c-0242ac110002"
+            task_id: this.task_id
           })
           .then(response => {
             if (response.data.status === "SUCCESS") {
@@ -671,7 +669,7 @@ export default {
     },
     getTaskLog() {
       this.$axios
-        .post("/task/getLog", "81598efb-ffa9-11e8-a19c-0242ac110002")
+        .post("/task/getLog", this.task_id)
         .then(response => {
           this.logs = response.data.data;
         })
@@ -689,7 +687,7 @@ export default {
       let routeData = this.$router.resolve({
         path: "/api/task/result",
         query: {
-          task_id: "81598efb-ffa9-11e8-a19c-0242ac110002",
+          task_id: this.task_id,
           u_id: "81598efb-ffa9-11e8-a19c-0242ac110002"
         }
       });
@@ -699,9 +697,9 @@ export default {
     SendTask() {
       this.status = true;
       this.activeStatus = false;
-      let intervaljob = setInterval(this.getTaskLog, 200);
+      let intervaljob = setInterval(this.getTaskLog, 500);
       this.$axios
-        .post("/task/test", "81598efb-ffa9-11e8-a19c-0242ac110002")
+        .post("/task/test", this.task_id)
         .then(response => {
           this.status = false;
           if (response.data.status === "SUCCESS") {
@@ -715,7 +713,7 @@ export default {
               .then(() => {
                 let routeData = this.$router.resolve({
                   path: "/api/task/result",
-                  query: { task_id: "81598efb-ffa9-11e8-a19c-0242ac110002" }
+                  query: { task_id: this.task_id }
                 });
                 window.open(routeData.href, "_blank");
               })
@@ -763,10 +761,10 @@ export default {
     },
     getTaskList() {
       this.$axios
-        .post("/task/extend/info", "81598efb-ffa9-11e8-a19c-0242ac110002")
+        .post("/task/extend/info", this.task_id)
         .then(response => {
           if (response.data.status === "SUCCESS") {
-            if (!!response.data.data[0]) {
+            if (response.data.data) {
               this.tasklist = response.data.data;
               this.$nextTick(() => {
                 this.setSort();
@@ -869,7 +867,13 @@ export default {
     }
   },
   created() {
-    // this.task_id = this.$route.query.params.task_id
+
+    if(this.$route.query.id===''){
+      this.$router.push({path: '/404'})
+    }
+    this.task_id = this.$route.query.id
+  },
+  mounted(){
     this.getTaskList();
     this.getApiTree();
     this.getApiList(50, 1);
@@ -966,9 +970,6 @@ export default {
     padding: 4px 0;
   }
 }
-/*.el-form-item {*/
-  /*margin-bottom: 10px;*/
-/*}*/
 .logdata {
   height: 80vh;
   overflow: auto;

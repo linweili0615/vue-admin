@@ -203,7 +203,6 @@
       }
       const validProject = (rule, value, callback) => {
         if(!this.load){
-          debugger
           if(value.length === 0){
             callback(new Error('请选择所属项目'))
           }else {
@@ -404,7 +403,6 @@
           })
       },
       handleOptionsChange(val){
-        debugger
         this.project_id = val[0]
         if(val.length === 2){
           this.case_id = val[1]

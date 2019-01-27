@@ -720,11 +720,11 @@ export default {
     }
   },
   created() {
-    // if(this.$route.query.project_id === undefined || this.$route.query.project_id ==='' || !this.$route.query.project_id){
-    //   this.$router.push({
-    //     path: '/404'
-    //   })
-    // }
+    if(!this.$route.query.project_id){
+      this.$router.push({
+        path: '/404'
+      })
+    }
     this.project_id = this.$route.query.project_id;
     if (this.$route.query.case_id) {
       this.case_id = this.$route.query.case_id;
@@ -789,6 +789,9 @@ export default {
     padding: 10px;
     height: 86vh;
     position: relative;
+  }
+  /deep/ .el-form-item {
+    margin-bottom: 0px;
   }
 }
 .checkbox-item {

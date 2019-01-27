@@ -405,13 +405,16 @@
       padding: 10px;
       height: 80vh;
     }
+    /deep/ .el-form-item {
+      margin-bottom: 0px;
+    }
   }
   .el-table {
     /deep/ th{
       padding: 0px 0;
     }
   }
-  .el-form-item {
-    margin-bottom: 0px;
-  }
+  /*.el-form-item {*/
+    /*margin-bottom: 0px;*/
+  /*}*/
 </style>
