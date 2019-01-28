@@ -705,6 +705,23 @@ export default {
       window.open(routeData.href, "_blank");
 
     },
+    getTask(){
+      if(this.task_id){
+        this.$axios.post('/task/info',this.task_id)
+          .then(res => {
+            if(res.data.status === 'SUCCESS'){
+              this.ConfigForm.name = res.data.data.name
+              this.ConfigForm.start_time = res.data.data.start_time
+              this.ConfigForm.end_time = res.data.data.end_time
+              this.ConfigForm.cron = res.data.data.cron_expression
+              this.ConfigForm.status = res.data.data.status
+            }
+          })
+          .catch(error => {
+
+          })
+      }
+    },
     SendTask() {
       this.status = true;
       this.activeStatus = false;
@@ -886,6 +903,7 @@ export default {
   },
   mounted(){
     this.getTaskList();
+    this.getTask()
     this.getApiTree();
     this.getApiList(50, 1);
   },
