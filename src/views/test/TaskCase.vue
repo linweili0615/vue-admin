@@ -63,7 +63,7 @@
                       width="350"
                     >
                       <template slot-scope="scope">
-                        <router-link :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
+                        <router-link target="_blank" :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
                           <span style="color:#409EFF">{{scope.row.api_name}}</span>
                         </router-link>
                       </template>
@@ -255,7 +255,7 @@
                         width="350"
                       >
                         <template slot-scope="scope">
-                          <router-link :to="{ name: 'API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
+                          <router-link target="_blank" :to="{ name: 'API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
                             <span style="color:#409EFF">{{scope.row.name}}</span>
                           </router-link>
                         </template>
@@ -684,6 +684,17 @@ export default {
       }
     },
     toTaskResult(row, event, column) {
+      let routeData = this.$router.resolve({
+        path: "/api/task/result",
+        query: {
+          task_id: this.task_id,
+          u_id: "81598efb-ffa9-11e8-a19c-0242ac110002"
+        }
+      });
+      window.open(routeData.href, "_blank");
+
+    },
+    toApi(row, event, column) {
       let routeData = this.$router.resolve({
         path: "/api/task/result",
         query: {
