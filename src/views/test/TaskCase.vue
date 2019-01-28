@@ -255,7 +255,7 @@
                         width="350"
                       >
                         <template slot-scope="scope">
-                          <router-link target="_blank" :to="{ name: 'API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
+                          <router-link target="_blank" :to="{ name: 'API接口', query: { id: scope.row.id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
                             <span style="color:#409EFF">{{scope.row.name}}</span>
                           </router-link>
                         </template>
