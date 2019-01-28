@@ -354,24 +354,9 @@
       </div>
     </el-dialog>
 
-    <el-dialog
-      class="importDialog"
-      title="导入swagger接口"
-      :visible.sync="loadSwaggerApi"
-      :close-on-click-modal="false"
-    >
-      <el-input
-        v-model.trim="swaggerUrl"
-        placeholder="请输入swagger接口地址"
-        style="width:100%"
-      ></el-input>
-      <el-button
-        type="primary"
-        size="medium"
-        @click="leadSwagger"
-        :loading="addLoading"
-        style="margin-top: 10px; float: right;"
-      >导入</el-button>
+    <el-dialog class="importDialog" title="导入swagger接口" :visible.sync="loadSwaggerApi" :close-on-click-modal="false">
+      <el-input v-model.trim="swaggerUrl" placeholder="请输入swagger接口地址" style="width:100%"></el-input>
+      <el-button type="primary" size="medium" @click="leadSwagger" :loading="addLoading" style="margin-top: 10px; float: right;">导入</el-button>
     </el-dialog>
   </div>
 
@@ -559,15 +544,13 @@ export default {
       return data.label.indexOf(value) !== -1;
     },
     leadSwagger() {
-      debugger;
       this.addLoading = true;
       if (this.swaggerUrl) {
-        this.$axios("/api/api/swagger", {
+        this.$axios.post("/api/swagger", {
           project_id: this.project_id,
           url: this.swaggerUrl
         })
           .then(res => {
-            debugger;
             this.addLoading = false;
             if (res.data.status === "SUCCESS") {
               this.$message.success(res.data.msg);
@@ -577,7 +560,6 @@ export default {
             }
           })
           .catch(err => {
-            debugger;
             this.addLoading = false;
             console.log(err);
           });
