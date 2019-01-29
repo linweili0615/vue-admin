@@ -34,6 +34,7 @@
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="请求参数: ">
+                  url: <pre>{{props.row.req_url}}</pre>
                   headers: <pre>{{props.row.req_headers}}</pre>
                   cookies: <pre>{{props.row.req_cookies}}</pre>
                   params: <pre>{{props.row.req_body}}</pre>

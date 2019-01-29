@@ -131,6 +131,7 @@
                         type="datetime"
                         placeholder="选择日期时间"
                         align="left"
+                        value-format="yyyy-MM-dd HH:mm:ss"
                         style="width: 100%"
                         :picker-options="pickerOptions1">
                       </el-date-picker>
@@ -140,6 +141,7 @@
                       <el-date-picker
                         v-model="ConfigForm.end_time"
                         type="datetime"
+                        value-format="yyyy-MM-dd HH:mm:ss"
                         placeholder="选择日期时间"
                         align="left"
                         style="width: 100%"
@@ -161,7 +163,9 @@
                                  inactive-value="-1"></el-switch>
                     </el-form-item>
 
-                      <el-button type="primary" style="width: 60%; margin:0 auto;display: block;" @click="SaveConfig">更新</el-button>
+                      <el-button type="primary"
+                                 style="width: 60%; margin:0 auto;display: block;"
+                                 @click="SaveConfig">更新</el-button>
                   </el-form>
 
                 </el-tab-pane>
@@ -424,10 +428,10 @@ export default {
           { min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }
         ],
         start_time: [
-          { type: 'date', required: true, message: '请选择开始时间', trigger: 'blur' }
+          { required: true, message: '请选择开始时间', trigger: 'blur' }
         ],
         end_time: [
-          { type: 'date', required: true, message: '请选择结束时间', trigger: 'blur' },
+          { required: true, message: '请选择结束时间', trigger: 'blur' },
           { required: true, validator : validateEndTime, trigger: 'blur'}
         ],
         cron: [
@@ -438,7 +442,7 @@ export default {
         name: '',
         start_time: '',
         end_time: '',
-        status: 1,
+        status: '1',
         cron: ''
       },
       pickerOptions1: {
@@ -511,11 +515,12 @@ export default {
     SaveConfig(){
       this.$refs.ConfigForm.validate((valid) => {
         if(valid){
-          this.$axios.post('/job/info/update',{
-            'task_id': this.task_id,
+          this.$axios.post('/task/deal',{
+            'id': this.task_id,
             'start_time': this.ConfigForm.start_time,
             'end_time': this.ConfigForm.end_time,
-            'cron_expression': this.ConfigForm.cron
+            'cron_expression': this.ConfigForm.cron,
+            'status': this.ConfigForm.status
           })
             .then(res => {
               if(res.data.status ==='SUCCESS'){
@@ -725,7 +730,7 @@ export default {
     SendTask() {
       this.status = true;
       this.activeStatus = false;
-      let intervaljob = setInterval(this.getTaskLog, 500);
+      let intervaljob = setInterval(this.getTaskLog, 200);
       this.$axios
         .post("/task/test", this.task_id)
         .then(response => {

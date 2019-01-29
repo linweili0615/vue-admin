@@ -9,13 +9,13 @@
             <div slot="header" class="clearfix">
               <el-form :inline="true"  @submit.native.prevent>
                 <el-form-item>
-                  <el-input  placeholder="请输入任务ID"></el-input>
+                  <el-input  placeholder="请输入任务ID" v-model="search.id"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-input  placeholder="请输入任务名称"></el-input>
+                  <el-input  placeholder="请输入任务名称" v-model="search.name"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary"  @click="">查询</el-button>
+                  <el-button type="primary"  @click="searchTask">查询</el-button>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="open_task">新增任务</el-button>
@@ -34,7 +34,7 @@
                 ref="multipleTable"
                 :data="tasklist"
                 v-loading="listLoading"
-                height="73vh"
+                height="72vh"
                 size="medium"
                 tooltip-effect="dark"
                 empty-text="暂无数据"
@@ -189,7 +189,8 @@
   export default {
     components: { cron },
     data() {
-      var validateEndTime = (rule, value, callback) => {if (this.ConfigForm.start_time > value) {
+      var validateEndTime = (rule, value, callback) => {
+        if (this.ConfigForm.start_time > value) {
           callback(new Error('结束时间必须大于开始时间'));
         } else {
           callback();
@@ -217,7 +218,7 @@
           name: '',
           start_time: '',
           end_time: '',
-          status: 1,
+          status: '1',
           cron: ''
         },
         pickerOptions1: {
@@ -246,9 +247,13 @@
         listLoading: false,
         tasklist: [],
         task_id: '',
+        search:{
+          id: '',
+          name:''
+        },
         total: 10,
-        sizes: [50, 80],
-        pageSize: 50,
+        sizes: [30, 50, 80],
+        pageSize: 30,
         pageCount: 1,
         page: 1,
         currentpage: 1,
@@ -258,10 +263,13 @@
       changeStart(val){
         console.log(this.ConfigForm.start_time)
       },
+      searchTask(){
+        this.getTaskList(30,1);
+      },
       add_Task(){
         this.$refs.ConfigForm.validate((valid) => {
           if(valid){
-            this.$axios.post('/task/add',{
+            this.$axios.post('/task/deal',{
               'name': this.ConfigForm.name,
               'start_time': this.ConfigForm.start_time,
               'end_time': this.ConfigForm.end_time,
@@ -275,7 +283,7 @@
                     duration:1000,
                     message:'任务添加'
                   })
-                  this.getTaskList(50,1)
+                  this.getTaskList(30,1)
                 }else {
                   this.$message({
                     type: 'error',
@@ -303,12 +311,20 @@
         this.dialogTaskVisible = true
       },
       getTaskList(pageSize,currentpage){
-        console.log(pageSize,currentpage)
         this.listLoading = true
-        this.$axios.get('/task/list')
+        this.$axios.post('/task/list',{
+          'pageSize': pageSize,
+          'pageNo': currentpage,
+          'id': this.search.id,
+          'name': this.search.name
+        })
           .then(res => {
             if(res.data.status ==='SUCCESS'){
               this.tasklist = res.data.data
+              this.total = res.data.total;
+              this.pageSize = res.data.pageSize;
+              this.pageNo = res.data.pageNo;
+              this.pageCount = res.data.pageCount;
             }else{
               this.$message.error(res.data.msg)
             }
@@ -335,7 +351,7 @@
               this.$message.error('任务删除失败');
             }else{
               this.$message.success('任务已删除');
-              this.getTaskList(50,1)
+              this.getTaskList(30,1)
             }
           })
           .catch(error => {
@@ -452,7 +468,7 @@
 
     },
     mounted() {
-      this.getTaskList(50,1)
+      this.getTaskList(30,1)
     },
   }
 </script>
