@@ -346,20 +346,26 @@
         this.getTaskList(this.pageSize, this.currentpage);
       },
       handleDel(id) {
-        this.$axios.post("/task/del", id)
-          .then(response => {
-            if (response.data.status !== "SUCCESS") {
-              this.$message.error('任务删除失败');
-            }else{
-              this.$message.success('任务已删除');
-              this.getTaskList(30,1)
-            }
-          })
-          .catch(error => {
-            console.log(error)
-            this.$message.error("任务删除异常！");
+        this.$confirm('确认删除该任务吗？','提示',{
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$axios.post("/task/del", id)
+            .then(response => {
+              if (response.data.status !== "SUCCESS") {
+                this.$message.error('任务删除失败');
+              } else {
+                this.$message.success('任务已删除');
+                this.getTaskList(30, 1)
+              }
+            })
+            .catch(error => {
+              console.log(error)
+              this.$message.error("任务删除异常！");
 
-          });
+            });
+        })
       },
       handleStatus(row) {
         this.task_id = row.id;
