@@ -211,7 +211,7 @@
             { required: true, validator : validateEndTime, trigger: 'blur'}
           ],
           cron: [
-            { required: true, message: '请输入定时策略', trigger: 'blur' },
+            { required: true, message: '请输入定时策略', trigger: 'change' },
           ],
         },
         ConfigForm: {
@@ -273,7 +273,8 @@
               'name': this.ConfigForm.name,
               'start_time': this.ConfigForm.start_time,
               'end_time': this.ConfigForm.end_time,
-              'cron_expression': this.ConfigForm.cron
+              'cron_expression': this.ConfigForm.cron,
+              'status': this.ConfigForm.status
             })
               .then(res => {
                 this.dialogTaskVisible = false

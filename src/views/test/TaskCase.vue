@@ -148,12 +148,14 @@
                         :picker-options="pickerOptions1">
                       </el-date-picker>
                     </el-form-item>
+
                     <el-form-item label="定时策略:" prop="cron">
                       <el-popover v-model="cronPopover">
                         <cron @change="changeCron" @close="cronPopover=false"></cron>
                         <el-input slot="reference" @click="cronPopover=true" v-model="ConfigForm.cron" placeholder="请输入定时策略"></el-input>
                       </el-popover>
                     </el-form-item>
+
                     <el-form-item label="状态:">
                       <el-switch v-model="ConfigForm.status"
                                  @click.native="handleConfigStatus(ConfigForm.status)"
@@ -435,7 +437,7 @@ export default {
           { required: true, validator : validateEndTime, trigger: 'blur'}
         ],
         cron: [
-          { required: true, message: '请输入定时策略', trigger: 'blur' },
+          { required: true, message: '请输入定时策略', trigger: 'change' },
         ],
       },
       ConfigForm: {
