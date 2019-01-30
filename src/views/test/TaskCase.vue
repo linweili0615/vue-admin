@@ -6,41 +6,19 @@
         <div class="grid-content bg-purple">
           <el-card class="box-card">
 
-            <div
-              slot="header"
-              class="clearfix"
-            >
+            <div slot="header" class="clearfix">
               <span>任务信息</span>
-              <el-button
-                style="float: right; padding: 5px;margin-left: 3px"
-                type="info"
-                @click="showLog"
-              >
-                查看日志
-              </el-button>
+              <el-button style="float: right; padding: 5px;margin-left: 3px" type="info" @click="showLog">查看日志</el-button>
               <router-link :to="{name: '任务列表'}">
-                <el-button
-                  style="float: right; padding: 5px 3px"
-                  type="primary"
-                  icon="el-icon-d-arrow-left"
-                >返回列表
-                </el-button>
+                <el-button style="float: right; padding: 5px 3px" type="primary"
+                  icon="el-icon-d-arrow-left" >返回列表</el-button>
               </router-link>
             </div>
 
             <template>
-              <el-button
-                type="primary"
-                size="medium"
-                style="position: absolute; right: 18px;z-index: 99"
-                :loading="status"
-                @click="SendTask"
-              >执行测试</el-button>
-              <el-tabs
-                v-model="activeName1"
-                type="card"
-                @tab-click="handleClick"
-              >
+              <el-button type="primary" size="medium"
+                style="position: absolute; right: 18px;z-index: 99" :loading="status" @click="SendTask" >执行测试</el-button>
+              <el-tabs v-model="activeName1" type="card" @tab-click="handleClick">
                 <el-tab-pane label="步骤" name="step">
                   <el-table
                     ref="multipleTable2"
@@ -53,15 +31,9 @@
                     style="width: 100%"
                     @selection-change="handleTaskChange"
                   >
-                    <el-table-column
-                      type="selection"
-                      width="30"
-                    ></el-table-column>
+                    <el-table-column type="selection" width="30"></el-table-column>
                     <!--<el-table-column type="index" width="52" label="序号"></el-table-column>-->
-                    <el-table-column
-                      label="接口名称"
-                      width="350"
-                    >
+                    <el-table-column label="接口名称" width="350">
                       <template slot-scope="scope">
                         <router-link target="_blank" :to="{ name: '修改API接口', query: { id: scope.row.api_id, project_id: scope.row.project_id, case_id: scope.row.case_id}}">
                           <span style="color:#409EFF">{{scope.row.api_name}}</span>
@@ -86,24 +58,10 @@
                     </el-table-column>
                     <el-table-column label="操作" width="200">
                       <template slot-scope="scope">
-                        <el-button
-                          type="primary"
-                          plain
-                          size="mini"
-                          icon="el-icon-circle-plus-outline"
-                          @click="drawFunction"
-                        >提取</el-button>
-                        <el-button
-                          type="warning"
-                          plain
-                          size="mini"
-                          icon="el-icon-circle-plus-outline"
-                        >检查</el-button>
-                        <el-button
-                          type="danger"
-                          size="mini"
-                          icon="el-icon-delete"
-                          style="margin-right: 18px;"
+                        <el-button type="primary" plain size="mini" icon="el-icon-circle-plus-outline"
+                          @click="drawFunction" >提取</el-button>
+                        <el-button type="warning" plain size="mini" icon="el-icon-circle-plus-outline">检查</el-button>
+                        <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;"
                           @click="delTask(scope.row.id)"
                         ></el-button>
                       </template>
@@ -185,59 +143,33 @@
       >
         <div class="grid-content bg-purple">
           <el-card class="box-card">
-            <div
-              slot="header"
-              class="clearfix"
-            >
+            <div slot="header" class="clearfix">
               <span>API列表</span>
-              <el-button
-                style="float: right; padding: 5px;margin-left: 3px"
-                type="success"
-                @click="toTaskResult"
-              >
+              <el-button style="float: right; padding: 5px;margin-left: 3px" type="success" @click="toTaskResult">
                 查看结果
                 <i class="el-icon-document"></i>
               </el-button>
             </div>
             <template>
               <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-                <el-tab-pane
-                  label="接口列表"
-                  name="interface"
-                >
+                <el-tab-pane label="接口列表" name="interface">
                   <el-form :inline="true" class="demo-form-inline" size="medium">
                     <el-form-item label="接口名称：" style="margin-bottom: 10px">
-                      <el-input
-                        v-model="search.name"
-                        placeholder="请输入接口名称"
-                      ></el-input>
+                      <el-input v-model="search.name" placeholder="请输入接口名称" ></el-input>
                     </el-form-item>
                     <el-form-item label="所属项目：" style="margin-bottom: 10px">
-                      <el-cascader
-                        placeholder="搜索：  用户项目"
-                        :options="options"
-                        @change="handleOptionsChange"
-                        filterable
-                        change-on-select
-                      ></el-cascader>
+                      <el-cascader placeholder="搜索：  用户项目" :options="options"
+                        @change="handleOptionsChange" filterable change-on-select ></el-cascader>
                     </el-form-item>
                     <el-form-item style="margin-bottom: 10px">
-                      <el-button
-                        type="primary"
-                        @click="onSubmit"
-                      >查询</el-button>
+                      <el-button type="primary" @click="onSubmit" >查询</el-button>
                     </el-form-item>
 
                   </el-form>
 
-                  <el-button
-                    type="primary"
-                    plain
-                    size="medium"
-                    style="font-size: 12px"
-                    icon="el-icon-circle-plus-outline"
-                    @click="addStep"
-                  >添加至步骤</el-button>
+                  <el-button type="primary" plain size="medium"
+                    style="font-size: 12px" icon="el-icon-circle-plus-outline"
+                    @click="addStep" >添加至步骤</el-button>
                   <template>
                     <el-table
                       ref="multipleTable"
@@ -267,11 +199,7 @@
                         </template>
 
                       </el-table-column>
-                      <el-table-column
-                        label="请求方式"
-                        width="85"
-                        show-overflow-tooltip
-                      >
+                      <el-table-column label="请求方式" width="85" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-tag
                             type="success"
@@ -364,46 +292,75 @@
       </el-col>
 
     </el-row>
-    <!--提取参数弹窗-->
-    <el-dialog title="提取参数" :visible.sync="dialogFormVisible">
-      <el-form :model="draw">
-        <el-form-item
-          label="活动名称"
-          label-width="120px"
-        >
-          <el-input v-model="draw.name"></el-input>
-        </el-form-item>
-        <el-form-item
-          label="活动区域"
-          label-width="120px"
-        >
-          <el-select
-            v-model="draw.region"
-            placeholder="请选择活动区域"
-          >
-            <el-option
-              label="区域一"
-              value="shanghai"
-            ></el-option>
-            <el-option
-              label="区域二"
-              value="beijing"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="dialogFormVisible = false"
-        >保存</el-button>
+    <!--后置处理弹窗-->
+    <el-dialog title="后置处理" :visible.sync="postVisible">
+      <el-dialog width="700px" title="详情" :visible.sync="innerVisible" append-to-body>
+        <template>
+          <el-tabs v-model="postActive" type="card" @tab-click="handlePostClick">
+            <el-tab-pane label="正则提取" name="reguler">
+              <el-form :model="RegulerForm" :rules="Reguler_rules" ref="RegulerForm" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="变量名称:" prop="values" >
+                  <el-input v-model="RegulerForm.values" placeholder="请输入引用变量名称"></el-input>
+                </el-form-item>
+                <el-form-item label="左边界:" prop="left">
+                  <el-input v-model="RegulerForm.left" placeholder="请输入左边界"></el-input>
+                </el-form-item>
+                <el-form-item label="右边界:" prop="right">
+                  <el-input v-model="RegulerForm.right" placeholder="请输入右边界"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button @click="submitForm" type="primary" size="medium">保存</el-button>
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="JSON提取" name="json">
+              <el-form :model="JSONForm" :rules="Json_rules" ref="JSONForm" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="变量名称:" prop="values" >
+                  <el-input v-model="JSONForm.values" placeholder="请输入引用变量名称"></el-input>
+                </el-form-item>
+                <el-form-item label="参数名称:" prop="left">
+                  <el-input v-model="JSONForm.left" placeholder="请输入参数名称"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button @click="JsonForm" type="primary" size="medium">保存</el-button>
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+          </el-tabs>
+        </template>
+      </el-dialog>
+      <el-button type="primary" size="medium" style="margin-bottom: 10px;" @click="innerVisible = true">添加</el-button>
+      <template>
+        <el-table :data="PostData" height="500"
+                  empty-text="暂无记录"
+                  border style="width: 100%">
+          <el-table-column prop="typs" label="提取类型" width="100">
+            <template slot-scope="scope">
+              <el-tag type="success" v-if="scope.row.typs === 'reguler'">
+                正则提取
+              </el-tag>
+              <el-tag v-else>JSON提取</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="values" label="变量名称" width="150"></el-table-column>
+          <el-table-column prop="left" label="左边界" ></el-table-column>
+          <el-table-column prop="right" label="右边界" ></el-table-column>
+          <el-table-column label="操作" >
+            <template slot-scope="scope">
+              <el-button type="primary" plain size="mini"
+                         icon="el-icon-circle-plus-outline"
+                         @click="">编辑</el-button>
+              <el-button type="danger" size="mini" style="margin-right: 18px;"
+                         @click="" icon="el-icon-error">删除</el-button>
+            </template>
+          </el-table-column>
+
+        </el-table>
+      </template>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="postVisible = false" size="medium">关闭</el-button>
       </div>
     </el-dialog>
-
   </div>
 </template>
 
@@ -422,8 +379,65 @@ export default {
         }
       }
     return {
+      JSONForm:{
+        'values': '',
+        'left': '',
+      },
+      RegulerForm:{
+        'values': '',
+        'left': '',
+        'right': ''
+      },
+      postActive: 'reguler',
+      PostData: [{
+        id: 1,
+        typs: 'reguler',
+        left: '王小虎',
+        right: '上海市普陀区',
+        values: '金沙江路 1518 弄'
+      },{
+        id: 2,
+        typs: 'json',
+        left: '王小虎',
+        right: '',
+        values: '金沙江路 1518 弄'
+      },{
+        id: 3,
+        typs: 'reguler',
+        left: '王小虎',
+        right: '上海市普陀区',
+        values: '金沙江路 1518 弄'
+      },{
+        id: 4,
+        typs: 'json',
+        left: '王小虎',
+        right: '',
+        values: '金沙江路 1518 弄'
+      }
+      ],
+      innerVisible: false,
+      postVisible: false,
       cronPopover:false,
       cron:'',
+      Json_rules:{
+        values:[
+          { required: true, message: '请输入变量名称', trigger: 'blur' },
+        ],
+        left:[
+          { required: true, message: '请输入参数名称', trigger: 'blur' },
+        ],
+      },
+      Reguler_rules:{
+        values:[
+          { required: true, message: '请输入变量名称', trigger: 'blur' },
+        ],
+        left:[
+          { required: true, message: '请输入左边界', trigger: 'blur' },
+        ],
+        right:[
+          { required: true, message: '请输入右边界', trigger: 'blur' },
+        ],
+      },
       rules: {
         name: [
           { required: true, message: '请输入任务名称', trigger: 'blur' },
@@ -487,6 +501,7 @@ export default {
         name: ""
       },
       task_id: '',
+      draw_id: '',
       project_id: '',
       case_id: '',
       apilist: [],
@@ -514,6 +529,29 @@ export default {
     };
   },
   methods: {
+    JsonForm(){
+      this.$refs.JSONForm.validate((valid) => {
+        if (valid) {
+          alert('submit!');
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    submitForm() {
+      this.$refs.RegulerForm.validate((valid) => {
+        if (valid) {
+          alert('submit!');
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    handlePostClick(tab, event) {
+      console.log(tab, event);
+    },
     SaveConfig(){
       this.$refs.ConfigForm.validate((valid) => {
         if(valid){
@@ -547,7 +585,7 @@ export default {
       this.ConfigForm.cron=val
     },
     drawFunction() {
-      this.dialogFormVisible = true;
+      this.postVisible = true;
     },
     handleConfigStatus(status){
       // console.log(status)
@@ -924,6 +962,12 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+  .el-dialog__wrapper{
+    /deep/ .el-dialog__body{
+      padding: 0px 10px;
+    }
+  }
+
 .dashboard {
   &-container {
     margin: 15px 20px 15px 20px;
