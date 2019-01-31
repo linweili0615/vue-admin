@@ -101,7 +101,10 @@
     },
     methods: {
       getTaskResult(){
-        this.$axios.post('/task/getResult',this.task_id)
+        this.$axios.post('/task/getResult',{
+          'task_id': this.task_id,
+          'run_type': 'TEST'
+        })
           .then(response => {
             const res = response.data
             if(res.status === 'SUCCESS'){

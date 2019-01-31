@@ -714,7 +714,10 @@ export default {
     },
     getTaskLog() {
       this.$axios
-        .post("/task/getLog", this.task_id)
+        .post("/task/getLog", {
+          'task_id': this.task_id,
+          'run_type': 'TEST'
+        })
         .then(response => {
           this.logs = response.data.data;
         })
@@ -732,8 +735,7 @@ export default {
       let routeData = this.$router.resolve({
         path: "/api/task/result",
         query: {
-          task_id: this.task_id,
-          u_id: "81598efb-ffa9-11e8-a19c-0242ac110002"
+          task_id: this.task_id
         }
       });
       window.open(routeData.href, "_blank");
