@@ -59,7 +59,7 @@
                     <el-table-column label="操作" width="200">
                       <template slot-scope="scope">
                         <el-button type="primary" plain size="mini" icon="el-icon-circle-plus-outline"
-                          @click="drawFunction" >提取</el-button>
+                          @click="drawFunction(scope.row.id)" >提取</el-button>
                         <el-button type="warning" plain size="mini" icon="el-icon-circle-plus-outline">检查</el-button>
                         <el-button type="danger" size="mini" icon="el-icon-delete" style="margin-right: 18px;"
                           @click="delTask(scope.row.id)"
@@ -297,6 +297,7 @@
       <el-dialog width="700px" title="详情" :visible.sync="innerVisible" append-to-body>
         <template>
           <el-tabs v-model="postActive" type="card" @tab-click="handlePostClick">
+
             <el-tab-pane label="正则提取" name="reguler">
               <el-form :model="RegulerForm" :rules="Reguler_rules" ref="RegulerForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="变量名称:" prop="values" >
@@ -313,6 +314,7 @@
                 </el-form-item>
               </el-form>
             </el-tab-pane>
+
             <el-tab-pane label="JSON提取" name="json">
               <el-form :model="JSONForm" :rules="Json_rules" ref="JSONForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="变量名称:" prop="values" >
@@ -326,6 +328,7 @@
                 </el-form-item>
               </el-form>
             </el-tab-pane>
+
           </el-tabs>
         </template>
       </el-dialog>
@@ -334,11 +337,9 @@
         <el-table :data="PostData" height="500"
                   empty-text="暂无记录"
                   border style="width: 100%">
-          <el-table-column prop="typs" label="提取类型" width="100">
+          <el-table-column label="提取类型" width="100">
             <template slot-scope="scope">
-              <el-tag type="success" v-if="scope.row.typs === 'reguler'">
-                正则提取
-              </el-tag>
+              <el-tag type="success" v-if="scope.row.types === 'reguler'">正则提取</el-tag>
               <el-tag v-else>JSON提取</el-tag>
             </template>
           </el-table-column>
@@ -389,32 +390,7 @@ export default {
         'right': ''
       },
       postActive: 'reguler',
-      PostData: [{
-        id: 1,
-        typs: 'reguler',
-        left: '王小虎',
-        right: '上海市普陀区',
-        values: '金沙江路 1518 弄'
-      },{
-        id: 2,
-        typs: 'json',
-        left: '王小虎',
-        right: '',
-        values: '金沙江路 1518 弄'
-      },{
-        id: 3,
-        typs: 'reguler',
-        left: '王小虎',
-        right: '上海市普陀区',
-        values: '金沙江路 1518 弄'
-      },{
-        id: 4,
-        typs: 'json',
-        left: '王小虎',
-        right: '',
-        values: '金沙江路 1518 弄'
-      }
-      ],
+      PostData: [],
       innerVisible: false,
       postVisible: false,
       cronPopover:false,
@@ -532,7 +508,24 @@ export default {
     JsonForm(){
       this.$refs.JSONForm.validate((valid) => {
         if (valid) {
-          alert('submit!');
+          this.$axios.post('/task/draw/add',{
+            'draw_id': this.draw_id,
+            'types': 'json',
+            'values': this.RegulerForm.values,
+            'left': this.RegulerForm.left,
+            'right': this.RegulerForm.right
+          })
+            .then(res => {
+              if(res.data.status ==='SUCCESS'){
+                this.innerVisible = false
+                this.drawFunction(this.draw_id)
+              }else {
+                this.$message.info(res.data.msg)
+              }
+            })
+            .catch(error => {
+              this.$message.error('添加失败')
+            })
         } else {
           console.log('error submit!!');
           return false;
@@ -542,7 +535,24 @@ export default {
     submitForm() {
       this.$refs.RegulerForm.validate((valid) => {
         if (valid) {
-          alert('submit!');
+          this.$axios.post('/task/draw/add',{
+            'draw_id': this.draw_id,
+            'types': 'reguler',
+            'values': this.RegulerForm.values,
+            'left': this.RegulerForm.left,
+            'right': this.RegulerForm.right
+          })
+            .then(res => {
+              if(res.data.status ==='SUCCESS'){
+                this.innerVisible = false
+                this.drawFunction(this.draw_id)
+              }else {
+                this.$message.info(res.data.msg)
+              }
+            })
+            .catch(error => {
+              this.$message.error('添加失败')
+            })
         } else {
           console.log('error submit!!');
           return false;
@@ -584,8 +594,26 @@ export default {
     changeCron(val){
       this.ConfigForm.cron=val
     },
-    drawFunction() {
-      this.postVisible = true;
+    drawFunction(id) {
+      if(id){
+        this.draw_id = id
+        this.$axios.post('/task/draw/list',{
+          'id': id,
+          'task_id': this.task_id
+        })
+          .then(res => {
+            if(res.data.status === 'SUCCESS'){
+              this.PostData = res.data.data
+            }else{
+              this.$message.info(res.data.msg)
+            }
+            this.postVisible = true;
+          })
+          .catch(error => {
+            this.$message.error('获取提取详情失败')
+          })
+      }
+
     },
     handleConfigStatus(status){
       // console.log(status)
@@ -694,7 +722,7 @@ export default {
             this.$axios
               .post("/task/extend/del", [id])
               .then(response => {
-                if (response.data.status === "success") {
+                if (response.data.status === "SUCCESS") {
                   this.$message.success("记录已删除");
                   this.tasklist.map((value, index) => {
                     if (value.id === id) {
@@ -771,15 +799,15 @@ export default {
     },
     SendTask() {
       this.status = true;
-      this.activeStatus = false;
-      let intervaljob = setInterval(this.getTaskLog, 200);
+      this.activeStatus = true;
+      // let intervaljob = setInterval(this.getTaskLog, 200);
       this.$axios
         .post("/task/test", this.task_id)
         .then(response => {
           this.status = false;
           if (response.data.status === "SUCCESS") {
             this.result_list = response.data.data;
-            clearInterval(intervaljob);
+            // clearInterval(intervaljob);
             this.$confirm("是否跳转结果页？", "任务执行成功", {
               confirmButtonText: "确定",
               cancelButtonText: "取消",
@@ -954,12 +982,12 @@ export default {
     this.getApiTree();
     this.getApiList(50, 1);
   },
-  updated() {
-    this.$nextTick(function() {
-      var div = document.getElementById("logdata");
-      div.scrollTop = div.scrollHeight;
-    });
-  }
+  // updated() {
+  //   this.$nextTick(function() {
+  //     var div = document.getElementById("logdata");
+  //     div.scrollTop = div.scrollHeight;
+  //   });
+  // }
 };
 </script>
 
