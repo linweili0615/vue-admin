@@ -25,5 +25,6 @@ export default {
   min-height: calc(100vh - 50px);
   position: relative;
   overflow: hidden;
+  padding: 15px 15px
 }
 </style>
